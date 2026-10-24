@@ -9,25 +9,27 @@ import {
   TrendingUp,
   LayoutDashboard,
   ChevronRight,
-  ShieldAlert,
-  Sparkles,
   Sprout,
-  LineChart,
+  Coins,
+  Calendar,
+  CalendarDays,
+  Clock,
+  Layers,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 
-import { PlanningFilterState } from "@/types/marketIntelligence";
+import { PlanningFilterState, CropCategory } from "@/types/marketIntelligence";
 import { MarketIntelligenceHeader } from "./MarketIntelligenceHeader";
-import { PlanningControls } from "./PlanningControls";
 import { MarketOverviewCards } from "./MarketOverviewCards";
 import { Next15DaysSection } from "./Next15DaysSection";
 import { SeasonalPlannerSection } from "./SeasonalPlannerSection";
 import { FieldSuitabilitySection } from "./FieldSuitabilitySection";
 import { CropPlanningComparison } from "./CropPlanningComparison";
 import { PriceTrendOutlook } from "./PriceTrendOutlook";
-import { FuturePriceOutlook } from "./FuturePriceOutlook";
 import { DataSourceReliability } from "./DataSourceReliability";
 
-type NavigationTab = "crop_decision" | "market_analysis" | "price_outlook";
+type NavigationTab = "find_crops" | "today_prices" | "plan_planting";
 
 export const MarketIntelligenceView: React.FC = () => {
   const { location, field, farmer } = useAuth();
@@ -35,8 +37,15 @@ export const MarketIntelligenceView: React.FC = () => {
   const { language } = useI18n();
   const isMr = language === "mr";
 
-  // Three-button navigation state (default: Crop Decision)
-  const [activeTab, setActiveTab] = useState<NavigationTab>("crop_decision");
+  // Three primary navigation options (default: Find Crops for My Farm)
+  const [activeTab, setActiveTab] = useState<NavigationTab>("find_crops");
+
+  // Planting options toggle within "Plan My Planting"
+  const [plantingChoice, setPlantingChoice] = useState<"next15" | "seasonal">("next15");
+
+  // Optional collapsible helper for Field Suitability & Historical Analysis
+  const [showFieldSuitability, setShowFieldSuitability] = useState<boolean>(false);
+  const [showPriceTrend, setShowPriceTrend] = useState<boolean>(false);
 
   // Active location context from auth
   const activeState = location?.state || "Maharashtra";
@@ -53,7 +62,7 @@ export const MarketIntelligenceView: React.FC = () => {
     taluka: activeTaluka,
     marketApmc: "Baramati APMC",
     horizon: "immediate",
-    season: "kharif",
+    season: "rabi",
     cropCategory: "all",
     selectedCropId: "",
   });
@@ -61,6 +70,15 @@ export const MarketIntelligenceView: React.FC = () => {
   const handleFilterChange = (updated: Partial<PlanningFilterState>) => {
     setFilters((prev) => ({ ...prev, ...updated }));
   };
+
+  const cropCategories: { key: CropCategory; labelEn: string; labelMr: string }[] = [
+    { key: "all", labelEn: "All Crops", labelMr: "सर्व पिके" },
+    { key: "cash_crops", labelEn: "Cash Crops", labelMr: "नगदी पिके" },
+    { key: "cereals", labelEn: "Cereals & Millets", labelMr: "धान्य" },
+    { key: "pulses", labelEn: "Pulses", labelMr: "कडधान्ये" },
+    { key: "oilseeds", labelEn: "Oilseeds", labelMr: "तेलबिया" },
+    { key: "vegetables", labelEn: "Vegetables", labelMr: "भाजीपाला" },
+  ];
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
@@ -79,7 +97,7 @@ export const MarketIntelligenceView: React.FC = () => {
         </span>
       </nav>
 
-      {/* SECTION A: Page Header with Location Context & Status */}
+      {/* Simplified Page Header */}
       <MarketIntelligenceHeader
         state={filters.state}
         district={filters.district}
@@ -88,95 +106,114 @@ export const MarketIntelligenceView: React.FC = () => {
         gatNo={activeGat}
       />
 
-      {/* SECTION: Three-Button Navigation Row */}
-      <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 p-1.5 bg-white rounded-2xl border border-surface-border shadow-xs w-full sm:w-auto">
+      {/* Exactly Three Main Navigation Buttons */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 p-1.5 bg-white rounded-2xl border border-surface-border shadow-xs">
+        {/* Button 1: Find Crops for My Farm */}
         <button
           type="button"
-          onClick={() => setActiveTab("crop_decision")}
-          className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all ${
-            activeTab === "crop_decision"
-              ? "bg-soil-primary text-white shadow-xs"
+          onClick={() => setActiveTab("find_crops")}
+          className={`flex items-center justify-center gap-2.5 px-4 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+            activeTab === "find_crops"
+              ? "bg-[#2A7C13] text-white shadow-xs"
               : "text-text-muted hover:text-text-main hover:bg-surface-muted"
           }`}
-          aria-pressed={activeTab === "crop_decision"}
+          aria-pressed={activeTab === "find_crops"}
         >
-          <Sprout className="w-4 h-4" />
-          <span>Crop Decision</span>
+          <Sprout className="w-4 h-4 shrink-0" />
+          <span>{isMr ? "माझ्या शेतासाठी पिके शोधा" : "Find Crops for My Farm"}</span>
         </button>
 
+        {/* Button 2: Today's Crop Prices */}
         <button
           type="button"
-          onClick={() => setActiveTab("market_analysis")}
-          className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all ${
-            activeTab === "market_analysis"
-              ? "bg-soil-primary text-white shadow-xs"
+          onClick={() => setActiveTab("today_prices")}
+          className={`flex items-center justify-center gap-2.5 px-4 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+            activeTab === "today_prices"
+              ? "bg-[#2A7C13] text-white shadow-xs"
               : "text-text-muted hover:text-text-main hover:bg-surface-muted"
           }`}
-          aria-pressed={activeTab === "market_analysis"}
+          aria-pressed={activeTab === "today_prices"}
         >
-          <LineChart className="w-4 h-4" />
-          <span>Market Analysis</span>
+          <Coins className="w-4 h-4 shrink-0" />
+          <span>{isMr ? "आजचे बाजार भाव" : "Today's Crop Prices"}</span>
         </button>
 
+        {/* Button 3: Plan My Planting */}
         <button
           type="button"
-          onClick={() => setActiveTab("price_outlook")}
-          className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all ${
-            activeTab === "price_outlook"
-              ? "bg-soil-primary text-white shadow-xs"
+          onClick={() => setActiveTab("plan_planting")}
+          className={`flex items-center justify-center gap-2.5 px-4 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+            activeTab === "plan_planting"
+              ? "bg-[#2A7C13] text-white shadow-xs"
               : "text-text-muted hover:text-text-main hover:bg-surface-muted"
           }`}
-          aria-pressed={activeTab === "price_outlook"}
+          aria-pressed={activeTab === "plan_planting"}
         >
-          <TrendingUp className="w-4 h-4" />
-          <span>Price Outlook</span>
+          <Calendar className="w-4 h-4 shrink-0" />
+          <span>{isMr ? "पेरणीचे नियोजन करा" : "Plan My Planting"}</span>
         </button>
       </div>
 
-      {/* 1. CROP DECISION SECTION (Default) */}
-      <div className={activeTab === "crop_decision" ? "space-y-6" : "hidden"}>
-        {/* SECTION B: Planning Controls & Horizon Switcher (Dedicated to Baramati APMC) */}
-        <PlanningControls
-          filters={filters}
-          onFilterChange={handleFilterChange}
-        />
+      {/* ============================================================== */}
+      {/* SECTION A: FIND CROPS FOR MY FARM (Default) */}
+      {/* ============================================================== */}
+      <div className={activeTab === "find_crops" ? "space-y-6" : "hidden"}>
+        {/* Category Filter Chips for Crops */}
+        <div className="bg-white rounded-2xl border border-surface-border p-4 shadow-2xs flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-bold text-text-muted">
+              {isMr ? "पीक वर्ग:" : "Crop Category:"}
+            </span>
+            <div className="flex flex-wrap items-center gap-1.5">
+              {cropCategories.map((cat) => (
+                <button
+                  key={cat.key}
+                  type="button"
+                  onClick={() => handleFilterChange({ cropCategory: cat.key })}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                    filters.cropCategory === cat.key
+                      ? "bg-[#2A7C13] text-white shadow-2xs"
+                      : "bg-surface-subtle text-text-muted hover:text-text-main hover:bg-surface-muted border border-surface-border"
+                  }`}
+                >
+                  {isMr ? cat.labelMr : cat.labelEn}
+                </button>
+              ))}
+            </div>
+          </div>
 
-        {/* SECTION C: Market Overview with Explicit Empty State */}
-        <MarketOverviewCards
-          selectedDistrict={filters.district}
-          selectedMarket={filters.marketApmc}
-          selectedCommodity={filters.cropCategory !== "all" ? filters.cropCategory : "All Commodities"}
-        />
+          {/* Collapsible toggle to inspect Soil Test & Cadastral Properties */}
+          <button
+            type="button"
+            onClick={() => setShowFieldSuitability(!showFieldSuitability)}
+            className="text-xs font-bold text-[#2A7C13] hover:underline flex items-center gap-1.5"
+          >
+            <Layers className="w-3.5 h-3.5" />
+            <span>
+              {showFieldSuitability
+                ? isMr ? "माती व शेत माहिती लपवा" : "Hide Soil & Parcel Data"
+                : isMr ? "शेताची माती व स्थिती पहा" : "Check Soil & Parcel Conditions"}
+            </span>
+            {showFieldSuitability ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+          </button>
+        </div>
 
-        {/* SECTION E or F: Dedicated Horizon Views */}
-        {filters.horizon === "immediate" ? (
-          <Next15DaysSection
-            currentVillage={activeVillage}
-            currentGat={activeGat}
-            fieldId={field?.id ?? (selectedFarmer as any)?.field_id}
-          />
-        ) : (
-          <SeasonalPlannerSection
-            activeSeason={filters.season}
-            onSeasonSelect={(season) => handleFilterChange({ season })}
-            gatNo={activeGat}
-            fieldAcreage={activeArea}
-            fieldId={field?.id ?? (selectedFarmer as any)?.field_id}
-          />
+        {/* Optional Collapsible Field Suitability */}
+        {showFieldSuitability && (
+          <div className="animate-in fade-in duration-200">
+            <FieldSuitabilitySection
+              currentGat={activeGat}
+              fieldId={field?.id ?? (selectedFarmer as any)?.field_id}
+              farmerName={farmer?.name ?? selectedFarmer?.name}
+              currentVillage={activeVillage}
+              currentTaluka={activeTaluka}
+              currentDistrict={activeDistrict}
+              activeSeason={filters.season}
+            />
+          </div>
         )}
 
-        {/* SECTION J: Field Suitability Assessment Layer (Phase 8) */}
-        <FieldSuitabilitySection
-          currentGat={activeGat}
-          fieldId={field?.id ?? (selectedFarmer as any)?.field_id}
-          farmerName={farmer?.name ?? selectedFarmer?.name}
-          currentVillage={activeVillage}
-          currentTaluka={activeTaluka}
-          currentDistrict={activeDistrict}
-          activeSeason={filters.season}
-        />
-
-        {/* SECTION D: Crop Planning Options Comparison (Cards / Table Layout) */}
+        {/* Main Crop Planning Options Comparison (Card View First) */}
         <CropPlanningComparison
           categoryFilter={filters.cropCategory}
           horizon={filters.horizon}
@@ -191,26 +228,121 @@ export const MarketIntelligenceView: React.FC = () => {
         />
       </div>
 
-      {/* 2. MARKET ANALYSIS SECTION */}
-      <div className={activeTab === "market_analysis" ? "space-y-6" : "hidden"}>
-        {/* SECTION G: Historical Price Analysis & Trend Detection (Phase 5) */}
-        <PriceTrendOutlook
+      {/* ============================================================== */}
+      {/* SECTION B: TODAY'S CROP PRICES */}
+      {/* ============================================================== */}
+      <div className={activeTab === "today_prices" ? "space-y-6" : "hidden"}>
+        {/* Single Clean & Readable Market Prices Table */}
+        <MarketOverviewCards
+          selectedDistrict={filters.district}
           selectedMarket={filters.marketApmc}
-          selectedCommodity={isMr ? "निवडलेले पीक" : "Target Crop"}
-          activeDistrict={filters.district}
+          selectedCommodity={filters.cropCategory !== "all" ? filters.cropCategory : "All Commodities"}
         />
 
-        {/* SECTION I: Data Sources and Reliability Panel */}
-        <DataSourceReliability selectedMarket={filters.marketApmc} />
+        {/* Secondary Collapsible for Farmers Seeking Historical Price Trends */}
+        <div className="bg-white rounded-2xl border border-surface-border p-4 shadow-2xs">
+          <button
+            type="button"
+            onClick={() => setShowPriceTrend(!showPriceTrend)}
+            className="w-full flex items-center justify-between text-left text-xs font-bold text-text-main hover:text-[#2A7C13] transition-colors"
+          >
+            <div className="flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 text-[#2A7C13]" />
+              <span>
+                {isMr
+                  ? "मागील बाजारभाव कल व स्त्रोत माहिती (ऐच्छिक)"
+                  : "View Historical Price Trends & Data Sources (Optional)"}
+              </span>
+            </div>
+            {showPriceTrend ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          </button>
+
+          {showPriceTrend && (
+            <div className="pt-4 mt-4 border-t border-surface-border space-y-6 animate-in fade-in duration-200">
+              <PriceTrendOutlook
+                selectedMarket={filters.marketApmc}
+                selectedCommodity={isMr ? "निवडलेले पीक" : "Target Crop"}
+                activeDistrict={filters.district}
+              />
+              <DataSourceReliability selectedMarket={filters.marketApmc} />
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* 3. PRICE OUTLOOK SECTION */}
-      <div className={activeTab === "price_outlook" ? "space-y-6" : "hidden"}>
-        {/* SECTION H: Future Price Outlook & Harvest-Time Forecasting Engine (Phase 6) */}
-        <FuturePriceOutlook
-          selectedMarket={filters.marketApmc}
-          selectedCommodity={isMr ? "निवडलेले पीक" : "Target Crop"}
-        />
+      {/* ============================================================== */}
+      {/* SECTION C: PLAN MY PLANTING */}
+      {/* ============================================================== */}
+      <div className={activeTab === "plan_planting" ? "space-y-6" : "hidden"}>
+        {/* Two Clear Choices Toggle: Next 15 Days vs Seasonal Planning */}
+        <div className="bg-white rounded-2xl border border-surface-border p-4 sm:p-5 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h3 className="text-base font-extrabold text-text-main tracking-tight">
+              {isMr ? "पेरणी नियोजन कालावधी निवडा" : "Choose Planning Horizon"}
+            </h3>
+            <p className="text-xs text-text-muted mt-0.5">
+              {isMr
+                ? "पुढील १५ दिवसांतील तातडीची पेरणी किंवा आगामी हंगामासाठी नियोजन निवडा."
+                : "Compare planting opportunities for the next 15 days or the upcoming growing season."}
+            </p>
+          </div>
+
+          <div className="inline-flex items-center gap-1.5 p-1 bg-surface-muted rounded-xl border border-surface-border self-start sm:self-auto">
+            {/* Option 1: Next 15 Days */}
+            <button
+              type="button"
+              onClick={() => {
+                setPlantingChoice("next15");
+                handleFilterChange({ horizon: "immediate" });
+              }}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+                plantingChoice === "next15"
+                  ? "bg-[#2A7C13] text-white shadow-2xs"
+                  : "text-text-muted hover:text-text-main hover:bg-white/60"
+              }`}
+            >
+              <Clock className="w-3.5 h-3.5" />
+              <span>{isMr ? "पुढील १५ दिवस (तातडीचे)" : "Option 1: Next 15 Days"}</span>
+            </button>
+
+            {/* Option 2: Seasonal Planning */}
+            <button
+              type="button"
+              onClick={() => {
+                setPlantingChoice("seasonal");
+                handleFilterChange({ horizon: "seasonal" });
+              }}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+                plantingChoice === "seasonal"
+                  ? "bg-[#2A7C13] text-white shadow-2xs"
+                  : "text-text-muted hover:text-text-main hover:bg-white/60"
+              }`}
+            >
+              <CalendarDays className="w-3.5 h-3.5" />
+              <span>{isMr ? "हंगामी नियोजन (आगामी)" : "Option 2: Seasonal Planning"}</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Option 1: Next 15 Days Component */}
+        {plantingChoice === "next15" && (
+          <Next15DaysSection
+            currentVillage={activeVillage}
+            currentGat={activeGat}
+            fieldId={field?.id ?? (selectedFarmer as any)?.field_id}
+          />
+        )}
+
+        {/* Option 2: Seasonal Planning Component */}
+        {plantingChoice === "seasonal" && (
+          <SeasonalPlannerSection
+            activeSeason={filters.season}
+            onSeasonSelect={(season) => handleFilterChange({ season })}
+            gatNo={activeGat}
+            fieldAcreage={activeArea}
+            fieldId={field?.id ?? (selectedFarmer as any)?.field_id}
+          />
+        )}
       </div>
     </div>
   );

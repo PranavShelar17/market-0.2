@@ -207,12 +207,24 @@ export const FieldSuitabilitySection: React.FC<FieldSuitabilitySectionProps> = (
       )}
 
       {error && !loading && (
-        <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-sm flex items-start gap-3">
-          <AlertCircle className="w-5 h-5 text-rose-600 flex-shrink-0 mt-0.5" />
-          <div>
-            <p className="font-semibold">{isMr ? "त्रुटी आढळली" : "Assessment Error"}</p>
-            <p className="text-xs text-rose-700 mt-0.5">{error}</p>
+        <div className="p-4 rounded-xl bg-amber-50/80 border border-amber-200 text-amber-900 text-xs flex items-center justify-between gap-3 shadow-2xs">
+          <div className="flex items-center gap-2.5">
+            <Info className="w-4 h-4 text-amber-700 shrink-0" />
+            <div>
+              <p className="font-bold text-sm">
+                {isMr ? "आम्ही तुमच्या शेताच्या स्थितीची तपासणी करू शकलो नाही." : "We could not check your field conditions."}
+              </p>
+              <p className="text-[11px] text-amber-800 mt-0.5">
+                {isMr ? "कृपया तुमच्या शेताचे तपशील तपासा." : "Please check your farm details or try again."}
+              </p>
+            </div>
           </div>
+          <button
+            onClick={fetchSuitability}
+            className="px-3 py-1.5 bg-[#2A7C13] text-white rounded-lg text-xs font-bold hover:bg-[#2A7C13]/90 transition-colors shrink-0"
+          >
+            {isMr ? "पुन्हा तपासा" : "Retry"}
+          </button>
         </div>
       )}
 

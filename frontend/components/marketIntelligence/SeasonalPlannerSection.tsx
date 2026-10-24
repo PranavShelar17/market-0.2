@@ -267,14 +267,25 @@ export const SeasonalPlannerSection: React.FC<SeasonalPlannerSectionProps> = ({
 
       {/* Error State */}
       {error && !loading && (
-        <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-900 flex items-start gap-3">
-          <Info className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
-          <div className="space-y-1">
-            <h4 className="text-xs sm:text-sm font-bold text-red-900">
-              {isMr ? "डेटा त्रुटी" : "Seasonal Calendar Unavailable"}
-            </h4>
-            <p className="text-xs text-red-800 leading-relaxed">{error}</p>
+        <div className="p-4 rounded-xl bg-amber-50/80 border border-amber-200 text-amber-900 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-2xs">
+          <div className="flex items-center gap-2.5">
+            <Info className="w-5 h-5 text-amber-700 shrink-0" />
+            <div>
+              <h4 className="text-sm font-bold text-amber-900">
+                {isMr ? "आम्ही तुमचे हंगामी नियोजन तयार करू शकलो नाही." : "We could not prepare your seasonal planning."}
+              </h4>
+              <p className="text-[11px] text-amber-800 mt-0.5">
+                {isMr ? "कृपया काही वेळाने पुन्हा प्रयत्न करा." : "Please try again later."}
+              </p>
+            </div>
           </div>
+          <button
+            onClick={fetchSeasonalData}
+            className="px-3.5 py-1.5 bg-[#2A7C13] text-white rounded-lg text-xs font-bold hover:bg-[#2A7C13]/90 transition-colors shrink-0 flex items-center gap-1.5"
+          >
+            <RefreshCw className="w-3.5 h-3.5" />
+            <span>{isMr ? "पुन्हा प्रयत्न करा" : "Try Again"}</span>
+          </button>
         </div>
       )}
 
