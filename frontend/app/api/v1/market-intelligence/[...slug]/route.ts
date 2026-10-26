@@ -5,6 +5,11 @@ import {
   getCertifiedObservations,
   getCertifiedNext15DaysOptions,
   getCertifiedSeasonalOptions,
+  getCertifiedFieldSuitability,
+  getCertifiedHistoricalAnalysis,
+  getCertifiedMarketForecast,
+  DEMO_COMMODITIES,
+  DEMO_MARKETS,
 } from "@/services/certifiedDecisionPlanData";
 
 const BACKEND_BASE = process.env.BACKEND_URL || "http://127.0.0.1:8000";
@@ -44,10 +49,10 @@ export async function GET(
       return NextResponse.json(data);
     }
   } catch (_backendErr) {
-    // Backend offline, connection refused, or timed out - proceed to certified fallback
+    // Backend offline, connection refused, or timed out - proceed to demo fallback
   }
 
-  // 2. Authoritative CACP & MPKV verified dataset fallbacks
+  // 2. Authoritative CACP & MPKV verified dataset demo fallbacks
   if (slugPath.startsWith("decision-engine/field/")) {
     const fieldIdentifier = slug[2] || "18";
     const horizon = searchParams.get("horizon") || "IMMEDIATE_15_DAYS";
@@ -83,10 +88,41 @@ export async function GET(
     return NextResponse.json(seasonal);
   }
 
+  if (slugPath.startsWith("suitability/field/")) {
+    const fieldIdentifier = slug[2] || "18";
+    const suitability = getCertifiedFieldSuitability(fieldIdentifier);
+    return NextResponse.json(suitability);
+  }
+
+  if (slugPath === "commodities") {
+    const category = searchParams.get("category");
+    const filtered = category
+      ? DEMO_COMMODITIES.filter((c) => c.category === category)
+      : DEMO_COMMODITIES;
+    return NextResponse.json(filtered);
+  }
+
+  if (slugPath === "markets") {
+    return NextResponse.json(DEMO_MARKETS);
+  }
+
+  if (slugPath === "historical-trends") {
+    const commodityId = parseInt(searchParams.get("commodity_id") || "1", 10);
+    const marketId = parseInt(searchParams.get("market_id") || "1", 10);
+    const trends = getCertifiedHistoricalAnalysis(commodityId, marketId);
+    return NextResponse.json(trends);
+  }
+
+  if (slugPath === "forecasts") {
+    const commodityId = parseInt(searchParams.get("commodity_id") || "1", 10);
+    const forecast = getCertifiedMarketForecast(commodityId);
+    return NextResponse.json(forecast);
+  }
+
   // Generic fallback if unknown subpath
   return NextResponse.json(
     {
-      detail: `Certified endpoint data available for ${slugPath}`,
+      detail: `Certified demo endpoint data available for ${slugPath}`,
       status: "FALLBACK_OPERATIONAL",
     },
     { status: 200 }

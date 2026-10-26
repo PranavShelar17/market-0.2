@@ -46,6 +46,15 @@ class ReportService:
         # Ensure report_date reflects dynamic live generation date in India timezone
         if "report" in data and isinstance(data["report"], dict):
             data["report"]["report_date"] = get_india_current_date_str()
+
+        # Integrate verified crop decision & market intelligence data
+        try:
+            from app.services.crop_decision_service import crop_decision_service
+            decision_res = crop_decision_service.evaluate_field_crop_decision(db, field_identifier=field_identifier)
+            data["crop_decision"] = decision_res.model_dump()
+        except Exception:
+            data["crop_decision"] = None
+
         return data
 
     def verify_field_access(
@@ -125,7 +134,7 @@ class ReportService:
         report_no = report_meta.get("report_no", "SPL/2026/SL-0104")
         verify_url = f"{base_url}/reports?verify={report_no}"
 
-        pdf_bytes = pdf_service.generate_soil_health_card_pdf(
+        pdf_bytes = pdf_service.generate_detailed_soil_report_pdf(
             report_data=data,
             lang=lang,
             verify_url=verify_url,

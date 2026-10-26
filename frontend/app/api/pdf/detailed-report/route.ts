@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
 
       const { formatReportDateIndia } = await import("@/lib/dateUtils");
       const liveDate = formatReportDateIndia();
-      let cleanFilename = `SoilPilot_Soil_Health_Card_Gat_${String(fieldId).replace(/^demo-field-gat-/, "")}_${liveDate}.pdf`;
+      let cleanFilename = `SoilPilot_Detailed_Soil_Report_Gat_${String(fieldId).replace(/^demo-field-gat-/, "")}_${liveDate}.pdf`;
       if (dispositionHeader) {
         const match = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/i.exec(dispositionHeader);
         if (match && match[1]) {

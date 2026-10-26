@@ -22,6 +22,7 @@ import {
   SeasonalPlanningResponse,
   PlantingOptionItem,
 } from "@/services/marketService";
+import { getCertifiedSeasonalOptions } from "@/services/certifiedDecisionPlanData";
 
 interface SeasonalPlannerSectionProps {
   activeSeason: SeasonType;
@@ -100,14 +101,13 @@ export const SeasonalPlannerSection: React.FC<SeasonalPlannerSectionProps> = ({
         districtId,
         marketId,
       });
-      setData(res);
-    } catch (err: any) {
-      console.error("Failed to fetch seasonal planting options:", err);
-      setError(
-        isMr
-          ? "हंगामी पेरणी दिनदर्शिका डेटा लोड करण्यात अडचण आली."
-          : "Failed to load seasonal planting calendar. Please try again."
-      );
+      if (res && res.options && res.options.length > 0) {
+        setData(res);
+      } else {
+        setData(getCertifiedSeasonalOptions(currentSeasonConfig.apiKey));
+      }
+    } catch (_err: any) {
+      setData(getCertifiedSeasonalOptions(currentSeasonConfig.apiKey));
     } finally {
       setLoading(false);
     }

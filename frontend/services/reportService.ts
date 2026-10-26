@@ -132,7 +132,7 @@ export const reportService = {
     const cleanGat = String(fieldId).replace(/[^\d]/g, "") || "18";
     const { formatReportDateIndia } = await import("@/lib/dateUtils");
     const liveDate = formatReportDateIndia();
-    const filename = `SoilPilot_Soil_Health_Card_Gat_${cleanGat}_${liveDate}.pdf`;
+    const filename = `SoilPilot_Detailed_Soil_Report_Gat_${cleanGat}_${liveDate}.pdf`;
     const directUrl = this.getDetailedReportPdfUrl(fieldId, lang, farmerName);
 
     try {

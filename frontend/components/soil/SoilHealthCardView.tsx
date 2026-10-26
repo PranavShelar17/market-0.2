@@ -67,7 +67,6 @@ export const SoilHealthCardView: React.FC<SoilHealthCardViewProps> = ({ fieldIdO
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [downloadingCard, setDownloadingCard] = useState<boolean>(false);
-  const [downloadingDetailed, setDownloadingDetailed] = useState<boolean>(false);
 
   const activeFieldId =
     fieldIdOverride ||
@@ -237,42 +236,6 @@ export const SoilHealthCardView: React.FC<SoilHealthCardViewProps> = ({ fieldIdO
             <span>{t("soilHealthCard.downloadCard")}</span>
           </button>
 
-          <button
-            type="button"
-            disabled={downloadingDetailed}
-            onClick={async () => {
-              try {
-                setDownloadingDetailed(true);
-                const farmerNameOverride =
-                  selectedFarmer && String(selectedFarmer.gat_no) === String(selectedGat)
-                    ? selectedFarmer.name
-                    : undefined;
-                await reportService.downloadDetailedReportPdf(activeFieldId, locale, farmerNameOverride);
-              } catch (err) {
-                console.error("Detailed dossier download failed, using fallback:", err);
-                const farmerNameOverride =
-                  selectedFarmer && String(selectedFarmer.gat_no) === String(selectedGat)
-                    ? selectedFarmer.name
-                    : undefined;
-                window.location.assign(reportService.getDetailedReportPdfUrl(activeFieldId, locale, farmerNameOverride));
-              } finally {
-                setDownloadingDetailed(false);
-              }
-            }}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold bg-stone-700 hover:bg-stone-800 text-white rounded-md transition-colors shadow-2xs disabled:opacity-50 cursor-pointer"
-            title="Download Detailed Laboratory Soil Report PDF"
-          >
-            {downloadingDetailed ? (
-              <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-            ) : (
-              <Download className="w-3.5 h-3.5" />
-            )}
-            <span>
-              {downloadingDetailed
-                ? t("reports.generatingPdf") || "Generating..."
-                : t("soilHealthCard.downloadReport")}
-            </span>
-          </button>
 
           <button
             type="button"
