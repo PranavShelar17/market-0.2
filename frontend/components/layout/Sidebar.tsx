@@ -6,118 +6,98 @@ import { usePathname } from "next/navigation";
 import { useI18n } from "@/i18n/useI18n";
 import { useAuth } from "@/context/AuthContext";
 import {
-  Home,
+  LayoutDashboard,
   Tractor,
+  FileBadge,
   Map,
-  Sprout,
+  Layers,
+  Lightbulb,
   FileText,
-  TrendingUp,
-  FileSpreadsheet,
-  Clock,
-  Globe,
   LogOut,
+  MapPin,
+  TrendingUp,
 } from "lucide-react";
+import { translateGeoName, formatGatLabel } from "@/i18n/marathiHelper";
 
-interface SidebarItem {
+interface NavItem {
   key: string;
-  label: string;
-  labelMr: string;
+  labelKey: string;
   href: string;
   icon: React.ComponentType<{ className?: string }>;
 }
 
-const navItems: SidebarItem[] = [
-  { key: "dashboard", label: "Dashboard", labelMr: "डॅशबोर्ड", href: "/dashboard", icon: Home },
-  { key: "myFarm", label: "My Farm", labelMr: "माझे शेत", href: "/my-farm", icon: Tractor },
-  { key: "soilMap", label: "Soil Map", labelMr: "माती नकाशा", href: "/soil-map", icon: Map },
-  { key: "soilHealthCard", label: "Soil Health Card", labelMr: "मृदा आरोग्य पत्रिका", href: "/soil-health-card", icon: Sprout },
-  { key: "detailedSoilReport", label: "Detailed Soil Report", labelMr: "सविस्तर माती अहवाल", href: "/reports?tab=detailed", icon: FileText },
-  { key: "marketIntelligence", label: "Market Intelligence & Crop Planner", labelMr: "बाजार भाव व पीक नियोजन", href: "/market-intelligence", icon: TrendingUp },
-  { key: "reports", label: "Reports", labelMr: "अहवाल", href: "/reports", icon: FileSpreadsheet },
-  { key: "historicalRecords", label: "Historical Records", labelMr: "ऐतिहासिक नोंदी", href: "/reports#history", icon: Clock },
+const navItems: NavItem[] = [
+  { key: "dashboard", labelKey: "nav.dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { key: "myFarm", labelKey: "nav.myFarm", href: "/my-farm", icon: Tractor },
+  { key: "soilHealthCard", labelKey: "nav.soilHealthCard", href: "/soil-health-card", icon: FileBadge },
+  { key: "soilMap", labelKey: "nav.soilMap", href: "/soil-map", icon: Map },
+  { key: "soilTexture", labelKey: "nav.soilTexture", href: "/soil-texture", icon: Layers },
+  { key: "recommendations", labelKey: "nav.recommendations", href: "/recommendations", icon: Lightbulb },
+  { key: "marketIntelligence", labelKey: "nav.marketIntelligence", href: "/market-intelligence", icon: TrendingUp },
+  { key: "reports", labelKey: "nav.reports", href: "/reports", icon: FileText },
 ];
 
 export const Sidebar: React.FC = () => {
   const pathname = usePathname();
-  const { language, setLanguage } = useI18n();
-  const { isAuthenticated, logout } = useAuth();
-  const isMr = language === "mr";
+  const { t, language } = useI18n();
+  const { isAuthenticated, field, location, logout } = useAuth();
 
   return (
-    <aside className="hidden md:flex flex-col w-64 bg-[#153928] text-white min-h-[calc(100vh-4.5rem)] shrink-0 relative overflow-hidden select-none">
-      {/* Decorative Botanical Watermark in Bottom Corner */}
-      <svg
-        className="absolute -bottom-8 -left-8 w-44 h-44 text-[#1C4633] pointer-events-none opacity-40"
-        viewBox="0 0 100 100"
-        fill="currentColor"
-        aria-hidden="true"
-      >
-        <path d="M50 0 C55 25 75 45 100 50 C75 55 55 75 50 100 C45 75 25 55 0 50 C25 45 45 25 50 0 Z" opacity="0.3" />
-        <path d="M20,90 Q40,60 80,40 Q60,70 30,95 Z" opacity="0.6" />
-        <path d="M10,80 Q35,50 65,30 Q50,65 15,85 Z" opacity="0.5" />
-      </svg>
-
-      {/* Navigation Links */}
-      <div className="flex-1 py-6 px-3 space-y-1.5 z-10">
+    <aside className="hidden md:flex flex-col w-64 bg-white border-r border-surface-border min-h-[calc(100vh-4rem)] p-4 shrink-0">
+      <div className="space-y-1">
         {navItems.map((item) => {
-          // Check if active (handle query params for detailed soil report / history)
-          const isActive =
-            pathname === item.href ||
-            (item.key === "reports" && pathname === "/reports" && !pathname.includes("tab=detailed")) ||
-            (item.key === "detailedSoilReport" && pathname === "/reports" && typeof window !== "undefined" && window.location.search.includes("tab=detailed"));
-
+          const isActive = pathname === item.href;
           const Icon = item.icon;
-          const displayLabel = isMr ? item.labelMr : item.label;
 
           return (
             <Link
               key={item.key}
               href={item.href}
-              className={`flex items-center gap-3.5 px-4 py-3 rounded-xl text-[13px] font-medium transition-all duration-150 ${
+              className={`flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-medium transition-colors ${
                 isActive
-                  ? "bg-[#557e63] text-white font-semibold shadow-xs"
-                  : "text-[#A3BEB0] hover:bg-[#1E4A35] hover:text-white"
+                  ? "bg-soil-primary text-white shadow-sm font-semibold"
+                  : "text-text-muted hover:bg-surface-muted hover:text-text-main"
               }`}
             >
-              <Icon className={`w-4 h-4 shrink-0 ${isActive ? "text-white" : "text-[#8CAE9A]"}`} />
-              <span className="truncate leading-snug">{displayLabel}</span>
+              <Icon className={`w-5 h-5 shrink-0 ${isActive ? "text-white" : "text-soil-primary"}`} />
+              <span>{t(item.labelKey)}</span>
             </Link>
           );
         })}
       </div>
 
-      {/* Bottom Controls: Language Toggle & Logout */}
-      <div className="p-4 border-t border-[#1F4A36] space-y-2 z-10 bg-[#153928]/90 backdrop-blur-xs">
-        {/* Language Row */}
-        <div className="flex items-center justify-between px-3 py-2 rounded-lg text-xs text-[#A3BEB0] hover:text-white transition-colors">
-          <div className="flex items-center gap-2.5">
-            <Globe className="w-4 h-4 text-[#8CAE9A]" />
-            <span className="font-medium">{isMr ? "भाषा" : "Language"}</span>
+      {/* Active Farm Context or Platform Status */}
+      <div className="mt-auto space-y-3 pt-6 border-t border-surface-border">
+        {isAuthenticated && field ? (
+          <div className="p-3 bg-soil-primaryLight/40 rounded-xl border border-soil-secondary/30 text-xs space-y-1">
+            <div className="flex items-center gap-1.5 font-bold text-soil-primary">
+              <MapPin className="w-3.5 h-3.5" />
+              <span>{formatGatLabel(field.gat_no, language === "mr")}</span>
+            </div>
+            <p className="text-[11px] text-text-muted truncate">
+              {translateGeoName(location?.village, language === "mr")}, {translateGeoName(location?.taluka, language === "mr")}
+            </p>
           </div>
+        ) : null}
+
+        {isAuthenticated && (
           <button
             type="button"
-            onClick={() => setLanguage(language === "en" ? "mr" : "en")}
-            className="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[#214F3A] text-white hover:bg-[#2B6148] transition-colors border border-[#2D664C]"
+            onClick={() => logout()}
+            className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-red-600 hover:bg-red-50 transition-colors"
           >
-            {language === "en" ? "English" : "मराठी"}
+            <LogOut className="w-4 h-4" />
+            <span>{t("auth.logout")}</span>
           </button>
-        </div>
+        )}
 
-        {/* Logout Row */}
-        <button
-          type="button"
-          onClick={() => {
-            if (isAuthenticated) {
-              logout();
-            } else {
-              window.location.href = "/";
-            }
-          }}
-          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-[#A3BEB0] hover:bg-[#1E4A35] hover:text-rose-300 transition-colors"
-        >
-          <LogOut className="w-4 h-4 text-[#8CAE9A]" />
-          <span>{isMr ? "बाहेर पडा" : "Logout"}</span>
-        </button>
+        <div className="p-3 bg-surface-subtle rounded-xl border border-surface-border text-xs text-text-muted">
+          <p className="font-semibold text-text-main">SoilPilot</p>
+          <p className="mt-0.5 text-[11px] text-text-light">
+            {language === "mr" ? "डिजिटल शेत नकाशा सक्रिय" : "Phase 5: Farm Map Active"}
+          </p>
+
+        </div>
       </div>
     </aside>
   );

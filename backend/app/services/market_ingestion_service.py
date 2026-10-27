@@ -437,6 +437,7 @@ class MarketIngestionService:
         now_utc = datetime.now(timezone.utc)
 
         stats = {
+            "source": source.name if source else "AGMARKNET / OGD India",
             "records_fetched": len(records),
             "records_validated": 0,
             "records_inserted": 0,

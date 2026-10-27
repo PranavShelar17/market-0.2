@@ -1,16 +1,11 @@
+"use client";
+
 import React from "react";
-import { usePathname } from "next/navigation";
 import { useI18n } from "@/i18n/useI18n";
 import { Sprout, MapPin, Award } from "lucide-react";
 
 export const Footer: React.FC = () => {
   const { t } = useI18n();
-  const pathname = usePathname();
-
-  // Hide big landing footer on dashboard and authenticated app views
-  if (pathname !== "/") {
-    return null;
-  }
 
   return (
     <footer className="w-full bg-white border-t border-surface-border mt-auto pt-10 pb-8 px-4 sm:px-6 lg:px-8 text-xs text-text-muted mb-16 md:mb-0">

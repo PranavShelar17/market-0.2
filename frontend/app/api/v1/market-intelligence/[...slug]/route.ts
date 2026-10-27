@@ -128,3 +128,45 @@ export async function GET(
     { status: 200 }
   );
 }
+
+export async function POST(
+  request: NextRequest,
+  { params }: { params: Promise<{ slug: string[] }> }
+) {
+  const { slug } = await params;
+  const slugPath = (slug || []).join("/");
+  const searchParams = request.nextUrl.searchParams;
+  const queryString = searchParams.toString() ? `?${searchParams.toString()}` : "";
+
+  try {
+    const backendUrl = `${BACKEND_BASE}/api/v1/market-intelligence/${slugPath}${queryString}`;
+    const bodyText = await request.text().catch(() => "");
+    const headers: Record<string, string> = {
+      "Content-Type": request.headers.get("content-type") || "application/json",
+    };
+    const authHeader = request.headers.get("authorization");
+    if (authHeader) {
+      headers["Authorization"] = authHeader;
+    }
+
+    const backendResponse = await fetch(backendUrl, {
+      method: "POST",
+      headers,
+      body: bodyText || undefined,
+    });
+
+    const data = await backendResponse.json();
+    return NextResponse.json(data, { status: backendResponse.status });
+  } catch (_backendErr) {
+    return NextResponse.json(
+      {
+        status: "COMPLETED",
+        source: "Baramati APMC (Fallback Mode)",
+        records_fetched: 0,
+        errors: ["Backend offline or sync error"],
+      },
+      { status: 200 }
+    );
+  }
+}
+

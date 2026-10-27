@@ -31,23 +31,67 @@ interface FarmerAccessFormProps {
 
 const GAT_OPTIONS: readonly string[] = KML_AVAILABLE_GATS;
 
+const DEFAULT_STATES: StateItem[] = [
+  { id: 1, name: "Maharashtra", code: "MH", is_active: true }
+];
+const DEFAULT_DISTRICTS: DistrictItem[] = [
+  { id: 1, state_id: 1, name: "Pune", code: "PN", is_active: true },
+  { id: 2, state_id: 1, name: "Nashik", code: "NAS", is_active: true }
+];
+const DEFAULT_TALUKAS: TalukaItem[] = [
+  { id: 6, district_id: 1, name: "Baramati", code: "BRM", is_active: true },
+  { id: 1, district_id: 1, name: "Haveli", code: "HVL", is_active: true },
+  { id: 2, district_id: 1, name: "Pune City", code: "PNC", is_active: true },
+  { id: 3, district_id: 1, name: "Maval", code: "MVL", is_active: true },
+  { id: 4, district_id: 1, name: "Mulshi", code: "MLS", is_active: true },
+  { id: 5, district_id: 1, name: "Shirur", code: "SHR", is_active: true },
+  { id: 7, district_id: 1, name: "Daund", code: "DND", is_active: true },
+  { id: 8, district_id: 1, name: "Indapur", code: "IND", is_active: true },
+  { id: 9, district_id: 1, name: "Bhor", code: "BHR", is_active: true },
+  { id: 10, district_id: 1, name: "Velha", code: "VLH", is_active: true },
+  { id: 11, district_id: 1, name: "Purandar", code: "PRN", is_active: true },
+  { id: 12, district_id: 1, name: "Khed", code: "KHD", is_active: true },
+  { id: 13, district_id: 1, name: "Junnar", code: "JNR", is_active: true },
+  { id: 14, district_id: 1, name: "Ambegaon", code: "AMB", is_active: true },
+  { id: 15, district_id: 1, name: "Pimpri-Chinchwad", code: "PCMC", is_active: true },
+  { id: 16, district_id: 1, name: "Loni Kalbhor", code: "LKB", is_active: true },
+];
+const DEFAULT_VILLAGES: VillageItem[] = [
+  { id: 87, taluka_id: 6, name: "Malegaon Kh", code: "MAL", is_active: true },
+  { id: 86, taluka_id: 6, name: "Malegaon Bk", code: "MAL", is_active: true },
+  { id: 85, taluka_id: 6, name: "Baramati", code: "BAR", is_active: true },
+  { id: 88, taluka_id: 6, name: "Katewadi", code: "KAT", is_active: true },
+  { id: 89, taluka_id: 6, name: "Dorlewadi", code: "DOR", is_active: true },
+  { id: 90, taluka_id: 6, name: "Gunwadi", code: "GUN", is_active: true },
+  { id: 91, taluka_id: 6, name: "Katphal", code: "KAT", is_active: true },
+  { id: 92, taluka_id: 6, name: "Korhale Bk", code: "KOR", is_active: true },
+  { id: 93, taluka_id: 6, name: "Korhale Kh", code: "KOR", is_active: true },
+  { id: 94, taluka_id: 6, name: "Jalgaon Supe", code: "JAL", is_active: true },
+  { id: 95, taluka_id: 6, name: "Songaon", code: "SON", is_active: true },
+  { id: 96, taluka_id: 6, name: "Morgaon", code: "MOR", is_active: true },
+  { id: 97, taluka_id: 6, name: "Supe", code: "SUP", is_active: true },
+  { id: 98, taluka_id: 6, name: "Shirsuphal", code: "SHI", is_active: true },
+  { id: 99, taluka_id: 6, name: "Khandaj", code: "KHA", is_active: true },
+  { id: 100, taluka_id: 6, name: "Anjangaon", code: "ANJ", is_active: true },
+];
+
 export const FarmerAccessForm: React.FC<FarmerAccessFormProps> = ({ className = "" }) => {
   const { t, language } = useI18n();
   const { login, isAuthenticated, loading: authLoading } = useAuth();
   const router = useRouter();
 
-  // Geographic dropdown lists
-  const [states, setStates] = useState<StateItem[]>([]);
-  const [districts, setDistricts] = useState<DistrictItem[]>([]);
-  const [talukas, setTalukas] = useState<TalukaItem[]>([]);
-  const [villages, setVillages] = useState<VillageItem[]>([]);
+  // Geographic dropdown lists pre-populated with standard Pune/Baramati hierarchy
+  const [states, setStates] = useState<StateItem[]>(DEFAULT_STATES);
+  const [districts, setDistricts] = useState<DistrictItem[]>(DEFAULT_DISTRICTS);
+  const [talukas, setTalukas] = useState<TalukaItem[]>(DEFAULT_TALUKAS);
+  const [villages, setVillages] = useState<VillageItem[]>(DEFAULT_VILLAGES);
 
-  // Selected values
-  const [selectedStateId, setSelectedStateId] = useState<number | "">("");
-  const [selectedDistrictId, setSelectedDistrictId] = useState<number | "">("");
-  const [selectedTalukaId, setSelectedTalukaId] = useState<number | "">("");
-  const [selectedVillageId, setSelectedVillageId] = useState<number | "">("");
-  const [gatNo, setGatNo] = useState<string>("");
+  // Selected values defaulting to Maharashtra -> Pune -> Baramati -> Malegaon Kh -> Gat 22
+  const [selectedStateId, setSelectedStateId] = useState<number | "">(1);
+  const [selectedDistrictId, setSelectedDistrictId] = useState<number | "">(1);
+  const [selectedTalukaId, setSelectedTalukaId] = useState<number | "">(6);
+  const [selectedVillageId, setSelectedVillageId] = useState<number | "">(87);
+  const [gatNo, setGatNo] = useState<string>("22");
 
   // Loading states
   const [loadingStates, setLoadingStates] = useState<boolean>(false);
@@ -71,28 +115,17 @@ export const FarmerAccessForm: React.FC<FarmerAccessFormProps> = ({ className = 
   useEffect(() => {
     let isMounted = true;
     const fetchStates = async () => {
-      setLoadingStates(true);
       try {
         const data = await geographyService.getStates();
-        if (isMounted) {
-          const validStates =
-            Array.isArray(data) && data.length > 0
-              ? data
-              : [{ id: 1, name: "Maharashtra", code: "MH", is_active: true }];
-          setStates(validStates);
-          const mh = validStates.find((s) => s.name.toLowerCase() === "maharashtra") || validStates[0];
+        if (isMounted && Array.isArray(data) && data.length > 0) {
+          setStates(data);
+          const mh = data.find((s) => s.name.toLowerCase() === "maharashtra") || data[0];
           if (mh) {
             setSelectedStateId(mh.id);
           }
         }
-      } catch (err) {
-        if (isMounted) {
-          const fallback = [{ id: 1, name: "Maharashtra", code: "MH", is_active: true }];
-          setStates(fallback);
-          setSelectedStateId(1);
-        }
-      } finally {
-        if (isMounted) setLoadingStates(false);
+      } catch (_err) {
+        // Keep DEFAULT_STATES
       }
     };
     fetchStates();
@@ -101,195 +134,139 @@ export const FarmerAccessForm: React.FC<FarmerAccessFormProps> = ({ className = 
     };
   }, []);
 
-  // Fetch Districts when State changes
-  useEffect(() => {
-    if (!selectedStateId) {
-      setDistricts([]);
-      return;
-    }
-    let isMounted = true;
-    const fetchDistricts = async () => {
-      setLoadingDistricts(true);
-      try {
-        const data = await geographyService.getDistricts(Number(selectedStateId));
-        if (isMounted) {
-          const validDistricts =
-            Array.isArray(data) && data.length > 0
-              ? data
-              : [{ id: 1, state_id: Number(selectedStateId), name: "Pune", code: "PN", is_active: true }];
-          setDistricts(validDistricts);
-          const pune = validDistricts.find((d) => d.name.toLowerCase() === "pune") || validDistricts[0];
-          if (pune) {
-            setSelectedDistrictId(pune.id);
-          }
-        }
-      } catch (err) {
-        if (isMounted) {
-          const fallback = [{ id: 1, state_id: Number(selectedStateId), name: "Pune", code: "PN", is_active: true }];
-          setDistricts(fallback);
-          setSelectedDistrictId(1);
-        }
-      } finally {
-        if (isMounted) setLoadingDistricts(false);
-      }
-    };
-    fetchDistricts();
-    return () => {
-      isMounted = false;
-    };
-  }, [selectedStateId]);
-
-  // Fetch Talukas when District changes
-  useEffect(() => {
-    if (!selectedDistrictId) {
-      setTalukas([]);
-      return;
-    }
-    let isMounted = true;
-    const fetchTalukas = async () => {
-      setLoadingTalukas(true);
-      try {
-        const data = await geographyService.getTalukas(Number(selectedDistrictId));
-        if (isMounted) {
-          const validTalukas =
-            Array.isArray(data) && data.length > 0
-              ? data
-              : [
-                  { id: 6, district_id: Number(selectedDistrictId), name: "Baramati", code: "BRM", is_active: true },
-                  { id: 1, district_id: Number(selectedDistrictId), name: "Haveli", code: "HVL", is_active: true },
-                  { id: 3, district_id: Number(selectedDistrictId), name: "Maval", code: "MVL", is_active: true },
-                  { id: 4, district_id: Number(selectedDistrictId), name: "Mulshi", code: "MLS", is_active: true },
-                  { id: 5, district_id: Number(selectedDistrictId), name: "Shirur", code: "SHR", is_active: true },
-                  { id: 7, district_id: Number(selectedDistrictId), name: "Daund", code: "DND", is_active: true },
-                  { id: 8, district_id: Number(selectedDistrictId), name: "Indapur", code: "IND", is_active: true },
-                  { id: 9, district_id: Number(selectedDistrictId), name: "Bhor", code: "BHR", is_active: true },
-                  { id: 10, district_id: Number(selectedDistrictId), name: "Velha", code: "VLH", is_active: true },
-                  { id: 11, district_id: Number(selectedDistrictId), name: "Purandar", code: "PRN", is_active: true },
-                  { id: 12, district_id: Number(selectedDistrictId), name: "Khed", code: "KHD", is_active: true },
-                  { id: 13, district_id: Number(selectedDistrictId), name: "Junnar", code: "JNR", is_active: true },
-                  { id: 14, district_id: Number(selectedDistrictId), name: "Ambegaon", code: "AMB", is_active: true },
-                  { id: 15, district_id: Number(selectedDistrictId), name: "Pimpri-Chinchwad", code: "PCMC", is_active: true },
-                  { id: 16, district_id: Number(selectedDistrictId), name: "Loni Kalbhor", code: "LKB", is_active: true },
-                  { id: 2, district_id: Number(selectedDistrictId), name: "Pune City", code: "PNC", is_active: true },
-                ];
-          setTalukas(validTalukas);
-          // Default to Baramati if available
-          const baramati = validTalukas.find((t) => t.name.toLowerCase() === "baramati");
-          if (baramati && !selectedTalukaId) {
-            setSelectedTalukaId(baramati.id);
-          }
-        }
-      } catch (err) {
-        if (isMounted) {
-          const fallback = [
-            { id: 6, district_id: Number(selectedDistrictId), name: "Baramati", code: "BRM", is_active: true },
-            { id: 1, district_id: Number(selectedDistrictId), name: "Haveli", code: "HVL", is_active: true },
-          ];
-          setTalukas(fallback);
-          setSelectedTalukaId(6);
-        }
-      } finally {
-        if (isMounted) setLoadingTalukas(false);
-      }
-    };
-    fetchTalukas();
-    return () => {
-      isMounted = false;
-    };
-  }, [selectedDistrictId]);
-
-  // Fetch Villages when Taluka changes
-  useEffect(() => {
-    if (!selectedTalukaId) {
-      setVillages([]);
-      return;
-    }
-    let isMounted = true;
-    const fetchVillages = async () => {
-      setLoadingVillages(true);
-      try {
-        const data = await geographyService.getVillages(Number(selectedTalukaId));
-        if (isMounted) {
-          const validVillages =
-            Array.isArray(data) && data.length > 0
-              ? data
-              : [
-                  { id: 87, taluka_id: Number(selectedTalukaId), name: "Malegaon Kh", code: "MAL", is_active: true },
-                  { id: 86, taluka_id: Number(selectedTalukaId), name: "Malegaon Bk", code: "MAL", is_active: true },
-                  { id: 85, taluka_id: Number(selectedTalukaId), name: "Baramati", code: "BAR", is_active: true },
-                ];
-          setVillages(validVillages);
-          // Default to Malegaon Kh if available
-          const malegaonKh = validVillages.find(
-            (v) =>
-              v.name.toLowerCase().includes("malegaon kh") ||
-              v.name.toLowerCase() === "malegaon kh."
-          );
-          if (malegaonKh && !selectedVillageId) {
-            setSelectedVillageId(malegaonKh.id);
-          }
-        }
-      } catch (err) {
-        if (isMounted) {
-          const fallback = [
-            { id: 87, taluka_id: Number(selectedTalukaId), name: "Malegaon Kh", code: "MAL", is_active: true },
-            { id: 86, taluka_id: Number(selectedTalukaId), name: "Malegaon Bk", code: "MAL", is_active: true },
-          ];
-          setVillages(fallback);
-          setSelectedVillageId(87);
-        }
-      } finally {
-        if (isMounted) setLoadingVillages(false);
-      }
-    };
-    fetchVillages();
-    return () => {
-      isMounted = false;
-    };
-  }, [selectedTalukaId]);
-
   // 1. Cascading State Change
-  const handleStateChange = (idStr: string) => {
+  const handleStateChange = async (idStr: string) => {
     const id = idStr ? Number(idStr) : "";
     setSelectedStateId(id);
-    setSelectedDistrictId("");
-    setSelectedTalukaId("");
-    setSelectedVillageId("");
-    setGatNo("");
-    setDistricts([]);
-    setTalukas([]);
-    setVillages([]);
     setErrorMessage(null);
+
+    if (!id) {
+      setSelectedDistrictId("");
+      setSelectedTalukaId("");
+      setSelectedVillageId("");
+      setGatNo("");
+      return;
+    }
+
+    setLoadingDistricts(true);
+    try {
+      const dList = await geographyService.getDistricts(Number(id));
+      const validDistricts = Array.isArray(dList) && dList.length > 0 ? dList : DEFAULT_DISTRICTS;
+      setDistricts(validDistricts);
+      const chosenDist = validDistricts.find((d) => d.name.toLowerCase() === "pune") || validDistricts[0];
+      if (chosenDist) {
+        setSelectedDistrictId(chosenDist.id);
+        const tList = await geographyService.getTalukas(chosenDist.id);
+        const validTalukas = Array.isArray(tList) && tList.length > 0 ? tList : DEFAULT_TALUKAS;
+        setTalukas(validTalukas);
+        const chosenTaluka = validTalukas.find((t) => t.name.toLowerCase() === "baramati") || validTalukas[0];
+        if (chosenTaluka) {
+          setSelectedTalukaId(chosenTaluka.id);
+          const vList = await geographyService.getVillages(chosenTaluka.id);
+          const validVillages = Array.isArray(vList) && vList.length > 0 ? vList : DEFAULT_VILLAGES;
+          setVillages(validVillages);
+          const chosenVillage = validVillages.find((v) => v.name.toLowerCase().includes("malegaon kh")) || validVillages[0];
+          if (chosenVillage) {
+            setSelectedVillageId(chosenVillage.id);
+            setGatNo("22");
+          }
+        }
+      }
+    } catch (_err) {
+      setDistricts(DEFAULT_DISTRICTS);
+      setSelectedDistrictId(1);
+      setTalukas(DEFAULT_TALUKAS);
+      setSelectedTalukaId(6);
+      setVillages(DEFAULT_VILLAGES);
+      setSelectedVillageId(87);
+      setGatNo("22");
+    } finally {
+      setLoadingDistricts(false);
+    }
   };
 
   // 2. Cascading District Change
-  const handleDistrictChange = (idStr: string) => {
+  const handleDistrictChange = async (idStr: string) => {
     const id = idStr ? Number(idStr) : "";
     setSelectedDistrictId(id);
-    setSelectedTalukaId("");
-    setSelectedVillageId("");
-    setGatNo("");
-    setTalukas([]);
-    setVillages([]);
     setErrorMessage(null);
+
+    if (!id) {
+      setSelectedTalukaId("");
+      setSelectedVillageId("");
+      setGatNo("");
+      return;
+    }
+
+    setLoadingTalukas(true);
+    try {
+      const tList = await geographyService.getTalukas(Number(id));
+      const validTalukas = Array.isArray(tList) && tList.length > 0 ? tList : DEFAULT_TALUKAS;
+      setTalukas(validTalukas);
+      const chosenTaluka = validTalukas.find((t) => t.name.toLowerCase() === "baramati") || validTalukas[0];
+      if (chosenTaluka) {
+        setSelectedTalukaId(chosenTaluka.id);
+        const vList = await geographyService.getVillages(chosenTaluka.id);
+        const validVillages = Array.isArray(vList) && vList.length > 0 ? vList : DEFAULT_VILLAGES;
+        setVillages(validVillages);
+        const chosenVillage = validVillages.find((v) => v.name.toLowerCase().includes("malegaon kh")) || validVillages[0];
+        if (chosenVillage) {
+          setSelectedVillageId(chosenVillage.id);
+          setGatNo("22");
+        }
+      }
+    } catch (_err) {
+      setTalukas(DEFAULT_TALUKAS);
+      setSelectedTalukaId(6);
+      setVillages(DEFAULT_VILLAGES);
+      setSelectedVillageId(87);
+      setGatNo("22");
+    } finally {
+      setLoadingTalukas(false);
+    }
   };
 
   // 3. Cascading Taluka Change
-  const handleTalukaChange = (idStr: string) => {
+  const handleTalukaChange = async (idStr: string) => {
     const id = idStr ? Number(idStr) : "";
     setSelectedTalukaId(id);
-    setSelectedVillageId("");
-    setGatNo("");
-    setVillages([]);
     setErrorMessage(null);
+
+    if (!id) {
+      setSelectedVillageId("");
+      setGatNo("");
+      return;
+    }
+
+    setLoadingVillages(true);
+    try {
+      const vList = await geographyService.getVillages(Number(id));
+      const validVillages = Array.isArray(vList) && vList.length > 0 ? vList : DEFAULT_VILLAGES;
+      setVillages(validVillages);
+      const chosenVillage = validVillages.find((v) => v.name.toLowerCase().includes("malegaon kh")) || validVillages[0];
+      if (chosenVillage) {
+        setSelectedVillageId(chosenVillage.id);
+        setGatNo("22");
+      }
+    } catch (_err) {
+      setVillages(DEFAULT_VILLAGES);
+      setSelectedVillageId(87);
+      setGatNo("22");
+    } finally {
+      setLoadingVillages(false);
+    }
   };
 
   // 4. Village Change
   const handleVillageChange = (idStr: string) => {
     const id = idStr ? Number(idStr) : "";
     setSelectedVillageId(id);
-    setGatNo("");
     setErrorMessage(null);
+    if (id) {
+      if (!gatNo) setGatNo("22");
+    } else {
+      setGatNo("");
+    }
   };
 
   // Quick 1-click Demo Fill for evaluation
