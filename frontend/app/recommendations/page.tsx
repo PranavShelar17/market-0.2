@@ -1,21 +1,18 @@
 "use client";
 
-import React, { Suspense } from "react";
-import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import { RecommendationsView } from "@/components/recommendations/RecommendationsView";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function RecommendationsPage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.replace("/dashboard");
+  }, [router]);
+
   return (
-    <ProtectedRoute>
-      <Suspense
-        fallback={
-          <div className="max-w-5xl mx-auto py-12 text-center text-sm font-semibold text-stone-500">
-            Loading Soil Recommendations...
-          </div>
-        }
-      >
-        <RecommendationsView />
-      </Suspense>
-    </ProtectedRoute>
+    <div className="p-8 text-center text-xs text-text-muted">
+      Redirecting to Dashboard...
+    </div>
   );
 }

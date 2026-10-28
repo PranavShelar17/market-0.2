@@ -258,27 +258,27 @@ export const GatFarmersSection: React.FC<GatFarmersSectionProps> = ({
   return (
     <section
       id="gat-farmers-section"
-      className={`bg-white rounded-2xl border border-surface-border shadow-card overflow-hidden transition-all duration-200 ${className}`}
+      className={`bg-white rounded-2xl border border-[#E6E9E5] shadow-xs overflow-hidden transition-all duration-200 ${className}`}
       aria-label="Farmers Associated with This Gat"
     >
       {/* 1. SECTION HEADER */}
-      <div className="p-5 sm:p-6 border-b border-surface-border bg-gradient-to-r from-surface-subtle to-white space-y-4">
+      <div className="p-5 sm:p-6 border-b border-[#E6E9E5] bg-white space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           {/* Title & Icon */}
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-soil-primaryLight border border-soil-secondary/30 text-soil-primary flex items-center justify-center shadow-xs shrink-0">
-              <Users className="w-5 h-5 text-soil-primary" />
+            <div className="w-10 h-10 rounded-full bg-[#EAF5EC] flex items-center justify-center text-[#0B4D2B] shrink-0">
+              <Users className="w-5 h-5 text-[#0B4D2B]" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-base sm:text-lg font-bold text-text-main tracking-tight">
+                <h2 className="text-base sm:text-lg font-bold text-[#0B4D2B] tracking-tight">
                   {t("gatFarmers.title") || "Farmers Associated with This Gat"}
                 </h2>
-                <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-soil-cream text-soil-primary border border-soil-secondary/30">
+                <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#FFF8CF] text-[#856404] border border-[#FFEBAA]">
                   {t("gatFarmers.officialCadastralSource") || "7/12 Register"}
                 </span>
               </div>
-              <p className="text-xs text-text-muted mt-0.5">
+              <p className="text-xs text-[#4A6B67] mt-0.5">
                 {t("gatFarmers.subtitle") || "Landholder records mapped to this cadastral parcel."}
               </p>
             </div>
@@ -288,10 +288,10 @@ export const GatFarmersSection: React.FC<GatFarmersSectionProps> = ({
           <div className="flex items-center gap-2 relative" ref={dropdownRef}>
             {/* Total Badge */}
             <span
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-soil-primaryLight text-soil-primary font-bold text-xs border border-soil-secondary/30 shadow-xs"
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EAF5EC] text-[#0B4D2B] font-semibold text-xs border border-[#CCD3CB] shadow-2xs"
               title={`Total ${totalCount} records`}
             >
-              <CheckCircle2 className="w-3.5 h-3.5 text-soil-primary" />
+              <CheckCircle2 className="w-3.5 h-3.5 text-[#176B38]" />
               <span>
                 {loading
                   ? "..."

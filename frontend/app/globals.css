@@ -4,15 +4,19 @@
 
 
 :root {
-  --color-primary: #2A7C13;
-  --color-secondary: #76C457;
+  --color-forest: #0B4D2B;
+  --color-primary: #176B38;
+  --color-leaf: #43A047;
+  --color-workspace: #F5F7F3;
+  --color-border: #E6E9E5;
+  --color-text-muted: #4A6B67;
   --color-cream: #FFF8CF;
   --color-beige: #FBE6C2;
 }
 
 body {
-  color: #1c2b18;
-  background-color: #fbfcf9;
+  color: #1A2E22;
+  background-color: #F5F7F3;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -20,7 +24,7 @@ body {
 
 /* Accessibility focus styles for farmers & keyboard navigation */
 :focus-visible {
-  outline: 2px solid #2A7C13;
+  outline: 2px solid #176B38;
   outline-offset: 2px;
 }
 

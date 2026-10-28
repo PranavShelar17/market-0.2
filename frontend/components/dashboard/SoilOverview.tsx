@@ -84,32 +84,34 @@ export const SoilOverview: React.FC = () => {
   ];
 
   return (
-    <section className="bg-white rounded-2xl border border-surface-border p-6 shadow-card space-y-4">
+    <section className="bg-white rounded-2xl border border-[#E6E9E5] p-6 shadow-xs space-y-4">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-surface-border pb-3">
-        <div className="flex items-center gap-2">
-          <FlaskConical className="w-5 h-5 text-soil-primary" />
-          <h3 className="text-base font-bold text-text-main">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#E6E9E5] pb-3">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-full bg-[#EAF5EC] flex items-center justify-center text-[#0B4D2B]">
+            <FlaskConical className="w-4 h-4 text-[#0B4D2B]" />
+          </div>
+          <h3 className="text-base font-bold text-[#0B4D2B]">
             {isMr ? "मृदा आरोग्य सारांश" : "Soil Health Summary"}
           </h3>
         </div>
 
         <div className="flex items-center gap-2">
           {summary?.is_demo && (
-            <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-300">
+            <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-[#FFF8CF] text-[#856404] border border-[#FFEBAA]">
               {t("common.demoData")}
             </span>
           )}
           <Link
             href="/soil-texture"
-            className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-bold text-soil-primary bg-soil-primaryLight rounded-lg border border-soil-primary/20 hover:bg-soil-primary hover:text-white transition-colors"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold text-[#0B4D2B] bg-[#EAF5EC] rounded-lg border border-[#CCD3CB] hover:bg-[#d8ebd2] transition-colors"
           >
             <Layers className="w-3.5 h-3.5" />
             <span>{isMr ? "मृदा पोत त्रिकोण" : "Texture Triangle"}</span>
           </Link>
           <Link
-            href={field?.id ? `/soil-health-card/${field.id}` : "/soil-health-card"}
-            className="inline-flex items-center gap-1.5 text-xs font-bold text-soil-primary hover:text-soil-primaryHover hover:underline"
+            href="/soil-health-card"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#176B38] hover:text-[#0B4D2B] transition-colors"
           >
             <span>{isMr ? "संपूर्ण पत्रिका पहा" : "View Full Card"}</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -118,7 +120,7 @@ export const SoilOverview: React.FC = () => {
       </div>
 
       {/* Notice / Context */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-text-muted">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-[#4A6B67]">
         <p>
           {hasReport
             ? (isMr
@@ -127,7 +129,7 @@ export const SoilOverview: React.FC = () => {
             : t("dashboard.soilOverviewNotice")}
         </p>
         {hasReport && summary?.report_no && (
-          <span className="font-mono text-[11px] text-stone-500 font-medium">
+          <span className="font-mono text-[11px] text-[#4A6B67] font-medium">
             {isMr ? "संदर्भ:" : "Ref:"} {summary.report_no} ({getLiveDateStr(summary.report_date)})
           </span>
         )}
@@ -138,26 +140,30 @@ export const SoilOverview: React.FC = () => {
         {metrics.map((metric, idx) => (
           <div
             key={idx}
-            className="p-3.5 rounded-xl bg-surface-subtle border border-surface-border space-y-1.5 flex flex-col justify-between transition-shadow hover:shadow-xs"
+            className="p-3.5 rounded-xl bg-[#F5F7F3] border border-[#E6E9E5] space-y-1.5 flex flex-col justify-between transition-shadow hover:shadow-xs"
           >
             <div>
-              <span className="text-xs text-text-muted font-medium block truncate">
+              <span className="text-xs text-[#4A6B67] font-medium block truncate">
                 {metric.label}
               </span>
               <div className="flex items-baseline gap-1.5 mt-1">
-                <span className="text-lg font-black text-text-main font-mono">
+                <span className="text-lg font-black text-[#0B4D2B] font-mono">
                   {loading ? "..." : metric.value}
                 </span>
-                <span className="text-[11px] text-text-light font-mono">
+                <span className="text-[11px] text-[#4A6B67] font-mono">
                   {metric.unit}
                 </span>
               </div>
             </div>
 
-            <div className="pt-2 border-t border-surface-border/60 flex items-center justify-between text-[11px]">
+            <div className="pt-2 border-t border-[#E6E9E5] flex items-center justify-between text-[11px]">
               <span
-                className={`font-bold px-1.5 py-0.5 rounded text-[10px] border ${
-                  hasReport ? metric.statusColor : "text-amber-700 bg-amber-50 border-amber-200"
+                className={`font-semibold px-2 py-0.5 rounded-full text-[10px] border ${
+                  metric.status.includes("High") || metric.status.includes("जास्त")
+                    ? "bg-[#EAF5EC] text-[#0B4D2B] border-[#CCD3CB]"
+                    : metric.status.includes("Low") || metric.status.includes("कमी")
+                    ? "bg-rose-50 text-rose-800 border-rose-200"
+                    : "bg-[#FFF8CF] text-[#856404] border-[#FFEBAA]"
                 }`}
               >
                 {loading ? "..." : metric.status}

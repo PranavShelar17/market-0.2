@@ -268,6 +268,12 @@ export const MARATHI_FARMER_MAP: Record<string, string> = {
   "dattatraya shinde": "दत्तात्रय शिंदे",
   "ramesh patil": "रमेश पाटील",
   "ramesh patil (रमेश पाटील)": "रमेश पाटील",
+  "pradip bhauso shelar": "प्रदिप भाऊसो शेलार",
+  "pradeep bhauso shelar": "प्रदिप भाऊसो शेलार",
+  "sunnabi ismail bagavan": "सुन्नाबी इस्माइल बागवान",
+  "sunabi ismail bagwan": "सुन्नाबी इस्माइल बागवान",
+  "rajendra vasantrao kate": "राजेंद्र वसंतराव काटे",
+  "rajendra vasntrao kate": "राजेंद्र वसंतराव काटे",
 };
 
 export const MARATHI_UNIT_MAP: Record<string, string> = {
@@ -284,22 +290,121 @@ export const MARATHI_UNIT_MAP: Record<string, string> = {
   "g/cm³": "g/cm³",
 };
 
+export const REVERSE_GEO_MAP: Record<string, string> = {
+  "महाराष्ट्र": "Maharashtra",
+  "पुणे": "Pune",
+  "पुणे शहर": "Pune City",
+  "बारामती": "Baramati",
+  "माळेगाव खुर्द": "Malegaon Kh.",
+  "माळेगाव खु.": "Malegaon Kh.",
+  "माळेगाव खु": "Malegaon Kh.",
+  "माळेगाव बुद्रुक": "Malegaon Bk.",
+  "माळेगाव बु.": "Malegaon Bk.",
+  "माळेगाव बु": "Malegaon Bk.",
+  "माळेगाव": "Malegaon",
+  "हवेली": "Haveli",
+  "दौंड": "Daund",
+  "इंदापूर": "Indapur",
+  "शिरूर": "Shirur",
+  "पुरंदर": "Purandar",
+  "भोर": "Bhor",
+  "वेल्हे": "Velhe",
+  "खेड": "Khed",
+  "जुन्नर": "Junnar",
+  "आंबेगाव": "Ambegaon",
+  "मावळ": "Maval",
+  "मुळशी": "Mulshi",
+  "पिंपरी-चिंचवड": "Pimpri-Chinchwad",
+  "लोणी काळभोर": "Loni Kalbhor",
+};
+
+export const REVERSE_CROP_MAP: Record<string, string> = {
+  "ऊस": "Sugarcane",
+  "ऊस / नगदी पीक": "Sugarcane / Cash Crop",
+  "ऊस (नगदी पीक)": "Sugarcane",
+  "गहू": "Wheat",
+  "सोयाबीन": "Soybean",
+  "हरभरा": "Gram / Chickpea",
+  "कापूस": "Cotton",
+  "कांदा": "Onion",
+  "नगदी पीक": "Cash Crop",
+  "टोमॅटो": "Tomato",
+  "मका": "Maize",
+  "बाजरी": "Bajra",
+  "ज्वारी": "Jowar",
+};
+
+export const REVERSE_STATUS_MAP: Record<string, string> = {
+  "तीव्र आम्लधर्मी": "Strongly Acidic",
+  "आम्लधर्मी": "Acidic",
+  "आम्लधर्मी माती": "Acidic Soil",
+  "किंचित आम्लयुक्त": "Slightly Acidic",
+  "उदासीन (योग्य सामू)": "Neutral (Optimal)",
+  "उत्कृष्ट उदासीन (योग्य सामू)": "Optimal Neutral",
+  "उत्कृष्ट उदासीन": "Optimal Neutral",
+  "योग्य (अनुकूल)": "Suitable",
+  "विम्लधर्मी": "Alkaline",
+  "मध्यम विम्लधर्मी (खारवट)": "Moderately Alkaline",
+  "मध्यम विम्लधर्मी": "Moderately Alkaline",
+  "तीव्र विम्लधर्मी (चोपण)": "Strongly Alkaline",
+  "अति विम्लधर्मी (चोपण)": "Highly Alkaline",
+  "तीव्र विम्लधर्मी": "Strongly Alkaline",
+  "उत्कृष्ट (आदर्श)": "Optimal",
+  "उत्कृष्ट / उत्तम": "Good",
+  "पुरेसे / योग्य": "Sufficient",
+  "पुरेसे / भरपूर": "Sufficient / High",
+  "सुरक्षित": "Safe",
+  "सर्वसाधारण / सामान्य": "Normal",
+  "क्षारमुक्त": "Non-Saline",
+  "किंचित क्षारयुक्त": "Slightly Saline",
+  "मध्यम क्षारयुक्त": "Moderately Saline",
+  "अति क्षारयुक्त": "Highly Saline",
+  "क्षारयुक्त": "Saline",
+  "चोपण / सोडियमयुक्त": "Sodic",
+  "कमी": "Low",
+  "कमी (कमतरता)": "Low / Deficient",
+  "कमतरता": "Deficient",
+  "कमी उपलब्ध नत्र": "Deficient Nitrogen",
+  "मध्यम उपलब्ध नत्र": "Moderate Nitrogen",
+  "मध्यम": "Medium",
+  "जास्त": "High",
+  "अति जास्त": "Very High",
+  "जास्त (चुनखडीयुक्त)": "High (Calcareous)",
+  "गंभीर": "Critical",
+  "सीमांत": "Marginal",
+  "उपलब्ध नाही": "Not Available",
+  "प्रलंबित": "Pending",
+  "उपलब्ध": "Available",
+};
+
 /**
- * Translates any diagnostic or classification status into Marathi
+ * Translates any diagnostic or classification status into Marathi or English
  */
 export function translateStatus(
   status: string | null | undefined,
   isMarathi: boolean = true
 ): string {
   if (!status) return isMarathi ? "उपलब्ध नाही" : "Not Available";
-  if (!isMarathi) return status;
+  const trimmed = status.trim();
 
-  // If already contains Devanagari characters, return as-is
-  if (/[\u0900-\u097F]/.test(status)) {
+  // English requested
+  if (!isMarathi) {
+    if (REVERSE_STATUS_MAP[trimmed]) return REVERSE_STATUS_MAP[trimmed];
+    for (const [mr, en] of Object.entries(REVERSE_STATUS_MAP)) {
+      if (trimmed.includes(mr)) return en;
+    }
+    if (/[\u0900-\u097F]/.test(trimmed)) {
+      return devanagariToEnglish(trimmed);
+    }
     return status;
   }
 
-  const normalized = status.trim().toLowerCase();
+  // Marathi requested
+  if (/[\u0900-\u097F]/.test(trimmed)) {
+    return status;
+  }
+
+  const normalized = trimmed.toLowerCase();
   if (MARATHI_STATUS_MAP[normalized]) {
     return MARATHI_STATUS_MAP[normalized];
   }
@@ -325,20 +430,34 @@ export function translateStatus(
 }
 
 /**
- * Translates parameter names into Marathi
+ * Translates parameter names into Marathi or English
  */
 export function translateParamName(
   paramNameOrKey: string | null | undefined,
   isMarathi: boolean = true
 ): string {
   if (!paramNameOrKey) return "";
-  if (!isMarathi) return paramNameOrKey;
+  const trimmed = paramNameOrKey.trim();
 
+  // English requested
+  if (!isMarathi) {
+    for (const [en, mr] of Object.entries(MARATHI_PARAMETER_MAP)) {
+      if (mr === trimmed || trimmed.includes(mr)) {
+        return en.charAt(0).toUpperCase() + en.slice(1);
+      }
+    }
+    if (/[\u0900-\u097F]/.test(trimmed)) {
+      return devanagariToEnglish(trimmed);
+    }
+    return paramNameOrKey;
+  }
+
+  // Marathi requested
   if (/[\u0900-\u097F]/.test(paramNameOrKey)) {
     return paramNameOrKey;
   }
 
-  const normalized = paramNameOrKey.trim().toLowerCase();
+  const normalized = trimmed.toLowerCase();
   if (MARATHI_PARAMETER_MAP[normalized]) {
     return MARATHI_PARAMETER_MAP[normalized];
   }
@@ -347,20 +466,33 @@ export function translateParamName(
 }
 
 /**
- * Translates administrative geographic names (State, District, Taluka, Village) into Marathi
+ * Translates administrative geographic names (State, District, Taluka, Village) into Marathi or English
  */
 export function translateGeoName(
   geoName: string | null | undefined,
   isMarathi: boolean = true
 ): string {
   if (!geoName) return "";
-  if (!isMarathi) return geoName;
+  const trimmed = geoName.trim();
 
-  if (/[\u0900-\u097F]/.test(geoName)) {
+  // English requested
+  if (!isMarathi) {
+    if (REVERSE_GEO_MAP[trimmed]) return REVERSE_GEO_MAP[trimmed];
+    for (const [mr, en] of Object.entries(REVERSE_GEO_MAP)) {
+      if (mr.toLowerCase() === trimmed.toLowerCase()) return en;
+    }
+    if (/[\u0900-\u097F]/.test(trimmed)) {
+      return devanagariToEnglish(trimmed);
+    }
     return geoName;
   }
 
-  const normalized = geoName.trim().toLowerCase();
+  // Marathi requested
+  if (/[\u0900-\u097F]/.test(trimmed)) {
+    return trimmed;
+  }
+
+  const normalized = trimmed.toLowerCase();
   if (MARATHI_GEO_MAP[normalized]) {
     return MARATHI_GEO_MAP[normalized];
   }
@@ -369,20 +501,33 @@ export function translateGeoName(
 }
 
 /**
- * Translates crop names into Marathi
+ * Translates crop names into Marathi or English
  */
 export function translateCropName(
   crop: string | null | undefined,
   isMarathi: boolean = true
 ): string {
   if (!crop) return isMarathi ? "ऊस / नगदी पीक" : "Sugarcane / Cash Crop";
-  if (!isMarathi) return crop;
+  const trimmed = crop.trim();
 
-  if (/[\u0900-\u097F]/.test(crop)) {
+  // English requested
+  if (!isMarathi) {
+    if (REVERSE_CROP_MAP[trimmed]) return REVERSE_CROP_MAP[trimmed];
+    for (const [mr, en] of Object.entries(REVERSE_CROP_MAP)) {
+      if (mr.toLowerCase() === trimmed.toLowerCase()) return en;
+    }
+    if (/[\u0900-\u097F]/.test(trimmed)) {
+      return devanagariToEnglish(trimmed);
+    }
     return crop;
   }
 
-  const normalized = crop.trim().toLowerCase();
+  // Marathi requested
+  if (/[\u0900-\u097F]/.test(trimmed)) {
+    return trimmed;
+  }
+
+  const normalized = trimmed.toLowerCase();
   if (MARATHI_CROP_MAP[normalized]) {
     return MARATHI_CROP_MAP[normalized];
   }
@@ -411,6 +556,7 @@ export function devanagariToEnglish(text: string | null | undefined): string {
     "कु": "Ku.",
     "अण्णा": "Anna",
     "भाऊ": "Bhau",
+    "भाऊसो": "Bhauso",
     "आप्पा": "Appa",
     "बापू": "Bapu",
     "तात्या": "Tatya",
@@ -424,6 +570,15 @@ export function devanagariToEnglish(text: string | null | undefined): string {
     "राजेंद्र": "Rajendra",
     "राजेंद": "Rajendra",
     "राजेद्र": "Rajendra",
+    "वसंतराव": "Vasantrao",
+    "वसंत": "Vasant",
+    "प्रदिप": "Pradip",
+    "प्रदीप": "Pradeep",
+    "शेलार": "Shelar",
+    "सुन्नाबी": "Sunnabi",
+    "सुन्न्नाबी": "Sunnabi",
+    "इस्माइल": "Ismail",
+    "बागवान": "Bagavan",
     "ज्ञानदेव": "Dnyandev",
     "ज्ञानेश्वर": "Dnyaneshwar",
     "ज्ञानेश्‍वर": "Dnyaneshwar",
@@ -478,7 +633,6 @@ export function devanagariToEnglish(text: string | null | undefined): string {
     "राजेश": "Rajesh",
     "वैभव": "Vaibhav",
     "शोभा": "Shobha",
-    "प्रदीप": "Pradip",
     "संदीप": "Sandip",
     "कमल": "Kamal",
     "गोपिनाथ": "Gopinath",

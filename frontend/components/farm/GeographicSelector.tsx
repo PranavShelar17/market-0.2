@@ -382,14 +382,14 @@ export const GeographicSelector: React.FC<GeographicSelectorProps> = ({
             <div className="p-3 bg-white rounded-lg border border-surface-border">
               <span className="text-text-muted block">{t("geo.farmerName")}</span>
               <span className="font-bold text-sm text-text-main mt-0.5 block truncate">
-                {fieldResult.farmer?.full_name ? (locale === "mr" ? translateFarmerName(fieldResult.farmer.full_name) : fieldResult.farmer.full_name) : t("geo.unassigned")}
+                {fieldResult.farmer?.full_name ? translateFarmerName(fieldResult.farmer.full_name, locale === "mr") : t("geo.unassigned")}
               </span>
             </div>
 
             <div className="p-3 bg-white rounded-lg border border-surface-border">
               <span className="text-text-muted block">{t("geo.locationHierarchy") || (locale === "mr" ? "स्थान रचना" : "Location Hierarchy")}</span>
               <span className="font-semibold text-xs text-text-main mt-0.5 block truncate">
-                {(locale === "mr" ? translateGeoName(fieldResult.village?.taluka_name || selectedTaluka) : (fieldResult.village?.taluka_name || selectedTaluka))} • {(locale === "mr" ? translateGeoName(fieldResult.village?.name || "") : fieldResult.village?.name)}
+                {translateGeoName(fieldResult.village?.taluka_name || selectedTaluka, locale === "mr")} • {translateGeoName(fieldResult.village?.name || "", locale === "mr")}
               </span>
             </div>
           </div>

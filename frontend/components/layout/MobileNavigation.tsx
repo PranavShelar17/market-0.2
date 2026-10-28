@@ -20,8 +20,8 @@ export const MobileNavigation: React.FC = () => {
   const navItems = [
     { key: "dashboard", labelKey: "nav.dashboard", href: "/dashboard", icon: LayoutDashboard },
     { key: "myFarm", labelKey: "nav.myFarm", href: "/my-farm", icon: Tractor },
-    { key: "soilHealthCard", labelKey: "nav.soilHealthCard", href: "/soil-health-card", icon: FileBadge },
     { key: "soilMap", labelKey: "nav.soilMap", href: "/soil-map", icon: Map },
+    { key: "soilHealthCard", labelKey: "nav.soilHealthCard", href: "/soil-health-card", icon: FileBadge },
     { key: "reports", labelKey: "nav.reports", href: "/reports", icon: FileText },
   ];
 

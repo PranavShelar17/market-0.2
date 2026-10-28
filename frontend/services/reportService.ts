@@ -121,8 +121,17 @@ export const reportService = {
       console.warn("Proxy download failed, falling back to direct navigation:", e);
     }
 
-    // Direct browser navigation stream fallback
-    window.location.assign(directUrl);
+    // Anchor download fallback
+    const a = document.createElement("a");
+    a.style.display = "none";
+    a.href = directUrl;
+    a.download = filename;
+    a.setAttribute("download", filename);
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      if (a.parentNode) a.parentNode.removeChild(a);
+    }, 2000);
   },
 
   /**
@@ -172,8 +181,17 @@ export const reportService = {
       console.warn("Detailed report proxy download failed, falling back to direct navigation:", e);
     }
 
-    // Direct browser navigation stream fallback
-    window.location.assign(directUrl);
+    // Anchor download fallback
+    const a = document.createElement("a");
+    a.style.display = "none";
+    a.href = directUrl;
+    a.download = filename;
+    a.setAttribute("download", filename);
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      if (a.parentNode) a.parentNode.removeChild(a);
+    }, 2000);
   },
 
   /**

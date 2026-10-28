@@ -414,7 +414,7 @@ function SoilMapContent() {
             <div className="px-3.5 py-1.5 rounded-xl bg-surface-subtle border border-surface-border flex items-center gap-2 text-xs font-semibold text-text-main shadow-xs">
               <MapPin className="w-3.5 h-3.5 text-soil-primary" />
               <span>
-                {(locale === "mr" ? translateGeoName(villageDisplay) : villageDisplay)}, {(locale === "mr" ? translateGeoName(talukaDisplay) : talukaDisplay)}
+                {translateGeoName(villageDisplay, locale === "mr")}, {translateGeoName(talukaDisplay, locale === "mr")}
               </span>
             </div>
             {isAdmin ? (

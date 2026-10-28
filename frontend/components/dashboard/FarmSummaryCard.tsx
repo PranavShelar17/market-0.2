@@ -2,8 +2,8 @@
 
 import React from "react";
 import { useI18n } from "@/i18n/useI18n";
-import { Tractor, Info, MapPin } from "lucide-react";
-import { translateGeoName, translateUnit, formatGatLabel } from "@/i18n/marathiHelper";
+import { Tractor, MapPin } from "lucide-react";
+import { translateGeoName, formatGatLabel } from "@/i18n/marathiHelper";
 
 interface FarmSummaryCardProps {
   gatNo: string;
@@ -41,18 +41,20 @@ export const FarmSummaryCard: React.FC<FarmSummaryCardProps> = ({
       : t("dashboard.notAvailable");
 
   return (
-    <section className="bg-white rounded-2xl border border-surface-border p-6 shadow-card space-y-4 flex flex-col justify-between">
+    <section className="bg-white rounded-2xl border border-[#E6E9E5] p-6 shadow-xs space-y-4 flex flex-col justify-between">
       {/* Top Header */}
-      <div className="flex items-center justify-between border-b border-surface-border pb-3">
-        <div className="flex items-center gap-2">
-          <Tractor className="w-5 h-5 text-soil-primary" />
-          <h2 className="text-sm font-bold text-text-main tracking-wider uppercase">
+      <div className="flex items-center justify-between border-b border-[#E6E9E5] pb-3">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-full bg-[#EAF5EC] flex items-center justify-center text-[#0B4D2B]">
+            <Tractor className="w-4 h-4 text-[#0B4D2B]" />
+          </div>
+          <h2 className="text-sm font-bold text-[#0B4D2B] tracking-wider uppercase">
             {t("dashboard.yourFarm")}
           </h2>
         </div>
 
         {isDemo && (
-          <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-soil-cream text-soil-primary border border-soil-secondary/40 shadow-xs">
+          <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-[#FFF8CF] text-[#856404] border border-[#FFEBAA]">
             {t("common.demoData")}
           </span>
         )}
@@ -60,42 +62,42 @@ export const FarmSummaryCard: React.FC<FarmSummaryCardProps> = ({
 
       {/* Cadastral Details Grid */}
       <div className="grid grid-cols-2 gap-3 text-xs">
-        <div className="p-3 bg-surface-subtle rounded-xl border border-surface-border space-y-1">
-          <span className="text-text-muted block font-medium">{t("geo.gatNo")}</span>
-          <span className="text-base font-bold text-text-main block">
+        <div className="p-3 bg-[#F5F7F3] rounded-xl border border-[#E6E9E5] space-y-1">
+          <span className="text-[#4A6B67] block font-medium">{t("geo.gatNo")}</span>
+          <span className="text-base font-bold text-[#0B4D2B] block">
             {formatGatLabel(gatNo, isMr) || t("dashboard.notAvailable")}
           </span>
         </div>
 
-        <div className="p-3 bg-surface-subtle rounded-xl border border-surface-border space-y-1">
-          <span className="text-text-muted block font-medium">{t("dashboard.fieldArea")}</span>
-          <span className="text-base font-bold text-text-main block">
+        <div className="p-3 bg-[#F5F7F3] rounded-xl border border-[#E6E9E5] space-y-1">
+          <span className="text-[#4A6B67] block font-medium">{t("dashboard.fieldArea")}</span>
+          <span className="text-base font-bold text-[#1A2E22] block">
             {formattedArea}
           </span>
         </div>
 
-        <div className="p-3 bg-surface-subtle rounded-xl border border-surface-border space-y-1">
-          <span className="text-text-muted block font-medium">{t("geo.village")}</span>
-          <span className="text-sm font-bold text-text-main block truncate" title={village}>
+        <div className="p-3 bg-[#F5F7F3] rounded-xl border border-[#E6E9E5] space-y-1">
+          <span className="text-[#4A6B67] block font-medium">{t("geo.village")}</span>
+          <span className="text-sm font-bold text-[#1A2E22] block truncate" title={village}>
             {translateGeoName(village, isMr) || t("dashboard.notAvailable")}
           </span>
         </div>
 
-        <div className="p-3 bg-surface-subtle rounded-xl border border-surface-border space-y-1">
-          <span className="text-text-muted block font-medium">{t("geo.taluka")}</span>
-          <span className="text-sm font-bold text-text-main block truncate" title={taluka}>
+        <div className="p-3 bg-[#F5F7F3] rounded-xl border border-[#E6E9E5] space-y-1">
+          <span className="text-[#4A6B67] block font-medium">{t("geo.taluka")}</span>
+          <span className="text-sm font-bold text-[#1A2E22] block truncate" title={taluka}>
             {translateGeoName(taluka, isMr) || t("dashboard.notAvailable")}
           </span>
         </div>
       </div>
 
       {/* Administrative Hierarchy summary bar */}
-      <div className="p-3 bg-surface-muted rounded-xl border border-surface-border flex items-center justify-between text-xs">
-        <div className="flex items-center gap-1.5 text-text-muted">
-          <MapPin className="w-3.5 h-3.5 text-soil-primary" />
+      <div className="p-3 bg-[#F5F7F3] rounded-xl border border-[#E6E9E5] flex items-center justify-between text-xs">
+        <div className="flex items-center gap-1.5 text-[#4A6B67]">
+          <MapPin className="w-3.5 h-3.5 text-[#176B38]" />
           <span>{t("geo.district")} & {t("geo.state")}</span>
         </div>
-        <span className="font-semibold text-text-main">
+        <span className="font-semibold text-[#1A2E22]">
           {translateGeoName(district || "Pune", isMr)}, {translateGeoName(state || "Maharashtra", isMr)}
         </span>
       </div>

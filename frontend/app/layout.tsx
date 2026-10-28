@@ -29,11 +29,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="min-h-screen flex flex-col bg-surface-subtle font-sans">
+      <body className="min-h-screen bg-[#F5F7F3] font-sans text-[#1A2E22] antialiased">
         <Providers>
-          <Header />
           <AppShell>{children}</AppShell>
-          <Footer />
         </Providers>
       </body>
     </html>

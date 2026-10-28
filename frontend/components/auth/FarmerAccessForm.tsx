@@ -22,6 +22,7 @@ import {
   Sparkles,
   MapPin,
   Lock,
+  Sprout,
 } from "lucide-react";
 import { translateGeoName, formatGatLabel } from "@/i18n/marathiHelper";
 
@@ -437,11 +438,13 @@ export const FarmerAccessForm: React.FC<FarmerAccessFormProps> = ({ className = 
       {/* Card Header: Find Your Field */}
       <div className="text-center space-y-1.5 border-b border-surface-border pb-5">
         <h2 className="text-xl sm:text-2xl font-bold text-text-main tracking-tight">
-          {t("auth.findYourField") || "Find Your Field"}
+          {language === "mr" ? "आपले शेत शोधा" : t("auth.findYourField") || "Find Your Field"}
         </h2>
         <p className="text-xs sm:text-sm text-text-muted">
-          {t("auth.accessSubtitle") ||
-            "Select your location and enter your Gat Number to view your farm details."}
+          {language === "mr"
+            ? "आपले स्थान निवडा आणि शेताची माहिती पाहण्यासाठी गट नंबर प्रविष्ट करा."
+            : t("auth.accessSubtitle") ||
+              "Select your location and enter your Gat Number to view your farm details."}
         </p>
       </div>
 
@@ -462,7 +465,7 @@ export const FarmerAccessForm: React.FC<FarmerAccessFormProps> = ({ className = 
             {/* 1. State Selector */}
             <div className="space-y-1.5">
               <label htmlFor="access-state" className="block text-xs font-semibold text-text-main">
-                {t("geo.state")} <span className="text-red-500">*</span>
+                {language === "mr" ? "राज्य" : t("geo.state") || "State"} <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <select
@@ -473,7 +476,7 @@ export const FarmerAccessForm: React.FC<FarmerAccessFormProps> = ({ className = 
                   className="w-full appearance-none rounded-xl border border-surface-border bg-white px-3.5 py-2.5 text-sm font-medium text-text-main focus:border-soil-primary focus:ring-2 focus:ring-soil-primary/20 transition-all cursor-pointer disabled:bg-surface-muted disabled:text-text-light"
                 >
                   <option value="">
-                    {loadingStates ? t("geo.loadingDistricts") : t("geo.selectState")}
+                    {loadingStates ? (language === "mr" ? "लोड होत आहे..." : t("geo.loadingDistricts") || "Loading...") : (language === "mr" ? "राज्य निवडा" : t("geo.selectState") || "Select State")}
                   </option>
                   {states.map((s) => (
                     <option key={s.id} value={s.id}>
@@ -487,11 +490,8 @@ export const FarmerAccessForm: React.FC<FarmerAccessFormProps> = ({ className = 
 
             {/* 2. District Selector */}
             <div className="space-y-1.5">
-              <label
-                htmlFor="access-district"
-                className="block text-xs font-semibold text-text-main"
-              >
-                {t("geo.district")} <span className="text-red-500">*</span>
+              <label htmlFor="access-district" className="block text-xs font-semibold text-text-main">
+                {language === "mr" ? "जिल्हा" : t("geo.district") || "District"} <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <select
@@ -502,7 +502,7 @@ export const FarmerAccessForm: React.FC<FarmerAccessFormProps> = ({ className = 
                   className="w-full appearance-none rounded-xl border border-surface-border bg-white px-3.5 py-2.5 text-sm font-medium text-text-main focus:border-soil-primary focus:ring-2 focus:ring-soil-primary/20 transition-all cursor-pointer disabled:bg-surface-muted disabled:text-text-light"
                 >
                   <option value="">
-                    {loadingDistricts ? t("geo.loadingDistricts") : t("geo.selectDistrict")}
+                    {loadingDistricts ? (language === "mr" ? "लोड होत आहे..." : t("geo.loadingDistricts") || "Loading...") : (language === "mr" ? "जिल्हा निवडा" : t("geo.selectDistrict") || "Select District")}
                   </option>
                   {districts.map((d) => (
                     <option key={d.id} value={d.id}>
@@ -516,11 +516,8 @@ export const FarmerAccessForm: React.FC<FarmerAccessFormProps> = ({ className = 
 
             {/* 3. Taluka Selector */}
             <div className="space-y-1.5">
-              <label
-                htmlFor="access-taluka"
-                className="block text-xs font-semibold text-text-main"
-              >
-                {t("geo.taluka")} <span className="text-red-500">*</span>
+              <label htmlFor="access-taluka" className="block text-xs font-semibold text-text-main">
+                {language === "mr" ? "तालुका" : t("geo.taluka") || "Taluka"} <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <select
@@ -531,7 +528,7 @@ export const FarmerAccessForm: React.FC<FarmerAccessFormProps> = ({ className = 
                   className="w-full appearance-none rounded-xl border border-surface-border bg-white px-3.5 py-2.5 text-sm font-medium text-text-main focus:border-soil-primary focus:ring-2 focus:ring-soil-primary/20 transition-all cursor-pointer disabled:bg-surface-muted disabled:text-text-light"
                 >
                   <option value="">
-                    {loadingTalukas ? t("geo.loadingTalukas") : t("geo.selectTaluka")}
+                    {loadingTalukas ? (language === "mr" ? "लोड होत आहे..." : t("geo.loadingTalukas") || "Loading...") : (language === "mr" ? "तालुका निवडा" : t("geo.selectTaluka") || "Select Taluka")}
                   </option>
                   {talukas.map((tk) => (
                     <option key={tk.id} value={tk.id}>
@@ -545,11 +542,8 @@ export const FarmerAccessForm: React.FC<FarmerAccessFormProps> = ({ className = 
 
             {/* 4. Village Selector */}
             <div className="space-y-1.5">
-              <label
-                htmlFor="access-village"
-                className="block text-xs font-semibold text-text-main"
-              >
-                {t("geo.village")} <span className="text-red-500">*</span>
+              <label htmlFor="access-village" className="block text-xs font-semibold text-text-main">
+                {language === "mr" ? "गाव" : t("geo.village") || "Village"} <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <select
@@ -561,12 +555,8 @@ export const FarmerAccessForm: React.FC<FarmerAccessFormProps> = ({ className = 
                 >
                   <option value="">
                     {loadingVillages
-                      ? t("geo.loadingVillages")
-                      : !selectedTalukaId
-                      ? t("geo.selectVillage")
-                      : villages.length === 0
-                      ? t("geo.noVillagesFound")
-                      : t("geo.selectVillage")}
+                      ? (language === "mr" ? "लोड होत आहे..." : t("geo.loadingVillages") || "Loading villages...")
+                      : (language === "mr" ? "गाव निवडा" : t("geo.selectVillage") || "Select Village")}
                   </option>
                   {villages.map((v) => (
                     <option key={v.id} value={v.id}>
@@ -582,68 +572,37 @@ export const FarmerAccessForm: React.FC<FarmerAccessFormProps> = ({ className = 
 
         {/* STEP 2: ENTER YOUR GAT / SURVEY NUMBER */}
         <div className="space-y-3 pt-2">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span
-                className={`text-[11px] uppercase tracking-wider font-bold px-2 py-0.5 rounded ${
-                  selectedVillageId
-                    ? "text-soil-primary bg-soil-primaryLight"
-                    : "text-text-muted bg-surface-muted"
-                }`}
-              >
-                Step 2
-              </span>
-              <label
-                htmlFor="access-gat"
-                className={`text-xs font-bold tracking-wider uppercase ${
-                  selectedVillageId ? "text-text-main" : "text-text-muted"
-                }`}
-              >
-                {t("auth.enterGatOrSurvey") || "ENTER YOUR GAT / SURVEY NUMBER"}{" "}
-                <span className="text-red-500">*</span>
-              </label>
-            </div>
-            {!selectedVillageId && (
-              <span className="inline-flex items-center gap-1 text-[11px] text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md font-medium border border-amber-200">
-                <Lock className="w-3 h-3" />
-                {t("auth.step1Locked")}
-              </span>
-            )}
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] uppercase tracking-wider font-bold text-soil-primary bg-soil-primaryLight px-2 py-0.5 rounded">
+              Step 2
+            </span>
+            <label htmlFor="access-gat" className="text-xs font-bold tracking-wider text-text-main uppercase">
+              {t("auth.enterGatOrSurvey") || "ENTER YOUR GAT / SURVEY NUMBER"} <span className="text-red-500">*</span>
+            </label>
           </div>
 
-          {!selectedVillageId ? (
-            <div className="p-4 rounded-xl bg-surface-subtle/80 border border-surface-border text-center space-y-1">
-              <div className="flex items-center justify-center gap-1.5 text-xs font-semibold text-text-muted">
-                <Lock className="w-3.5 h-3.5 text-text-light" />
-                <span>{t("auth.step1Required")}</span>
-              </div>
-              <p className="text-[11px] text-text-muted">
-                {t("auth.step1Hint")}
-              </p>
-            </div>
-          ) : (
-            <div className="relative">
-              <select
-                id="access-gat"
-                value={gatNo}
-                onChange={(e) => {
-                  setGatNo(e.target.value);
-                  setErrorMessage(null);
-                }}
-                className="w-full appearance-none rounded-xl border border-surface-border bg-white px-3.5 py-3 text-sm font-semibold text-text-main focus:border-soil-primary focus:ring-2 focus:ring-soil-primary/20 transition-all cursor-pointer shadow-xs"
-              >
-                <option value="">
-                  {language === "mr" ? "गट नंबर निवडा" : "Select Gat Number"}
+          <div className="relative">
+            <select
+              id="access-gat"
+              value={gatNo}
+              onChange={(e) => {
+                setGatNo(e.target.value);
+                setErrorMessage(null);
+              }}
+              disabled={!selectedVillageId}
+              className="w-full appearance-none rounded-xl border border-surface-border bg-white px-3.5 py-3 text-sm font-semibold text-text-main focus:border-soil-primary focus:ring-2 focus:ring-soil-primary/20 transition-all cursor-pointer shadow-xs disabled:bg-surface-muted disabled:text-text-light"
+            >
+              <option value="">
+                {language === "mr" ? "गट नंबर निवडा" : "Select Gat Number"}
+              </option>
+              {GAT_OPTIONS.map((g) => (
+                <option key={g} value={g}>
+                  {language === "mr" ? `गट क्र. ${g}` : `Gat ${g}`}
                 </option>
-                {GAT_OPTIONS.map((g) => (
-                  <option key={g} value={g}>
-                    {language === "mr" ? `गट क्र. ${g}` : `Gat ${g}`}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="absolute right-3.5 top-3.5 w-4 h-4 text-text-light pointer-events-none" />
-            </div>
-          )}
+              ))}
+            </select>
+            <ChevronDown className="absolute right-3.5 top-3.5 w-4 h-4 text-text-light pointer-events-none" />
+          </div>
 
           <p className="text-[11px] text-text-muted">
             {t("auth.noAccountNeeded") ||
@@ -677,12 +636,11 @@ export const FarmerAccessForm: React.FC<FarmerAccessFormProps> = ({ className = 
             {submitting ? (
               <>
                 <Loader2 className="w-5 h-5 animate-spin" />
-                <span>{t("auth.checkingYourField") || "Finding your field..."}</span>
+                <span>{language === "mr" ? "शेत शोधत आहे..." : t("auth.checkingYourField") || "Finding your field..."}</span>
               </>
             ) : (
               <>
-                <span>{t("auth.viewMyField") || "View My Field →"}</span>
-                <ArrowRight className="w-4 h-4" />
+                <span>{language === "mr" ? "माझे शेत पहा →" : t("auth.viewMyField") || "View My Field →"}</span>
               </>
             )}
           </button>
@@ -698,9 +656,14 @@ export const FarmerAccessForm: React.FC<FarmerAccessFormProps> = ({ className = 
           className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-soil-cream text-soil-primary hover:bg-soil-beige/80 transition-colors text-xs font-semibold border border-soil-secondary/40 shadow-xs cursor-pointer"
         >
           <Sparkles className="w-3.5 h-3.5 text-soil-secondary" />
-          <span>{t("auth.quickDemoButton")}</span>
+          <span>
+            {language === "mr"
+              ? "त्वरित डेमो: बारामती – माळेगाव खु – गट २२"
+              : "Quick Demo: Baramati – Malegaon Kh – Gat 22"}
+          </span>
         </button>
       </div>
     </div>
   );
 };
+

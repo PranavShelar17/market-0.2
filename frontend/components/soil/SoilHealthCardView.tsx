@@ -215,12 +215,7 @@ export const SoilHealthCardView: React.FC<SoilHealthCardViewProps> = ({ fieldIdO
                     : undefined;
                 await reportService.downloadSoilHealthCardPdf(activeFieldId, locale, farmerNameOverride);
               } catch (err) {
-                console.error("PDF download failed, using fallback:", err);
-                const farmerNameOverride =
-                  selectedFarmer && String(selectedFarmer.gat_no) === String(selectedGat)
-                    ? selectedFarmer.name
-                    : undefined;
-                window.location.assign(reportService.getSoilHealthCardPdfUrl(activeFieldId, locale, farmerNameOverride));
+                console.error("PDF download failed:", err);
               } finally {
                 setDownloadingCard(false);
               }

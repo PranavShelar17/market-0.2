@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { I18nProvider } from "@/i18n/context";
 import { AuthProvider } from "@/context/AuthContext";
 import { FarmerProvider } from "@/context/FarmerContext";
+import { SidebarProvider } from "@/context/SidebarContext";
 
 export const Providers: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [queryClient] = useState(
@@ -24,7 +25,9 @@ export const Providers: React.FC<{ children: ReactNode }> = ({ children }) => {
     <QueryClientProvider client={queryClient}>
       <I18nProvider>
         <AuthProvider>
-          <FarmerProvider>{children}</FarmerProvider>
+          <FarmerProvider>
+            <SidebarProvider>{children}</SidebarProvider>
+          </FarmerProvider>
         </AuthProvider>
       </I18nProvider>
     </QueryClientProvider>

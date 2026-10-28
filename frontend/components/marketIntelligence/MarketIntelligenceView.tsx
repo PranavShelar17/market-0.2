@@ -107,15 +107,15 @@ export const MarketIntelligenceView: React.FC = () => {
       />
 
       {/* Exactly Three Main Navigation Buttons */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 p-1.5 bg-white rounded-2xl border border-surface-border shadow-xs">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 p-1.5 bg-white rounded-2xl border border-[#E6E9E5] shadow-xs">
         {/* Button 1: Find Crops for My Farm */}
         <button
           type="button"
           onClick={() => setActiveTab("find_crops")}
           className={`flex items-center justify-center gap-2.5 px-4 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all ${
             activeTab === "find_crops"
-              ? "bg-[#2A7C13] text-white shadow-xs"
-              : "text-text-muted hover:text-text-main hover:bg-surface-muted"
+              ? "bg-[#176B38] text-white shadow-xs"
+              : "text-[#4A6B67] hover:text-[#0B4D2B] hover:bg-[#F5F7F3]"
           }`}
           aria-pressed={activeTab === "find_crops"}
         >
@@ -129,8 +129,8 @@ export const MarketIntelligenceView: React.FC = () => {
           onClick={() => setActiveTab("today_prices")}
           className={`flex items-center justify-center gap-2.5 px-4 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all ${
             activeTab === "today_prices"
-              ? "bg-[#2A7C13] text-white shadow-xs"
-              : "text-text-muted hover:text-text-main hover:bg-surface-muted"
+              ? "bg-[#176B38] text-white shadow-xs"
+              : "text-[#4A6B67] hover:text-[#0B4D2B] hover:bg-[#F5F7F3]"
           }`}
           aria-pressed={activeTab === "today_prices"}
         >
@@ -144,8 +144,8 @@ export const MarketIntelligenceView: React.FC = () => {
           onClick={() => setActiveTab("plan_planting")}
           className={`flex items-center justify-center gap-2.5 px-4 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all ${
             activeTab === "plan_planting"
-              ? "bg-[#2A7C13] text-white shadow-xs"
-              : "text-text-muted hover:text-text-main hover:bg-surface-muted"
+              ? "bg-[#176B38] text-white shadow-xs"
+              : "text-[#4A6B67] hover:text-[#0B4D2B] hover:bg-[#F5F7F3]"
           }`}
           aria-pressed={activeTab === "plan_planting"}
         >
@@ -159,9 +159,9 @@ export const MarketIntelligenceView: React.FC = () => {
       {/* ============================================================== */}
       <div className={activeTab === "find_crops" ? "space-y-6" : "hidden"}>
         {/* Category Filter Chips for Crops */}
-        <div className="bg-white rounded-2xl border border-surface-border p-4 shadow-2xs flex flex-wrap items-center justify-between gap-3">
+        <div className="bg-white rounded-2xl border border-[#E6E9E5] p-4 shadow-2xs flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-text-muted">
+            <span className="text-xs font-bold text-[#4A6B67]">
               {isMr ? "पीक वर्ग:" : "Crop Category:"}
             </span>
             <div className="flex flex-wrap items-center gap-1.5">
@@ -172,8 +172,8 @@ export const MarketIntelligenceView: React.FC = () => {
                   onClick={() => handleFilterChange({ cropCategory: cat.key })}
                   className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                     filters.cropCategory === cat.key
-                      ? "bg-[#2A7C13] text-white shadow-2xs"
-                      : "bg-surface-subtle text-text-muted hover:text-text-main hover:bg-surface-muted border border-surface-border"
+                      ? "bg-[#176B38] text-white shadow-2xs"
+                      : "bg-[#F5F7F3] text-[#4A6B67] hover:text-[#0B4D2B] hover:bg-stone-100 border border-[#E6E9E5]"
                   }`}
                 >
                   {isMr ? cat.labelMr : cat.labelEn}
@@ -186,7 +186,7 @@ export const MarketIntelligenceView: React.FC = () => {
           <button
             type="button"
             onClick={() => setShowFieldSuitability(!showFieldSuitability)}
-            className="text-xs font-bold text-[#2A7C13] hover:underline flex items-center gap-1.5"
+            className="text-xs font-bold text-[#176B38] hover:underline flex items-center gap-1.5 cursor-pointer"
           >
             <Layers className="w-3.5 h-3.5" />
             <span>
@@ -240,14 +240,14 @@ export const MarketIntelligenceView: React.FC = () => {
         />
 
         {/* Secondary Collapsible for Farmers Seeking Historical Price Trends */}
-        <div className="bg-white rounded-2xl border border-surface-border p-4 shadow-2xs">
+        <div className="bg-white rounded-2xl border border-[#E6E9E5] p-4 shadow-2xs">
           <button
             type="button"
             onClick={() => setShowPriceTrend(!showPriceTrend)}
-            className="w-full flex items-center justify-between text-left text-xs font-bold text-text-main hover:text-[#2A7C13] transition-colors"
+            className="w-full flex items-center justify-between text-left text-xs font-bold text-[#1A2E22] hover:text-[#0B4D2B] transition-colors cursor-pointer"
           >
             <div className="flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-[#2A7C13]" />
+              <TrendingUp className="w-4 h-4 text-[#176B38]" />
               <span>
                 {isMr
                   ? "मागील बाजारभाव कल व स्त्रोत माहिती (ऐच्छिक)"
@@ -258,7 +258,7 @@ export const MarketIntelligenceView: React.FC = () => {
           </button>
 
           {showPriceTrend && (
-            <div className="pt-4 mt-4 border-t border-surface-border space-y-6 animate-in fade-in duration-200">
+            <div className="pt-4 mt-4 border-t border-[#E6E9E5] space-y-6 animate-in fade-in duration-200">
               <PriceTrendOutlook
                 selectedMarket={filters.marketApmc}
                 selectedCommodity={isMr ? "निवडलेले पीक" : "Target Crop"}
@@ -275,19 +275,19 @@ export const MarketIntelligenceView: React.FC = () => {
       {/* ============================================================== */}
       <div className={activeTab === "plan_planting" ? "space-y-6" : "hidden"}>
         {/* Two Clear Choices Toggle: Next 15 Days vs Seasonal Planning */}
-        <div className="bg-white rounded-2xl border border-surface-border p-4 sm:p-5 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="bg-white rounded-2xl border border-[#E6E9E5] p-4 sm:p-5 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h3 className="text-base font-extrabold text-text-main tracking-tight">
+            <h3 className="text-base font-extrabold text-[#0B4D2B] tracking-tight">
               {isMr ? "पेरणी नियोजन कालावधी निवडा" : "Choose Planning Horizon"}
             </h3>
-            <p className="text-xs text-text-muted mt-0.5">
+            <p className="text-xs text-[#4A6B67] mt-0.5">
               {isMr
                 ? "पुढील १५ दिवसांतील तातडीची पेरणी किंवा आगामी हंगामासाठी नियोजन निवडा."
                 : "Compare planting opportunities for the next 15 days or the upcoming growing season."}
             </p>
           </div>
 
-          <div className="inline-flex items-center gap-1.5 p-1 bg-surface-muted rounded-xl border border-surface-border self-start sm:self-auto">
+          <div className="inline-flex items-center gap-1.5 p-1 bg-[#F5F7F3] rounded-xl border border-[#E6E9E5] self-start sm:self-auto">
             {/* Option 1: Next 15 Days */}
             <button
               type="button"
@@ -295,10 +295,10 @@ export const MarketIntelligenceView: React.FC = () => {
                 setPlantingChoice("next15");
                 handleFilterChange({ horizon: "immediate" });
               }}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                 plantingChoice === "next15"
-                  ? "bg-[#2A7C13] text-white shadow-2xs"
-                  : "text-text-muted hover:text-text-main hover:bg-white/60"
+                  ? "bg-[#176B38] text-white shadow-2xs"
+                  : "text-[#4A6B67] hover:text-[#0B4D2B] hover:bg-white"
               }`}
             >
               <Clock className="w-3.5 h-3.5" />
@@ -312,10 +312,10 @@ export const MarketIntelligenceView: React.FC = () => {
                 setPlantingChoice("seasonal");
                 handleFilterChange({ horizon: "seasonal" });
               }}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                 plantingChoice === "seasonal"
-                  ? "bg-[#2A7C13] text-white shadow-2xs"
-                  : "text-text-muted hover:text-text-main hover:bg-white/60"
+                  ? "bg-[#176B38] text-white shadow-2xs"
+                  : "text-[#4A6B67] hover:text-[#0B4D2B] hover:bg-white"
               }`}
             >
               <CalendarDays className="w-3.5 h-3.5" />

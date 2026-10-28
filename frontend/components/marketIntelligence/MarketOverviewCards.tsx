@@ -128,19 +128,19 @@ export const MarketOverviewCards: React.FC<MarketOverviewCardsProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-surface-border shadow-sm overflow-hidden transition-all space-y-4 p-5 sm:p-6">
+    <div className="bg-white rounded-2xl border border-[#E6E9E5] shadow-xs overflow-hidden transition-all space-y-4 p-5 sm:p-6">
       {/* Header: Title and Market Context */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-surface-border">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#E6E9E5]">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-soil-primaryLight border border-soil-secondary/30 text-soil-primary flex items-center justify-center shrink-0">
-            <Coins className="w-5 h-5" />
+          <div className="w-10 h-10 rounded-full bg-[#EAF5EC] text-[#0B4D2B] flex items-center justify-center shrink-0">
+            <Coins className="w-5 h-5 text-[#0B4D2B]" />
           </div>
           <div>
-            <h2 className="text-base sm:text-lg font-bold text-text-main tracking-tight flex items-center gap-2">
+            <h2 className="text-base sm:text-lg font-bold text-[#0B4D2B] tracking-tight flex items-center gap-2">
               <span>{isMr ? "आजचे बाजार भाव" : "Today's Crop Prices"}</span>
-              {loading && <RefreshCw className="w-3.5 h-3.5 animate-spin text-soil-primary" />}
+              {loading && <RefreshCw className="w-3.5 h-3.5 animate-spin text-[#176B38]" />}
             </h2>
-            <p className="text-xs text-text-muted mt-0.5">
+            <p className="text-xs text-[#4A6B67] mt-0.5">
               {isMr
                 ? `अधिकृत कृषी उत्पन्न बाजार समिती (${selectedMarket}) चे उपलब्ध दर`
                 : `Latest available and verified market prices for configured crops in ${selectedMarket}`}
@@ -153,7 +153,7 @@ export const MarketOverviewCards: React.FC<MarketOverviewCardsProps> = ({
             type="button"
             onClick={fetchObservations}
             disabled={loading}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-soil-primary text-white hover:bg-soil-primary/90 text-xs font-semibold shadow-xs transition-colors disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#0B4D2B] hover:bg-[#083A20] text-white text-xs font-semibold shadow-xs transition-colors disabled:opacity-50 cursor-pointer"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
             <span>{isMr ? "दर पुन्हा तपासा" : "Refresh Prices"}</span>

@@ -1,144 +1,187 @@
 "use client";
 
-import React from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import React, { useState } from "react";
 import { useI18n } from "@/i18n/useI18n";
 import { useAuth } from "@/context/AuthContext";
 import { useSelectedFarmer } from "@/context/FarmerContext";
-import { Sprout, Globe, LogOut, User } from "lucide-react";
+import { useSidebar } from "@/context/SidebarContext";
+import {
+  Menu,
+  Search,
+  Globe,
+  Bell,
+  User,
+  ChevronDown,
+  LogOut,
+  MapPin,
+  Check,
+} from "lucide-react";
 import { translateFarmerName, formatGatLabel } from "@/i18n/marathiHelper";
 
 export const Header: React.FC = () => {
   const { language, setLanguage, t } = useI18n();
   const { isAuthenticated, farmer, field, logout } = useAuth();
   const { selectedFarmer } = useSelectedFarmer();
-  const pathname = usePathname();
+  const { toggleSidebar } = useSidebar();
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [langDropdownOpen, setLangDropdownOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [mounted, setMounted] = useState(false);
 
-  const navItems = [
-    { key: "dashboard", labelKey: "nav.dashboard", href: "/dashboard" },
-    { key: "myFarm", labelKey: "nav.myFarm", href: "/my-farm" },
-    { key: "soilMap", labelKey: "nav.soilMap", href: "/soil-map" },
-    { key: "soilTexture", labelKey: "nav.soilTexture", href: "/soil-texture" },
-    { key: "soilHealthCard", labelKey: "nav.soilHealthCard", href: "/soil-health-card" },
-    { key: "marketIntelligence", labelKey: "nav.marketIntelligence", href: "/market-intelligence" },
-    { key: "reports", labelKey: "nav.reports", href: "/reports" },
-  ];
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const isMr = language === "mr";
+
+  // Active farmer identity
+  const currentGat =
+    field?.gat_no ||
+    (mounted && typeof window !== "undefined" ? localStorage.getItem("soilpilot_selected_gat") : null) ||
+    "22";
+
+  const rawFarmerName =
+    (selectedFarmer && String(selectedFarmer.gat_no) === String(currentGat)
+      ? selectedFarmer.name
+      : null) ||
+    farmer?.name ||
+    "Pradip Bhauso Shelar";
+
+  const displayName = translateFarmerName(rawFarmerName, isMr);
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-white border-b border-surface-border shadow-subtle">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
-        {/* LEFT: Brand identity */}
-        <Link href={isAuthenticated ? "/dashboard" : "/"} className="flex items-center gap-3 group shrink-0">
-          <div className="w-10 h-10 rounded-lg bg-soil-primary text-white flex items-center justify-center shadow-sm group-hover:bg-soil-primaryHover transition-colors">
-            <Sprout className="w-6 h-6" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xl font-bold tracking-tight text-text-main group-hover:text-soil-primary transition-colors">
-                SoilPilot
-              </span>
-              <span className="px-2 py-0.5 text-[10px] font-semibold bg-soil-cream text-soil-primary border border-soil-secondary/40 rounded-full">
-                {t("brand.portalTag") || "DSM Portal"}
-              </span>
-            </div>
-            <p className="text-xs text-text-muted hidden sm:block font-normal">
-              {t("brand.subtitle")}
-            </p>
-          </div>
-        </Link>
+    <header className="sticky top-0 z-20 w-full bg-white border-b border-[#E6E9E5] h-16 shrink-0 flex items-center px-4 sm:px-6 lg:px-8">
+      <div className="w-full flex items-center justify-between gap-4">
+        {/* Left Side: Hamburger & Search Bar */}
+        <div className="flex items-center gap-3 sm:gap-4 flex-1 max-w-lg">
+          <button
+            type="button"
+            onClick={toggleSidebar}
+            aria-label="Toggle navigation menu"
+            className="p-2 -ml-1 text-gray-600 hover:text-[#0B4D2B] hover:bg-[#F5F7F3] rounded-lg transition-colors cursor-pointer"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
 
-        {/* CENTER: Navigation Links */}
-        <nav className="hidden lg:flex items-center gap-1">
-          {isAuthenticated ? (
-            navItems.map((item) => {
-              const isActive = pathname === item.href;
-              return (
-                <Link
-                  key={item.key}
-                  href={item.href}
-                  className={`text-xs font-semibold px-3 py-1.5 rounded-lg transition-all ${
-                    isActive
-                      ? "text-soil-primary bg-soil-primaryLight border border-soil-secondary/40 shadow-xs"
-                      : "text-text-muted hover:text-text-main hover:bg-surface-subtle"
+          {/* Search Bar matching screenshot */}
+          <div className="relative flex-1">
+            <Search className="w-4 h-4 text-[#4A6B67] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={isMr ? "अहवाल, गट अथवा शेतकरी शोधा..." : "Search reports, gates, or farmers..."}
+              className="w-full bg-[#FFFFFF] hover:bg-[#F5F7F3]/50 focus:bg-white text-xs text-[#1A2E22] placeholder:text-[#4A6B67] pl-9 pr-4 py-2 rounded-full border border-[#E6E9E5] focus:border-[#176B38] focus:outline-none transition-all shadow-2xs"
+            />
+          </div>
+        </div>
+
+        {/* Right Side: Language Pill, Notification Bell, Farmer Profile */}
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          {/* Language Selector Dropdown */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setLangDropdownOpen(!langDropdownOpen)}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-[#E6E9E5] bg-white hover:bg-[#F5F7F3] text-xs font-semibold text-gray-700 transition-colors cursor-pointer"
+              aria-label="Language selector"
+            >
+              <Globe className="w-4 h-4 text-[#176B38]" />
+              <span className="font-semibold text-xs text-gray-800">
+                {language === "mr" ? "मराठी" : "English"}
+              </span>
+              <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
+            </button>
+
+            {langDropdownOpen && (
+              <div
+                className="absolute right-0 mt-1.5 w-32 bg-white rounded-xl border border-[#E6E9E5] shadow-lg py-1 z-50 animate-in fade-in duration-100"
+                onClick={() => setLangDropdownOpen(false)}
+              >
+                <button
+                  type="button"
+                  onClick={() => setLanguage("en")}
+                  className={`w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-left transition-colors cursor-pointer ${
+                    language === "en" ? "bg-[#EAF5EC] text-[#0B4D2B]" : "text-gray-700 hover:bg-[#F5F7F3]"
                   }`}
                 >
-                  {t(item.labelKey)}
-                </Link>
-              );
-            })
-          ) : (
-            <Link
-              href="/"
-              className={`text-sm font-medium px-3.5 py-1.5 rounded-lg transition-colors ${
-                pathname === "/"
-                  ? "text-soil-primary font-semibold bg-soil-primaryLight/50"
-                  : "text-text-muted hover:text-text-main hover:bg-surface-subtle"
-              }`}
-            >
-              {t("nav.home") || "Home"}
-            </Link>
-          )}
-        </nav>
-
-        {/* RIGHT: Controls (Active Farmer, Language Switcher, Logout) */}
-        <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
-          {/* Active farmer badge if authenticated */}
-          {isAuthenticated && (farmer || field || selectedFarmer) && (
-            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-surface-subtle border border-surface-border text-xs font-semibold text-text-main shadow-xs">
-              <User className="w-3.5 h-3.5 text-soil-primary" />
-              <span className="max-w-[130px] truncate">
-                {translateFarmerName(selectedFarmer?.name || farmer?.name, language === "mr")}
-              </span>
-              {(selectedFarmer?.gat_no || field?.gat_no) && (
-                <span className="px-2 py-0.5 rounded-md bg-soil-primaryLight text-soil-primary text-[11px] font-bold border border-soil-primary/20">
-                  {formatGatLabel(selectedFarmer?.gat_no || field?.gat_no || "", language === "mr")}
-                </span>
-              )}
-            </div>
-          )}
-
-          {/* Language Switcher */}
-          <div className="inline-flex items-center p-1 rounded-lg bg-surface-muted border border-surface-border">
-            <Globe className="w-3.5 h-3.5 text-text-light mx-1 hidden sm:inline" />
-            <button
-              type="button"
-              onClick={() => setLanguage("en")}
-              className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-all ${
-                language === "en"
-                  ? "bg-soil-primary text-white shadow-sm"
-                  : "text-text-muted hover:text-text-main"
-              }`}
-              aria-label="Switch to English"
-            >
-              EN
-            </button>
-            <button
-              type="button"
-              onClick={() => setLanguage("mr")}
-              className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-all ${
-                language === "mr"
-                  ? "bg-soil-primary text-white shadow-sm"
-                  : "text-text-muted hover:text-text-main"
-              }`}
-              aria-label="मराठी मध्ये बदला"
-            >
-              मराठी
-            </button>
+                  <span>English</span>
+                  {language === "en" && <Check className="w-3.5 h-3.5 text-[#176B38]" />}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setLanguage("mr")}
+                  className={`w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-left transition-colors cursor-pointer ${
+                    language === "mr" ? "bg-[#EAF5EC] text-[#0B4D2B]" : "text-gray-700 hover:bg-[#F5F7F3]"
+                  }`}
+                >
+                  <span>मराठी</span>
+                  {language === "mr" && <Check className="w-3.5 h-3.5 text-[#176B38]" />}
+                </button>
+              </div>
+            )}
           </div>
 
-          {/* Logout Action */}
-          {isAuthenticated && (
+          {/* Notification Bell */}
+          <button
+            type="button"
+            aria-label="Notifications"
+            className="relative p-2 text-gray-600 hover:text-[#0B4D2B] hover:bg-[#F5F7F3] rounded-full transition-colors cursor-pointer"
+            title={isMr ? "सूचना" : "Notifications"}
+          >
+            <Bell className="w-4 h-4" />
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#176B38] ring-2 ring-white" />
+          </button>
+
+          {/* Farmer Profile Pill */}
+          <div className="relative">
             <button
               type="button"
-              onClick={() => logout()}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-red-200 bg-red-50 text-red-700 hover:bg-red-100 transition-colors text-xs font-semibold shadow-xs"
-              title={t("auth.logout")}
+              onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+              className="flex items-center gap-2.5 pl-1.5 pr-2 py-1 rounded-full hover:bg-[#F5F7F3] transition-colors cursor-pointer"
+              aria-label="User profile menu"
             >
-              <LogOut className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">{t("auth.logout")}</span>
+              <div className="w-8 h-8 rounded-full bg-[#0B4D2B] text-white flex items-center justify-center font-bold text-xs shadow-xs">
+                <User className="w-4 h-4 text-white" />
+              </div>
+              <div className="hidden sm:block text-left leading-tight">
+                <p className="text-xs font-bold text-[#0B4D2B] truncate max-w-[140px]">
+                  {displayName}
+                </p>
+                <p className="text-[10.5px] text-[#4A6B67] font-medium">
+                  {isMr ? "शेतकरी" : "Farmer"}
+                  {currentGat ? ` • ${formatGatLabel(currentGat, isMr)}` : ""}
+                </p>
+              </div>
             </button>
-          )}
+
+            {/* Profile Dropdown Menu */}
+            {profileDropdownOpen && (
+              <div
+                className="absolute right-0 mt-2 w-56 bg-white rounded-xl border border-[#E6E9E5] shadow-lg py-2 z-50 animate-in fade-in duration-100"
+                onClick={() => setProfileDropdownOpen(false)}
+              >
+                <div className="px-4 py-2 border-b border-[#E6E9E5]">
+                  <p className="text-xs font-bold text-[#0B4D2B]">{displayName}</p>
+                  <p className="text-[11px] text-[#4A6B67] flex items-center gap-1 mt-0.5">
+                    <MapPin className="w-3 h-3 text-[#176B38]" />
+                    <span>{formatGatLabel(currentGat, isMr)}</span>
+                  </p>
+                </div>
+
+                {isAuthenticated && (
+                  <button
+                    type="button"
+                    onClick={() => logout()}
+                    className="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 transition-colors text-left"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    <span>{t("auth.logout") || (isMr ? "बाहेर पडा" : "Logout")}</span>
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </header>

@@ -282,22 +282,22 @@ export const SoilTextureCalculator: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* 1. Top Header Banner & Field Selector */}
-      <div className="bg-white rounded-2xl border border-surface-border p-5 sm:p-6 shadow-card flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white rounded-2xl border border-[#E6E9E5] p-5 sm:p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-xl bg-soil-primary text-white flex items-center justify-center shadow-xs">
-              <Layers className="w-5 h-5" />
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-[#EAF5EC] text-[#0B4D2B] flex items-center justify-center shrink-0">
+              <Layers className="w-5 h-5 text-[#0B4D2B]" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-xl sm:text-2xl font-black text-text-main tracking-tight">
+                <h1 className="text-xl sm:text-2xl font-black text-[#0B4D2B] tracking-tight">
                   {t("soilTexture.title") || "Soil Texture Calculator"}
                 </h1>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-soil-cream text-soil-primary border border-soil-secondary/30 uppercase">
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FFF8CF] text-[#856404] border border-[#FFEBAA] uppercase">
                   USDA System
                 </span>
               </div>
-              <p className="text-xs sm:text-sm text-text-muted mt-0.5">
+              <p className="text-xs sm:text-sm text-[#4A6B67] mt-0.5">
                 {t("soilTexture.subtitle") ||
                   "Interactive USDA Soil Texture Triangle connected directly to Soil Health Card data."}
               </p>

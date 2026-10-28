@@ -12,28 +12,31 @@ const config: Config = {
     extend: {
       colors: {
         soil: {
-          primary: "#2A7C13",
-          primaryHover: "#23660f",
-          primaryLight: "#e9f6e5",
-          secondary: "#76C457",
-          secondaryHover: "#62a845",
+          forest: "#0B4D2B",          // Deep forest green: sidebar, brand, major headings
+          primary: "#176B38",         // Primary section green: buttons, active controls
+          primaryHover: "#0E5429",    // Hover state for primary buttons
+          primaryLight: "#EAF5EC",    // Pale green icon backgrounds, badges
+          leaf: "#43A047",           // Leaf green: positive indicators, accents
+          leafHover: "#388E3C",
           cream: "#FFF8CF",
-          creamMuted: "#fffdec",
+          creamMuted: "#FFFDEC",
           beige: "#FBE6C2",
-          beigeDark: "#e8cba0",
+          beigeDark: "#E8CBA0",
         },
         surface: {
-          DEFAULT: "#ffffff",
-          subtle: "#fbfcf9",
-          muted: "#f4f6f0",
-          border: "#e2e8df",
-          borderStrong: "#c4d1be",
+          DEFAULT: "#FFFFFF",         // White cards, panels, tables
+          workspace: "#F5F7F3",       // Warm light-grey main background
+          subtle: "#F5F7F3",
+          muted: "#ECEFEA",
+          border: "#E6E9E5",          // Soft border grey
+          borderStrong: "#CCD3CB",
         },
         text: {
-          main: "#1c2b18",
-          muted: "#556b50",
-          light: "#7b8f77",
-          inverted: "#ffffff",
+          main: "#0B4D2B",            // Main headings in dark forest green
+          dark: "#1A2E22",            // High-contrast readable body text
+          muted: "#4A6B67",           // Muted secondary text and descriptions
+          light: "#728B87",           // Subtle captions and placeholders
+          inverted: "#FFFFFF",
         }
       },
       fontFamily: {

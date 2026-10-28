@@ -132,15 +132,15 @@ export default function ReportsPage() {
     farmer?.name ||
     t("reports.farmerName") ||
     "Farmer";
-  const farmerName = isMr ? translateFarmerName(rawFarmerName) : rawFarmerName;
+  const farmerName = translateFarmerName(rawFarmerName, isMr);
   const gatNo = report?.field?.gat_no || field?.gat_no || activeGat;
   const rawVillageName =
     report?.field?.village || location?.village || "Malegaon Bk";
-  const villageName = isMr ? translateGeoName(rawVillageName) : rawVillageName;
+  const villageName = translateGeoName(rawVillageName, isMr);
   const rawTalukaName = report?.field?.taluka || location?.taluka || "Baramati";
-  const talukaName = isMr ? translateGeoName(rawTalukaName) : rawTalukaName;
+  const talukaName = translateGeoName(rawTalukaName, isMr);
   const rawDistrictName = report?.field?.district || location?.district || "Pune";
-  const districtName = isMr ? translateGeoName(rawDistrictName) : rawDistrictName;
+  const districtName = translateGeoName(rawDistrictName, isMr);
   const rawAreaNum =
     report?.field?.area != null
       ? report.field.area

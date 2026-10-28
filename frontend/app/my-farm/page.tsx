@@ -132,22 +132,22 @@ function MyFarmContent() {
       </div>
 
       {/* 1. Header Section */}
-      <div className="bg-white rounded-2xl border border-surface-border p-6 sm:p-7 shadow-card flex flex-wrap items-center justify-between gap-4">
+      <div className="bg-white rounded-2xl border border-[#E6E9E5] p-6 sm:p-7 shadow-xs flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-soil-primaryLight border border-soil-secondary/30 text-soil-primary flex items-center justify-center font-bold shadow-xs shrink-0">
-            <Tractor className="w-6 h-6" />
+          <div className="w-12 h-12 rounded-full bg-[#EAF5EC] text-[#0B4D2B] flex items-center justify-center font-bold shadow-2xs shrink-0">
+            <Tractor className="w-6 h-6 text-[#0B4D2B]" />
           </div>
           <div>
             <div className="flex items-center gap-2.5">
-              <h1 className="text-xl sm:text-2xl font-extrabold text-text-main tracking-tight">
+              <h1 className="text-xl sm:text-2xl font-extrabold text-[#0B4D2B] tracking-tight">
                 {t("myFarm.title")}
               </h1>
-              <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-soil-primaryLight text-soil-primary border border-soil-secondary/30">
-                <CheckCircle className="w-3 h-3" />
+              <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#EAF5EC] text-[#0B4D2B] border border-[#CCD3CB]">
+                <CheckCircle className="w-3 h-3 text-[#176B38]" />
                 <span>{t("myFarm.phase5Tag") || (locale === "mr" ? "सक्रिय शेत" : "Phase 5")}</span>
               </span>
             </div>
-            <p className="text-xs sm:text-sm text-text-muted mt-0.5">
+            <p className="text-xs sm:text-sm text-[#4A6B67] mt-0.5">
               {t("myFarm.subtitle")}
             </p>
           </div>
@@ -157,10 +157,10 @@ function MyFarmContent() {
         <div className="flex flex-wrap items-center gap-2.5">
           {/* Interactive Gat Selector (Admin only) / Verified Badge (Farmer) */}
           {isAdmin ? (
-            <div className="relative inline-flex items-center bg-surface-subtle border border-surface-border rounded-xl px-3 py-1.5 shadow-xs hover:border-soil-primary/40 transition-colors">
-              <MapPin className="w-3.5 h-3.5 text-soil-primary shrink-0 mr-1.5" />
-              <span className="text-xs text-text-muted mr-1.5 font-medium">
-                {(locale === "mr" ? translateGeoName(village) : village)} • {t("geo.gatNo")}
+            <div className="relative inline-flex items-center bg-[#F5F7F3] border border-[#E6E9E5] rounded-xl px-3 py-1.5 shadow-2xs hover:border-[#176B38]/40 transition-colors">
+              <MapPin className="w-3.5 h-3.5 text-[#176B38] shrink-0 mr-1.5" />
+              <span className="text-xs text-[#4A6B67] mr-1.5 font-medium">
+                {translateGeoName(village, locale === "mr")} • {t("geo.gatNo")}
               </span>
               <select
                 id="selected-gat-dropdown"
@@ -180,12 +180,12 @@ function MyFarmContent() {
           ) : (
             <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold shadow-xs">
               <Lock className="w-3.5 h-3.5 text-emerald-600" />
-              <span>{(locale === "mr" ? translateGeoName(village) : village)} • {t("geo.gatNo")} {gatNo} ({locale === "mr" ? "तुमची शेत सीमा" : "Your Farm Boundary"})</span>
+              <span>{translateGeoName(village, locale === "mr")} • {t("geo.gatNo")} {gatNo} ({locale === "mr" ? "तुमची शेत सीमा" : "Your Farm Boundary"})</span>
             </div>
           )}
 
           <span className="text-text-light font-normal text-xs hidden sm:inline">
-            ({locale === "mr" ? translateGeoName(taluka) : taluka}, {locale === "mr" ? translateGeoName(district) : district})
+            ({translateGeoName(taluka, locale === "mr")}, {translateGeoName(district, locale === "mr")})
           </span>
 
           {isDemo && (
@@ -205,15 +205,15 @@ function MyFarmContent() {
       </section>
 
       {/* 3. Field Information Card */}
-      <section className="bg-white rounded-2xl border border-surface-border p-6 sm:p-7 shadow-card space-y-5">
-        <div className="flex items-center justify-between border-b border-surface-border pb-3.5">
+      <section className="bg-white rounded-2xl border border-[#E6E9E5] p-6 sm:p-7 shadow-xs space-y-5">
+        <div className="flex items-center justify-between border-b border-[#E6E9E5] pb-3.5">
           <div className="flex items-center gap-2">
-            <Maximize2 className="w-4 h-4 text-soil-primary" />
-            <h2 className="text-sm font-bold text-text-main tracking-wider uppercase">
+            <Maximize2 className="w-4 h-4 text-[#176B38]" />
+            <h2 className="text-sm font-bold text-[#0B4D2B] tracking-wider uppercase">
               {t("myFarm.fieldInfo")}
             </h2>
           </div>
-          <span className="text-xs text-text-muted">
+          <span className="text-xs text-[#4A6B67]">
             {t("myFarm.readOnlyNotice")}
           </span>
         </div>
@@ -221,33 +221,33 @@ function MyFarmContent() {
         {/* 6-Grid Attributes */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
           {/* Gat Number */}
-          <div className="p-4 bg-surface-subtle rounded-xl border border-surface-border space-y-1">
-            <span className="text-text-muted flex items-center gap-1.5 font-medium">
-              <MapPin className="w-3.5 h-3.5 text-soil-primary" />
+          <div className="p-4 bg-[#F5F7F3] rounded-xl border border-[#E6E9E5] space-y-1">
+            <span className="text-[#4A6B67] flex items-center gap-1.5 font-medium">
+              <MapPin className="w-3.5 h-3.5 text-[#176B38]" />
               <span>{t("geo.gatNo")}</span>
             </span>
-            <span className="text-base font-bold text-soil-primary block">
+            <span className="text-base font-bold text-[#0B4D2B] block">
               {gatNo || t("dashboard.notAvailable")}
             </span>
           </div>
 
           {/* Field Area */}
-          <div className="p-4 bg-surface-subtle rounded-xl border border-surface-border space-y-1">
-            <span className="text-text-muted block font-medium">
+          <div className="p-4 bg-[#F5F7F3] rounded-xl border border-[#E6E9E5] space-y-1">
+            <span className="text-[#4A6B67] block font-medium">
               {t("dashboard.fieldArea")}
             </span>
-            <span className="text-base font-bold text-text-main block">
+            <span className="text-base font-bold text-[#1A2E22] block">
               {formattedArea}
             </span>
           </div>
 
           {/* Village */}
-          <div className="p-4 bg-surface-subtle rounded-xl border border-surface-border space-y-1">
+          <div className="p-4 bg-[#F5F7F3] rounded-xl border border-[#E6E9E5] space-y-1">
             <span className="text-text-muted block font-medium">
               {t("geo.village")}
             </span>
             <span className="text-base font-bold text-text-main block">
-              {locale === "mr" ? translateGeoName(village) : (village || t("dashboard.notAvailable"))}
+              {translateGeoName(village, locale === "mr") || t("dashboard.notAvailable")}
             </span>
           </div>
 
@@ -257,7 +257,7 @@ function MyFarmContent() {
               {t("geo.taluka")}
             </span>
             <span className="text-base font-bold text-text-main block">
-              {locale === "mr" ? translateGeoName(taluka) : (taluka || t("dashboard.notAvailable"))}
+              {translateGeoName(taluka, locale === "mr") || t("dashboard.notAvailable")}
             </span>
           </div>
 
@@ -267,7 +267,7 @@ function MyFarmContent() {
               {t("geo.district")} & {t("geo.state")}
             </span>
             <span className="text-base font-bold text-text-main block">
-              {locale === "mr" ? `${translateGeoName(district)}, ${translateGeoName(state)}` : `${district}, ${state}`}
+              {`${translateGeoName(district, locale === "mr")}, ${translateGeoName(state, locale === "mr")}`}
             </span>
           </div>
 
@@ -278,7 +278,7 @@ function MyFarmContent() {
               <span>{t("myFarm.registeredLandholder")}</span>
             </span>
             <span className="text-base font-bold text-text-main block truncate">
-              {locale === "mr" ? translateFarmerName(farmerName) : farmerName}
+              {translateFarmerName(farmerName, locale === "mr")}
             </span>
           </div>
         </div>

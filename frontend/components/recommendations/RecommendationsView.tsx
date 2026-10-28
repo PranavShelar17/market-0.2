@@ -312,16 +312,16 @@ export const RecommendationsView: React.FC<RecommendationsViewProps> = ({ fieldI
     <div className="max-w-5xl mx-auto space-y-6 py-4 sm:py-6">
 
       {/* Clean Navigation & Parcel Identity Header */}
-      <div className="bg-white p-3.5 sm:p-4 rounded-xl border border-stone-200 shadow-xs flex flex-wrap items-center justify-between gap-3 print:hidden">
+      <div className="bg-white p-3.5 sm:p-4 rounded-xl border border-[#E6E9E5] shadow-xs flex flex-wrap items-center justify-between gap-3 print:hidden">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-800 border border-emerald-200/90 rounded-lg text-xs font-bold shadow-xs">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#EAF5EC] text-[#0B4D2B] border border-[#CCD3CB] rounded-lg text-xs font-semibold shadow-2xs">
+            <span className="w-2 h-2 rounded-full bg-[#176B38] animate-pulse" />
             <span>
               {data?.field?.village || "Malegaon Kh"} &bull; {t("geo.gatNo") || "Gat No."} {selectedGat}
               {data?.field?.area ? ` (${data.field.area} Ha)` : ""}
             </span>
           </span>
-          <span className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-stone-100 text-stone-700 border border-stone-200 rounded-lg text-xs font-semibold">
+          <span className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-[#F5F7F3] text-[#4A6B67] border border-[#E6E9E5] rounded-lg text-xs font-semibold">
             🌱 {locale === "mr" ? "माती नकाशानुसार खत शिफारसी" : "Soil Test-Based Recommendations"}
           </span>
         </div>
@@ -329,14 +329,14 @@ export const RecommendationsView: React.FC<RecommendationsViewProps> = ({ fieldI
         <div className="flex items-center gap-2">
           <Link
             href={`/soil-map?gat=${selectedGat}`}
-            className="text-xs font-bold text-soil-primary hover:text-soil-primaryHover flex items-center gap-1.5 transition-colors bg-stone-100 hover:bg-stone-200 px-3 py-1.5 rounded-lg border border-stone-200"
+            className="text-xs font-semibold text-[#0B4D2B] hover:text-[#083A20] flex items-center gap-1.5 transition-colors bg-[#F5F7F3] hover:bg-stone-200 px-3 py-1.5 rounded-lg border border-[#E6E9E5]"
           >
-            <MapIcon className="w-3.5 h-3.5 text-soil-primary" />
+            <MapIcon className="w-3.5 h-3.5 text-[#176B38]" />
             <span>{locale === "mr" ? `माती नकाशा पहा` : `View Soil Map`}</span>
           </Link>
           <Link
             href={`/soil-health-card?gat=${selectedGat}`}
-            className="text-xs font-bold text-white bg-soil-primary hover:bg-soil-primaryHover px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors shadow-xs"
+            className="text-xs font-semibold text-white bg-[#0B4D2B] hover:bg-[#083A20] px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors shadow-xs"
           >
             <FileText className="w-3.5 h-3.5" />
             <span>{locale === "mr" ? `सॉईल हेल्थ कार्ड` : `Soil Health Card`}</span>
@@ -362,14 +362,14 @@ export const RecommendationsView: React.FC<RecommendationsViewProps> = ({ fieldI
       <RecommendationsSummaryCards summary={data.summary} />
 
       {/* 4. Filter Tabs */}
-      <div className="flex flex-wrap items-center gap-2 border-b border-surface-border pb-3">
+      <div className="flex flex-wrap items-center gap-2 border-b border-[#E6E9E5] pb-3">
         <button
           type="button"
           onClick={() => setActiveTab("all")}
-          className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+          className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
             activeTab === "all"
-              ? "bg-soil-primary text-white shadow-xs"
-              : "bg-surface-subtle text-text-muted hover:text-text-main hover:bg-surface-muted border border-surface-border"
+              ? "bg-[#176B38] text-white shadow-xs"
+              : "bg-[#F5F7F3] text-[#4A6B67] hover:text-[#0B4D2B] hover:bg-stone-100 border border-[#E6E9E5]"
           }`}
         >
           {t("recommendations.filterAll")} ({data.summary.parameters_reviewed})
@@ -378,10 +378,10 @@ export const RecommendationsView: React.FC<RecommendationsViewProps> = ({ fieldI
         <button
           type="button"
           onClick={() => setActiveTab("high")}
-          className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+          className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
             activeTab === "high"
               ? "bg-rose-600 text-white shadow-xs"
-              : "bg-surface-subtle text-rose-700 hover:bg-rose-50 border border-rose-200"
+              : "bg-[#F5F7F3] text-rose-700 hover:bg-rose-50 border border-rose-200"
           }`}
         >
           {t("recommendations.filterHigh")} ({data.summary.high_priority_count})
@@ -390,10 +390,10 @@ export const RecommendationsView: React.FC<RecommendationsViewProps> = ({ fieldI
         <button
           type="button"
           onClick={() => setActiveTab("attention")}
-          className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+          className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
             activeTab === "attention"
               ? "bg-amber-600 text-white shadow-xs"
-              : "bg-surface-subtle text-amber-800 hover:bg-amber-50 border border-amber-200"
+              : "bg-[#F5F7F3] text-amber-800 hover:bg-amber-50 border border-amber-200"
           }`}
         >
           {t("recommendations.filterAttention")} ({data.summary.parameters_needing_attention})
@@ -402,10 +402,10 @@ export const RecommendationsView: React.FC<RecommendationsViewProps> = ({ fieldI
         <button
           type="button"
           onClick={() => setActiveTab("info")}
-          className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+          className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
             activeTab === "info"
-              ? "bg-emerald-700 text-white shadow-xs"
-              : "bg-surface-subtle text-text-muted hover:text-text-main hover:bg-surface-muted border border-surface-border"
+              ? "bg-[#0B4D2B] text-white shadow-xs"
+              : "bg-[#F5F7F3] text-[#4A6B67] hover:text-[#0B4D2B] hover:bg-stone-100 border border-[#E6E9E5]"
           }`}
         >
           {t("recommendations.filterInfo")} ({data.summary.info_count})
@@ -414,10 +414,10 @@ export const RecommendationsView: React.FC<RecommendationsViewProps> = ({ fieldI
         <button
           type="button"
           onClick={() => setActiveTab("standards")}
-          className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+          className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
             activeTab === "standards"
-              ? "bg-soil-primary text-white shadow-xs"
-              : "bg-surface-subtle text-soil-primary hover:bg-soil-primaryLight/40 border border-soil-secondary/40"
+              ? "bg-[#176B38] text-white shadow-xs"
+              : "bg-[#F5F7F3] text-[#0B4D2B] hover:bg-[#EAF5EC] border border-[#CCD3CB]"
           }`}
         >
           <BookOpen className="w-3.5 h-3.5" />

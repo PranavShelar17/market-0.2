@@ -41,6 +41,7 @@ export async function GET(request: NextRequest) {
       method: "GET",
       headers,
       cache: "no-store",
+      signal: AbortSignal.timeout(600),
     });
 
     if (backendRes.ok) {
