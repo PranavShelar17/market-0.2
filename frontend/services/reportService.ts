@@ -59,7 +59,11 @@ export const reportService = {
     const token = typeof window !== "undefined" ? sessionStorage.getItem("soilpilot_token") || "" : "";
     let url = `/api/pdf/soil-health-card?fieldId=${encodeURIComponent(fieldId)}&lang=${encodeURIComponent(lang)}`;
     if (token) url += `&token=${encodeURIComponent(token)}`;
-    if (farmerName) url += `&farmer_name=${encodeURIComponent(farmerName)}`;
+    if (farmerName) {
+      const { translateFarmerName } = require("@/i18n/marathiHelper");
+      const cleanName = translateFarmerName(farmerName, lang === "mr");
+      url += `&farmer_name=${encodeURIComponent(cleanName)}`;
+    }
     return url;
   },
 
@@ -70,7 +74,11 @@ export const reportService = {
     const token = typeof window !== "undefined" ? sessionStorage.getItem("soilpilot_token") || "" : "";
     let url = `/api/pdf/detailed-report?fieldId=${encodeURIComponent(fieldId)}&lang=${encodeURIComponent(lang)}`;
     if (token) url += `&token=${encodeURIComponent(token)}`;
-    if (farmerName) url += `&farmer_name=${encodeURIComponent(farmerName)}`;
+    if (farmerName) {
+      const { translateFarmerName } = require("@/i18n/marathiHelper");
+      const cleanName = translateFarmerName(farmerName, lang === "mr");
+      url += `&farmer_name=${encodeURIComponent(cleanName)}`;
+    }
     return url;
   },
 

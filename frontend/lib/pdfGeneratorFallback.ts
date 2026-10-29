@@ -25,8 +25,10 @@ export function generateEmergencyJsPdf(options: GeneratePdfOptions): GeneratePdf
   const title =
     options.type === "detailed"
       ? (isMr ? "सविस्तर माती चाचणी व निर्णय अहवाल" : "Detailed Soil & Crop Decision Report")
-      : (isMr ? "मृदा आरोग्य पत्रिका" : "Soil Health Card");
-  const farmer = options.farmerName || (isMr ? "राजेंद्र वसंतराव काटे" : "Rajendra Vasantrao Kate");
+      : (isMr ? "मृदा चाचणी अहवाल" : "Soil Health Card");
+  const { translateFarmerName } = require("@/i18n/marathiHelper");
+  const rawFarmer = options.farmerName || (isMr ? "राजेंद्र वसंतराव काटे" : "Rajendra Vasantrao Kate");
+  const farmer = translateFarmerName(rawFarmer, isMr);
 
   // Green header banner matching brand #0B4D2B
   doc.setFillColor(11, 77, 43);

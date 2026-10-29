@@ -281,7 +281,7 @@ export const SoilTextureCalculator: React.FC = () => {
           setFeedbackMessage({
             type: "success",
             text: isMr
-              ? `गट क्र. ${gatToFetch} चे मृदा आरोग्य पत्रक डेटा लोड केले (${extracted.sourceType})`
+              ? `गट क्र. ${gatToFetch} चे मृदा चाचणी अहवाल डेटा लोड केला (${extracted.sourceType})`
               : `Loaded official Soil Health Card data for Gat #${gatToFetch} (${extracted.sourceType})`,
           });
         } else if (result.status === "warning_tolerance" && result.normalizedFineEarthComposition) {
@@ -308,7 +308,7 @@ export const SoilTextureCalculator: React.FC = () => {
         console.error("Failed to load Soil Health Card data:", err);
         setReportError(
           isMr
-            ? "मृदा आरोग्य पत्रक माहिती लोड करताना त्रुटी आली. कृपया पुन्हा प्रयत्न करा."
+            ? "मृदा चाचणी अहवाल माहिती लोड करताना त्रुटी आली. कृपया पुन्हा प्रयत्न करा."
             : "Could not load Soil Health Card data. Please check connection and retry."
         );
       } finally {
@@ -423,10 +423,11 @@ export const SoilTextureCalculator: React.FC = () => {
   const handleDownloadPdf = async () => {
     try {
       setDownloadingReport(true);
-      const farmerNameOverride =
+      const rawFarmer =
         selectedFarmer && String(selectedFarmer.gat_no) === String(cleanSelectedGat)
           ? selectedFarmer.name
           : currentFarmerName || undefined;
+      const farmerNameOverride = translateFarmerName(rawFarmer, language === "mr");
       await reportService.downloadSoilHealthCardPdf(cleanSelectedGat, language, farmerNameOverride);
     } catch (err) {
       console.error("PDF download failed:", err);
@@ -698,7 +699,7 @@ export const SoilTextureCalculator: React.FC = () => {
               className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-rose-600 text-white text-xs font-bold rounded-lg hover:bg-rose-700 transition-colors"
             >
               <FileBadge className="w-3.5 h-3.5" />
-              <span>{isMr ? "उपलब्ध मृदा आरोग्य पत्रिका पहा" : "View Available Soil Health Card Data"}</span>
+              <span>{isMr ? "उपलब्ध मृदा चाचणी अहवाल पहा" : "View Available Soil Health Card Data"}</span>
             </Link>
           </div>
         </div>
@@ -1065,7 +1066,7 @@ export const SoilTextureCalculator: React.FC = () => {
                   <span className="font-medium truncate max-w-[240px]">
                     {activeMode === "field"
                       ? (isMr
-                          ? `${extractedParams?.sourceType === "LABORATORY TEST" ? "प्रयोगशाळा चाचणी" : "मृदा आरोग्य पत्रिका"} (गट क्र. #${selectedGat})`
+                          ? `${extractedParams?.sourceType === "LABORATORY TEST" ? "प्रयोगशाळा चाचणी" : "मृदा चाचणी अहवाल"} (गट क्र. #${selectedGat})`
                           : `${extractedParams?.sourceType || "Soil Health Card"} (Gat #${selectedGat})`)
                       : (isMr ? "वापरकर्ता मॅन्युअल सिम्युलेशन" : "Manual User Simulation")}
                   </span>
@@ -1197,11 +1198,11 @@ export const SoilTextureCalculator: React.FC = () => {
           </div>
           <div>
             <h4 className="text-sm font-bold text-text-main">
-              {isMr ? "अधिकृत मृदा आरोग्य अहवाल" : "Official Soil Health & Texture Dossier"}
+              {isMr ? "अधिकृत मृदा चाचणी अहवाल" : "Official Soil Health & Texture Dossier"}
             </h4>
             <p className="text-xs text-text-muted mt-0.5">
               {isMr
-                ? `गट क्र. ${selectedGat} (${displayFarmerName}) ची प्रमाणित मृदा आरोग्य पत्रिका PDF डाऊनलोड करा.`
+                ? `गट क्र. ${selectedGat} (${displayFarmerName}) चा प्रमाणित मृदा चाचणी अहवाल PDF डाऊनलोड करा.`
                 : `Download the verified Soil Health Card PDF for Gat #${selectedGat} (${displayFarmerName}).`}
             </p>
           </div>
@@ -1223,7 +1224,7 @@ export const SoilTextureCalculator: React.FC = () => {
             {downloadingReport
               ? (isMr ? "PDF तयार होत आहे..." : "Generating PDF...")
               : (isMr
-                  ? "मृदा आरोग्य अहवाल PDF डाऊनलोड करा"
+                  ? "मृदा चाचणी अहवाल PDF डाऊनलोड करा"
                   : "Download Soil Health Card PDF")}
           </span>
         </button>

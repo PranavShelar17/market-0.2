@@ -93,6 +93,164 @@ def _format_ref_range_xml(text: str) -> str:
         formatted_lines.append(cleaned)
     return "<br/>".join(formatted_lines)
 
+GEO_NAME_MAP = {
+    "malegaon kh.": {"en": "Malegaon Kh.", "mr": "माळेगाव खुर्द"},
+    "malegaon kh": {"en": "Malegaon Kh.", "mr": "माळेगाव खुर्द"},
+    "malegaon": {"en": "Malegaon", "mr": "माळेगाव"},
+    "baramati": {"en": "Baramati", "mr": "बारामती"},
+    "pune": {"en": "Pune", "mr": "पुणे"},
+    "maharashtra": {"en": "Maharashtra", "mr": "महाराष्ट्र"},
+    "माळेगाव खुर्द": {"en": "Malegaon Kh.", "mr": "माळेगाव खुर्द"},
+    "माळेगाव": {"en": "Malegaon", "mr": "माळेगाव"},
+    "बारामती": {"en": "Baramati", "mr": "बारामती"},
+    "पुणे": {"en": "Pune", "mr": "पुणे"},
+    "महाराष्ट्र": {"en": "Maharashtra", "mr": "महाराष्ट्र"},
+}
+
+def translate_geo_name(name: str, is_mr: bool) -> str:
+    if not name:
+        return "माळेगाव खुर्द" if is_mr else "Malegaon Kh."
+    norm = name.strip().lower()
+    if norm in GEO_NAME_MAP:
+        return GEO_NAME_MAP[norm]["mr" if is_mr else "en"]
+    if name in GEO_NAME_MAP:
+        return GEO_NAME_MAP[name]["mr" if is_mr else "en"]
+    return name
+
+def devanagari_to_english(text: str) -> str:
+    if not text:
+        return ""
+    vowels = {
+        "अ": "a", "आ": "a", "इ": "i", "ई": "i", "उ": "u", "ऊ": "u",
+        "ऋ": "ri", "ए": "e", "ऐ": "ai", "ओ": "o", "औ": "au", "अं": "an", "अः": "ah",
+    }
+    matras = {
+        "ा": "a", "ि": "i", "ी": "i", "ु": "u", "ू": "u",
+        "ृ": "ri", "े": "e", "ै": "ai", "ो": "o", "ौ": "au",
+        "ं": "n", "ँ": "n", "ः": "h",
+    }
+    consonants = {
+        "क": "k", "ख": "kh", "ग": "g", "घ": "gh", "ङ": "ng",
+        "च": "ch", "छ": "chh", "ज": "j", "झ": "jh", "ञ": "ny",
+        "ट": "t", "ठ": "th", "ड": "d", "ढ": "dh", "ण": "n",
+        "त": "t", "थ": "th", "द": "d", "ध": "dh", "न": "n",
+        "प": "p", "फ": "ph", "ब": "b", "भ": "bh", "म": "m",
+        "य": "y", "र": "r", "ल": "l", "व": "v", "श": "sh",
+        "ष": "sh", "स": "s", "ह": "h", "ळ": "l", "क्ष": "ksh",
+        "ज्ञ": "dny", "श्र": "shr", "त्र": "tr",
+    }
+    def is_punct(ch):
+        return ch in " .,/#!$%^&*;:{}=-_`~()"
+
+    def transliterate_word(w):
+        if not w:
+            return ""
+        out = []
+        i = 0
+        wlen = len(w)
+        while i < wlen:
+            ch = w[i]
+            nxt = w[i+1] if i + 1 < wlen else ""
+            nxt2 = w[i+2] if i + 2 < wlen else ""
+            if ch == "ज" and nxt == "्" and nxt2 == "ञ":
+                out.append("dny")
+                i += 3
+                if i < wlen and w[i] in matras:
+                    out.append(matras[w[i]])
+                    i += 1
+                elif i < wlen and w[i] == "्":
+                    i += 1
+                elif i < wlen and not is_punct(w[i]):
+                    out.append("a")
+                continue
+            if ch == "क" and nxt == "्" and nxt2 == "ष":
+                out.append("ksh")
+                i += 3
+                if i < wlen and w[i] in matras:
+                    out.append(matras[w[i]])
+                    i += 1
+                elif i < wlen and w[i] == "्":
+                    i += 1
+                elif i < wlen and not is_punct(w[i]):
+                    out.append("a")
+                continue
+            if ch == "श" and nxt == "्" and nxt2 == "र":
+                out.append("shr")
+                i += 3
+                if i < wlen and w[i] in matras:
+                    out.append(matras[w[i]])
+                    i += 1
+                elif i < wlen and w[i] == "्":
+                    i += 1
+                elif i < wlen and not is_punct(w[i]):
+                    out.append("a")
+                continue
+            if ch == "त" and nxt == "्" and nxt2 == "र":
+                out.append("tr")
+                i += 3
+                if i < wlen and w[i] in matras:
+                    out.append(matras[w[i]])
+                    i += 1
+                elif i < wlen and w[i] == "्":
+                    i += 1
+                elif i < wlen and not is_punct(w[i]):
+                    out.append("a")
+                continue
+            if ch in vowels:
+                out.append(vowels[ch])
+                i += 1
+                continue
+            if ch in consonants:
+                c = consonants[ch]
+                i += 1
+                if i < wlen:
+                    nc = w[i]
+                    if nc == "्":
+                        out.append(c)
+                        i += 1
+                    elif nc in matras:
+                        out.append(c + matras[nc])
+                        i += 1
+                        if i < wlen and w[i] in ("ं", "ँ"):
+                            nxt_af = w[i+1] if i + 1 < wlen else ""
+                            out.append("m" if nxt_af in ("प", "फ", "ब", "भ", "म") else "n")
+                            i += 1
+                    elif nc in ("ं", "ँ"):
+                        nxt_af = w[i+1] if i + 1 < wlen else ""
+                        out.append(c + ("am" if nxt_af in ("प", "फ", "ब", "भ", "म") else "an"))
+                        i += 1
+                    elif nc == "ः":
+                        out.append(c + "ah")
+                        i += 1
+                    elif nc in consonants or nc in vowels:
+                        out.append(c + "a")
+                    else:
+                        out.append(c)
+                else:
+                    out.append(c)
+                continue
+            if ch in matras:
+                out.append(matras[ch])
+                i += 1
+                continue
+            out.append(ch)
+            i += 1
+        res = "".join(out)
+        return res[:1].upper() + res[1:] if res else ""
+
+    words = text.strip().split()
+    res_words = []
+    for w in words:
+        if w.endswith("राव") and len(w) > 3:
+            res_words.append(transliterate_word(w[:-3]) + "rao")
+        elif w.endswith("भाऊ") and len(w) > 3:
+            res_words.append(transliterate_word(w[:-3]) + "bhau")
+        elif w.endswith("सिंह") and len(w) > 4:
+            res_words.append(transliterate_word(w[:-4]) + "sinh")
+        else:
+            res_words.append(transliterate_word(w))
+    return " ".join(res_words)
+
 def _init_fonts() -> str:
     """Register Unicode font for Devanagari/Marathi support with safe fallbacks."""
     global FONT_REGULAR, FONT_BOLD
@@ -631,15 +789,17 @@ class PDFService:
         # --------------------------------------------------------------
         # 2. FARMER & SAMPLE INFORMATION (4-Column Table directly below)
         # --------------------------------------------------------------
-        farmer_name = farmer.get("name") or ("रमेश पाटील" if is_mr else "Ramesh Patil (रमेश पाटील)")
+        farmer_name = farmer.get("name") or ("रमेश पाटील" if is_mr else "Ramesh Patil")
+        if not is_mr and any('\u0900' <= c <= '\u097f' for c in str(farmer_name)):
+            farmer_name = devanagari_to_english(str(farmer_name))
         gat_no = field.get("gat_no", "22")
         area_unit = "हेक्टर" if is_mr else "hectare"
         area_val = field.get("area", "1.49")
         gat_label = f"गट क्र. {gat_no} ({area_val} {area_unit})" if is_mr else f"Gat No. {gat_no} ({area_val} {area_unit})"
 
-        taluka_val = field.get("taluka") or ("बारामती" if is_mr else "Baramati")
-        district_val = field.get("district") or ("पुणे" if is_mr else "Pune")
-        village_val = field.get("village") or ("माळेगाव खुर्द" if is_mr else "Malegaon Kh.")
+        taluka_val = translate_geo_name(field.get("taluka") or "Baramati", is_mr)
+        district_val = translate_geo_name(field.get("district") or "Pune", is_mr)
+        village_val = translate_geo_name(field.get("village") or "Malegaon Kh.", is_mr)
         date_val = live_date
 
         f_data = [
@@ -839,7 +999,7 @@ class PDFService:
             interp_flowable = _format_interp(raw_interp)
 
             if pkey in ["soil_texture", "texture"] or "clay vertisol" in str(val_str).lower():
-                val_flowable = Paragraph("<b>Clay<br/>Vertisol</b>", st_td_val)
+                val_flowable = Paragraph("<b>चिकण माती<br/>(व्हर्टिसॉल)</b>" if is_mr else "<b>Clay<br/>Vertisol</b>", st_td_val)
             else:
                 val_flowable = Paragraph(f"<b>{val_str}</b>", st_td_val)
 
@@ -1021,10 +1181,12 @@ class PDFService:
         story.append(Spacer(1, 1.5 * mm))
 
         farmer_name = farmer.get("name", "Farmer")
+        if not is_mr and any('\u0900' <= c <= '\u097f' for c in str(farmer_name)):
+            farmer_name = devanagari_to_english(str(farmer_name))
         gat_no = field.get("gat_no", "N/A")
-        village = field.get("village", "N/A")
-        taluka = field.get("taluka", "N/A")
-        district = field.get("district", "N/A")
+        village = translate_geo_name(field.get("village", "Malegaon Kh."), is_mr)
+        taluka = translate_geo_name(field.get("taluka", "Baramati"), is_mr)
+        district = translate_geo_name(field.get("district", "Pune"), is_mr)
         area = f"{field.get('area', 'N/A')} {field.get('area_unit', 'Ha')}"
         sample_date = report_meta.get("sample_date", "15-09-2026")
         report_date = report_meta.get("report_date", "20-09-2026")

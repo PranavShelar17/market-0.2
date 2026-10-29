@@ -787,7 +787,7 @@ export const SoilReferenceStandardsTable: React.FC<SoilReferenceStandardsTablePr
           </div>
           <p className="text-xs text-stone-600 mt-1">
             {isMr
-              ? "शासकीय मृदा आरोग्य पत्रिका (SHC) आणि भारतीय सूक्ष्म अन्नद्रव्य संशोधन (२,४२,८२७ नमुने) मानकांवर आधारित अधिकृत वर्गीकरण."
+              ? "शासकीय मृदा चाचणी मानके (SHC) आणि भारतीय सूक्ष्म अन्नद्रव्य संशोधन (२,४२,८२७ नमुने) मानकांवर आधारित अधिकृत वर्गीकरण."
               : "Official scientific benchmarks derived from Govt. Soil Health Card (SHC) scheme & Indian Micronutrient Research (242,827 soil samples across 615 districts)."}
           </p>
         </div>
@@ -949,11 +949,11 @@ export const SoilReferenceStandardsTable: React.FC<SoilReferenceStandardsTablePr
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-[11px] text-stone-700 pt-1">
           <div className="p-2.5 bg-white/80 rounded-lg border border-soil-secondary/20">
             <span className="font-bold font-mono text-soil-primary block">
-              {isMr ? "[R1] मृदा आरोग्य पत्रिका (SHC)" : "[R1] Soil Health Card (SHC)"}
+              {isMr ? "[R1] मृदा चाचणी अहवाल (SHC)" : "[R1] Soil Health Card (SHC)"}
             </span>
             <p className="mt-0.5 text-stone-600">
               {isMr
-                ? "केंद्रीय कृषी मंत्रालय, भारत सरकार मृदा आरोग्य पत्रिका मार्गदर्शक मानके."
+                ? "केंद्रीय कृषी मंत्रालय, भारत सरकार मृदा चाचणी मार्गदर्शक मानके."
                 : "Ministry of Agriculture & Farmers Welfare, Government of India Soil Health Card Standards."}
             </p>
           </div>

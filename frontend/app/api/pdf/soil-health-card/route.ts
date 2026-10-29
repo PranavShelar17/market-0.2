@@ -8,7 +8,11 @@ export async function GET(request: NextRequest) {
   const fieldId = searchParams.get("fieldId") || "104";
   const lang = searchParams.get("lang") || "en";
   const token = searchParams.get("token") || "";
-  const farmerName = searchParams.get("farmer_name") || "";
+  let farmerName = searchParams.get("farmer_name") || "";
+  if (farmerName) {
+    const { translateFarmerName } = await import("@/i18n/marathiHelper");
+    farmerName = translateFarmerName(farmerName, lang === "mr");
+  }
   const farmerId = searchParams.get("farmer_id") || "";
 
   // 1. First, attempt to proxy via live backend HTTP server

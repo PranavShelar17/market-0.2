@@ -24,7 +24,7 @@ import {
   ArrowLeft,
   Layers,
 } from "lucide-react";
-import { translateGeoName } from "@/i18n/marathiHelper";
+import { translateGeoName, translateFarmerName } from "@/i18n/marathiHelper";
 
 interface SoilHealthCardViewProps {
   fieldIdOverride?: string | number;
@@ -209,10 +209,11 @@ export const SoilHealthCardView: React.FC<SoilHealthCardViewProps> = ({ fieldIdO
             onClick={async () => {
               try {
                 setDownloadingCard(true);
-                const farmerNameOverride =
+                const rawFarmerName =
                   selectedFarmer && String(selectedFarmer.gat_no) === String(selectedGat)
                     ? selectedFarmer.name
-                    : undefined;
+                    : report?.farmer?.name || undefined;
+                const farmerNameOverride = translateFarmerName(rawFarmerName, locale === "mr");
                 await reportService.downloadSoilHealthCardPdf(activeFieldId, locale, farmerNameOverride);
               } catch (err) {
                 console.error("PDF download failed:", err);
@@ -221,7 +222,7 @@ export const SoilHealthCardView: React.FC<SoilHealthCardViewProps> = ({ fieldIdO
               }
             }}
             className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold bg-[#214F3F] hover:bg-[#1a3f33] text-white rounded-md transition-colors shadow-2xs disabled:opacity-50 cursor-pointer"
-            title="Download Official Soil Health Card PDF"
+            title={locale === "mr" ? "अधिकृत मृदा चाचणी अहवाल PDF डाउनलोड करा" : "Download Official Soil Test Report PDF"}
           >
             {downloadingCard ? (
               <RefreshCw className="w-3.5 h-3.5 animate-spin" />
