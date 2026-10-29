@@ -57,8 +57,8 @@ DISCLAIMER_PHASE_8 = (
 AGRONOMIC_CROP_CRITERIA: Dict[str, Dict[str, Any]] = {
     "CHANA": {
         "crop_code": "CHANA",
-        "crop_name": "Bengal Gram (Chickpea / Harbara)",
-        "crop_name_mr": "हरभरा (चना)",
+        "crop_name": "Bengal Gram",
+        "crop_name_mr": "हरभरा",
         "category": "PULSES",
         "scientific_name": "Cicer arietinum L.",
         "season": "RABI",
@@ -142,8 +142,8 @@ AGRONOMIC_CROP_CRITERIA: Dict[str, Dict[str, Any]] = {
     },
     "ONION": {
         "crop_code": "ONION",
-        "crop_name": "Rabi Onion (Kanda)",
-        "crop_name_mr": "कांदा (रब्बी)",
+        "crop_name": "Rabi Onion",
+        "crop_name_mr": "कांदा",
         "category": "VEGETABLES",
         "scientific_name": "Allium cepa L.",
         "season": "RABI",
@@ -214,7 +214,7 @@ AGRONOMIC_CROP_CRITERIA: Dict[str, Dict[str, Any]] = {
     },
     "WHEAT": {
         "crop_code": "WHEAT",
-        "crop_name": "Wheat (Gahu)",
+        "crop_name": "Wheat",
         "crop_name_mr": "गहू",
         "category": "CEREALS",
         "scientific_name": "Triticum aestivum L.",
@@ -286,8 +286,8 @@ AGRONOMIC_CROP_CRITERIA: Dict[str, Dict[str, Any]] = {
     },
     "MAIZE": {
         "crop_code": "MAIZE",
-        "crop_name": "Rabi Maize (Makka)",
-        "crop_name_mr": "मका (रब्बी)",
+        "crop_name": "Rabi Maize",
+        "crop_name_mr": "मका",
         "category": "CEREALS",
         "scientific_name": "Zea mays L.",
         "season": "RABI",
@@ -345,7 +345,7 @@ AGRONOMIC_CROP_CRITERIA: Dict[str, Dict[str, Any]] = {
     },
     "SUGARCANE": {
         "crop_code": "SUGARCANE",
-        "crop_name": "Sugarcane (Oos)",
+        "crop_name": "Sugarcane",
         "crop_name_mr": "ऊस",
         "category": "CASH_CROP",
         "scientific_name": "Saccharum officinarum L.",
@@ -404,7 +404,7 @@ AGRONOMIC_CROP_CRITERIA: Dict[str, Dict[str, Any]] = {
     },
     "SOYBEAN": {
         "crop_code": "SOYBEAN",
-        "crop_name": "Soybean (Soyabean)",
+        "crop_name": "Soybean",
         "crop_name_mr": "सोयाबीन",
         "category": "OILSEEDS",
         "scientific_name": "Glycine max (L.) Merr.",
@@ -450,8 +450,8 @@ AGRONOMIC_CROP_CRITERIA: Dict[str, Dict[str, Any]] = {
     },
     "TUR": {
         "crop_code": "TUR",
-        "crop_name": "Pigeon Pea (Tur / Arhar)",
-        "crop_name_mr": "तूर (अरहर)",
+        "crop_name": "Pigeon Pea",
+        "crop_name_mr": "तूर",
         "category": "PULSES",
         "scientific_name": "Cajanus cajan (L.) Millsp.",
         "season": "KHARIF",
@@ -496,7 +496,7 @@ AGRONOMIC_CROP_CRITERIA: Dict[str, Dict[str, Any]] = {
     },
     "COTTON": {
         "crop_code": "COTTON",
-        "crop_name": "Cotton (Kapas)",
+        "crop_name": "Cotton",
         "crop_name_mr": "कापूस",
         "category": "FIBRE",
         "scientific_name": "Gossypium hirsutum L.",

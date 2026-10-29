@@ -22,6 +22,21 @@ import {
   USDA_CLASS_METADATA,
 } from "@/lib/soilTexture/soilTextureData";
 
+const MR_SHORT_LABELS: Record<string, string> = {
+  clay: "चिकण",
+  silty_clay: "गाळ चिकण",
+  sandy_clay: "वाळू चिकण",
+  clay_loam: "चिकण पोयटा",
+  silty_clay_loam: "गाळ पोयटा",
+  sandy_clay_loam: "वाळू पोयटा",
+  loam: "पोयट",
+  silt_loam: "गाळ पोयटा",
+  silt: "गाळ",
+  sandy_loam: "रेती पोयटा",
+  loamy_sand: "पोयट वाळू",
+  sand: "वाळू",
+};
+
 interface SoilTextureTriangleProps {
   composition: SoilComposition;
   isValidComposition: boolean;
@@ -306,7 +321,7 @@ export const SoilTextureTriangle: React.FC<SoilTextureTriangleProps> = ({
                       fill={isActive ? "#FFFFFF" : "#1C2B18"}
                       className="transition-all tracking-tight"
                     >
-                      {poly.shortLabel}
+                      {isMr ? (MR_SHORT_LABELS[poly.key] || poly.shortLabel) : poly.shortLabel}
                     </text>
                   </g>
                 );
@@ -336,7 +351,7 @@ export const SoilTextureTriangle: React.FC<SoilTextureTriangleProps> = ({
               fill="#2A7C13"
               letterSpacing="0.08em"
             >
-              {isMr ? "← चिकणमाती CLAY (%)" : "← CLAY (%)"}
+              {isMr ? "← चिकणमाती (%)" : "← CLAY (%)"}
             </text>
 
             {/* Clay Ticks & Numbers (0 to 100) */}
@@ -380,7 +395,7 @@ export const SoilTextureTriangle: React.FC<SoilTextureTriangleProps> = ({
               fill="#2A7C13"
               letterSpacing="0.08em"
             >
-              {isMr ? "गाळ SILT (%) →" : "SILT (%) →"}
+              {isMr ? "गाळ (%) →" : "SILT (%) →"}
             </text>
 
             {/* Silt Ticks & Numbers (0 to 100) */}
@@ -424,7 +439,7 @@ export const SoilTextureTriangle: React.FC<SoilTextureTriangleProps> = ({
               fill="#2A7C13"
               letterSpacing="0.08em"
             >
-              {isMr ? "← वाळू SAND (%)" : "← SAND (%)"}
+              {isMr ? "← वाळू (%)" : "← SAND (%)"}
             </text>
 
             {/* Sand Ticks & Numbers (0 at right to 100 at left) */}
@@ -555,8 +570,11 @@ export const SoilTextureTriangle: React.FC<SoilTextureTriangleProps> = ({
           <div className="absolute top-2 right-2 sm:top-4 sm:right-4 bg-white/95 backdrop-blur-xs px-2.5 py-1.5 rounded-lg border border-surface-border text-[11px] font-mono shadow-xs text-text-main flex items-center gap-2 pointer-events-none">
             <span className="w-2 h-2 rounded-full bg-soil-primary animate-ping" />
             <span>
-              Sand: <strong className="text-soil-primary font-bold">{hoverComp.sand}%</strong> | Silt:{" "}
-              <strong className="text-sky-700 font-bold">{hoverComp.silt}%</strong> | Clay:{" "}
+              {isMr ? "वाळू:" : "Sand:"}{" "}
+              <strong className="text-soil-primary font-bold">{hoverComp.sand}%</strong> |{" "}
+              {isMr ? "गाळ:" : "Silt:"}{" "}
+              <strong className="text-sky-700 font-bold">{hoverComp.silt}%</strong> |{" "}
+              {isMr ? "चिकणमाती:" : "Clay:"}{" "}
               <strong className="text-amber-800 font-bold">{hoverComp.clay}%</strong>
             </span>
           </div>

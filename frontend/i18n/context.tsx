@@ -26,9 +26,17 @@ const I18nContext = createContext<I18nContextType | undefined>(undefined);
 export const I18nProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [language, setLanguageState] = useState<Language>("en");
 
-  // Load language preference from localStorage if in client
+  // Load language preference from localStorage or URL query param if in client
   useEffect(() => {
     try {
+      if (typeof window !== "undefined") {
+        const urlParams = new URLSearchParams(window.location.search);
+        const qLang = urlParams.get("lang") as Language;
+        if (qLang === "en" || qLang === "mr") {
+          setLanguageState(qLang);
+          return;
+        }
+      }
       const savedLang = localStorage.getItem("soilpilot_lang") as Language;
       if (savedLang === "en" || savedLang === "mr") {
         setLanguageState(savedLang);

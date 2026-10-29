@@ -205,18 +205,18 @@ export function classifyUSDA(comp: SoilComposition): SoilClassificationOutput {
   }
 
   const nameMapping: Record<USDAClassKey, { en: string; mr: string }> = {
-    clay: { en: 'Clay', mr: 'चिकणमाती (काळी कसदार माती)' },
-    silty_clay: { en: 'Silty Clay', mr: 'गाळयुक्त चिकणमाती' },
-    sandy_clay: { en: 'Sandy Clay', mr: 'वालुकामय चिकणमाती' },
-    clay_loam: { en: 'Clay Loam', mr: 'चिकण दुमट माती' },
-    silty_clay_loam: { en: 'Silty Clay Loam', mr: 'गाळयुक्त चिकण दुमट माती' },
-    sandy_clay_loam: { en: 'Sandy Clay Loam', mr: 'वालुकामय चिकण दुमट माती' },
-    loam: { en: 'Loam', mr: 'दुमट माती (आदर्श पोत)' },
-    silt_loam: { en: 'Silt Loam', mr: 'गाळयुक्त दुमट माती' },
-    silt: { en: 'Silt', mr: 'मऊ गाळ माती' },
-    sandy_loam: { en: 'Sandy Loam', mr: 'वालुकामय दुमट माती' },
-    loamy_sand: { en: 'Loamy Sand', mr: 'दुमट वाळू माती' },
-    sand: { en: 'Sand', mr: 'वाळू / रेती' },
+    sand: { en: 'Sand', mr: 'वाळूमय' },
+    loamy_sand: { en: 'Loamy Sand', mr: 'पोयटायुक्त वाळूमय' },
+    sandy_loam: { en: 'Sandy Loam', mr: 'वाळूमिश्रित पोयटायुक्त' },
+    loam: { en: 'Loam', mr: 'पोयट' },
+    silt_loam: { en: 'Silt Loam', mr: 'गाळमिश्रित पोयट' },
+    silt: { en: 'Silt', mr: 'गाळमय' },
+    sandy_clay_loam: { en: 'Sandy Clay Loam', mr: 'वाळूमिश्रित चिकण पोयट' },
+    clay_loam: { en: 'Clay Loam', mr: 'चिकण पोयट' },
+    silty_clay_loam: { en: 'Silty Clay Loam', mr: 'गाळमिश्रित चिकण पोयट' },
+    sandy_clay: { en: 'Sandy Clay', mr: 'वाळूमिश्रित चिकणमाती' },
+    silty_clay: { en: 'Silty Clay', mr: 'गाळमिश्रित चिकणमाती' },
+    clay: { en: 'Clay', mr: 'चिकणमाती' },
   };
 
   return {

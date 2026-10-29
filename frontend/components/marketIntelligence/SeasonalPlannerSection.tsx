@@ -23,6 +23,7 @@ import {
   PlantingOptionItem,
 } from "@/services/marketService";
 import { getCertifiedSeasonalOptions } from "@/services/certifiedDecisionPlanData";
+import { cleanCropName, isAllowedCrop } from "@/i18n/marathiHelper";
 
 interface SeasonalPlannerSectionProps {
   activeSeason: SeasonType;
@@ -91,6 +92,15 @@ export const SeasonalPlannerSection: React.FC<SeasonalPlannerSectionProps> = ({
   const currentSeasonConfig =
     seasonsList.find((s) => s.key === activeSeason) || seasonsList[0];
 
+  const sanitizeData = (raw: SeasonalPlanningResponse): SeasonalPlanningResponse => {
+    const remaining = (raw.options || []).filter((opt) => isAllowedCrop(opt));
+    return {
+      ...raw,
+      options: remaining,
+      total_crops_count: remaining.length,
+    };
+  };
+
   const fetchSeasonalData = async () => {
     setLoading(true);
     setError(null);
@@ -102,12 +112,12 @@ export const SeasonalPlannerSection: React.FC<SeasonalPlannerSectionProps> = ({
         marketId,
       });
       if (res && res.options && res.options.length > 0) {
-        setData(res);
+        setData(sanitizeData(res));
       } else {
-        setData(getCertifiedSeasonalOptions(currentSeasonConfig.apiKey));
+        setData(sanitizeData(getCertifiedSeasonalOptions(currentSeasonConfig.apiKey)));
       }
     } catch (_err: any) {
-      setData(getCertifiedSeasonalOptions(currentSeasonConfig.apiKey));
+      setData(sanitizeData(getCertifiedSeasonalOptions(currentSeasonConfig.apiKey)));
     } finally {
       setLoading(false);
     }
@@ -330,10 +340,10 @@ export const SeasonalPlannerSection: React.FC<SeasonalPlannerSectionProps> = ({
                 <div className="flex items-start justify-between gap-2 pb-2.5 border-b border-surface-border/70">
                   <div>
                     <h4 className="text-base font-extrabold text-text-main">
-                      {isMr ? option.crop_name_mr : option.crop_name}
+                      {cleanCropName(isMr ? option.crop_name_mr : option.crop_name)}
                     </h4>
                     <span className="text-xs text-text-muted">
-                      {isMr ? option.crop_name : option.crop_name_mr} • {option.category}
+                      {cleanCropName(isMr ? option.crop_name : option.crop_name_mr)} • {option.category}
                     </span>
                   </div>
                   <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-white border border-surface-border text-soil-primary shrink-0">

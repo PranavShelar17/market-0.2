@@ -5,7 +5,12 @@ import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useI18n } from "@/i18n/useI18n";
 import { useAuth } from "@/context/AuthContext";
+import { useSelectedFarmer } from "@/context/FarmerContext";
+import { farmerService } from "@/services/farmerService";
+import { AssociatedFarmerItem } from "@/types/farmer";
+import { translateFarmerName } from "@/i18n/marathiHelper";
 import { soilHealthService } from "@/services/soilHealthService";
+import { reportService } from "@/services/reportService";
 import { SoilHealthReport } from "@/types/soilHealth";
 import { KML_AVAILABLE_GATS } from "@/types/gat";
 import {
@@ -33,6 +38,7 @@ import {
   CheckCircle2,
   AlertTriangle,
   FileBadge,
+  Download,
   Info,
   Droplets,
   Scale,
@@ -48,9 +54,65 @@ import {
   HelpCircle,
 } from "lucide-react";
 
+function translateDrainage(rate?: string, isMr = false): string {
+  if (!rate) return isMr ? "माहिती नाही" : "Unknown";
+  if (!isMr) return rate;
+  const lower = rate.toLowerCase();
+  if (lower.includes("very slow")) return "अतिशय मंद";
+  if (lower.includes("slow")) return "मंद / सावकाश";
+  if (lower.includes("very rapid") || lower.includes("very fast")) return "अतिशय जलद";
+  if (lower.includes("rapid") || lower.includes("fast")) return "जलद";
+  if (lower.includes("moderate to rapid")) return "मध्यम ते जलद";
+  if (lower.includes("moderate to slow")) return "मध्यम ते सावकाश";
+  if (lower.includes("moderate")) return "मध्यम";
+  return rate;
+}
+
+function translateWaterCapacity(cap?: string, isMr = false): string {
+  if (!cap) return isMr ? "माहिती नाही" : "Unknown";
+  if (!isMr) return cap;
+  const lower = cap.toLowerCase();
+  if (lower.includes("very high")) return "अत्यंत उच्च";
+  if (lower.includes("moderate to high")) return "मध्यम ते उच्च";
+  if (lower.includes("high")) return "उच्च";
+  if (lower.includes("low to moderate")) return "कमी ते मध्यम";
+  if (lower.includes("very low")) return "अत्यंत कमी";
+  if (lower.includes("low")) return "कमी";
+  if (lower.includes("moderate")) return "मध्यम";
+  return cap;
+}
+
+function translateTypicalRange(range?: string, isMr = false): string {
+  if (!range) return "";
+  if (!isMr) return range;
+  return range
+    .replace(/Clay/gi, "चिकणमाती")
+    .replace(/Sand/gi, "वाळू")
+    .replace(/Silt/gi, "गाळ");
+}
+
+function translateValidationError(err: string, isMr = false): string {
+  if (!isMr) return err;
+  if (err.includes("Sand percentage is required")) return "वाळूचे प्रमाण आवश्यक असून वैध संख्या असणे आवश्यक आहे.";
+  if (err.includes("Sand percentage must be between")) return "वाळूचे प्रमाण ०% ते १००% दरम्यान असणे आवश्यक आहे.";
+  if (err.includes("Silt percentage is required")) return "गाळाचे प्रमाण आवश्यक असून वैध संख्या असणे आवश्यक आहे.";
+  if (err.includes("Silt percentage must be between")) return "गाळाचे प्रमाण ०% ते १००% दरम्यान असणे आवश्यक आहे.";
+  if (err.includes("Clay percentage is required")) return "चिकणमातीचे प्रमाण आवश्यक असून वैध संख्या असणे आवश्यक आहे.";
+  if (err.includes("Clay percentage must be between")) return "चिकणमातीचे प्रमाण ०% ते १००% दरम्यान असणे आवश्यक आहे.";
+  if (err.includes("Total sum is")) {
+    return err
+      .replace(/Total sum is ([\d.]+)%/i, "एकूण बेरीज $1% आहे")
+      .replace(/Percentages must equal 100%/i, "प्रमाण १००% असणे आवश्यक आहे")
+      .replace(/\(exceeds by \+?([\d.]+)%\)/i, "(+$1% जास्त आहे)")
+      .replace(/\(short by ([\d.]+)%\)/i, "($1% कमी पडत आहे)");
+  }
+  return err;
+}
+
 export const SoilTextureCalculator: React.FC = () => {
   const { t, language } = useI18n();
   const { field, farmer, location, loading: authLoading } = useAuth();
+  const { selectedFarmer, selectFarmer } = useSelectedFarmer();
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -71,6 +133,7 @@ export const SoilTextureCalculator: React.FC = () => {
   });
 
   const [hasMounted, setHasMounted] = useState<boolean>(false);
+  const [gatFarmers, setGatFarmers] = useState<AssociatedFarmerItem[]>([]);
 
   // Mode: "field" (official Soil Health Card data) or "simulation" (user modified)
   const [activeMode, setActiveMode] = useState<"field" | "simulation">("field");
@@ -121,18 +184,93 @@ export const SoilTextureCalculator: React.FC = () => {
     }
   }, [urlGat]);
 
+  const cleanSelectedGat = String(selectedGat).replace(/[^\d]/g, "") || "18";
+
+  // Fetch registered farmers for this Gat
+  useEffect(() => {
+    let active = true;
+    async function loadFarmers() {
+      try {
+        const data = await farmerService.getFarmersByGat(cleanSelectedGat);
+        if (active && data?.farmers && data.farmers.length > 0) {
+          setGatFarmers(data.farmers);
+          const farmerGat = selectedFarmer ? String(selectedFarmer.gat_no).replace(/[^\d]/g, "") : null;
+          if (farmerGat !== cleanSelectedGat) {
+            const preferred =
+              (cleanSelectedGat === "18"
+                ? data.farmers.find((f) => f.name.includes("जयाबाई") || f.name.toLowerCase().includes("jayabai"))
+                : null) || data.farmers[0];
+            if (preferred) {
+              selectFarmer({
+                id: preferred.id,
+                name: preferred.name,
+                gat_no: cleanSelectedGat,
+                village: data.village || "Malegaon Khurd",
+              });
+            }
+          }
+        }
+      } catch (e) {
+        console.warn("Could not load farmers for Gat", cleanSelectedGat, e);
+      }
+    }
+    loadFarmers();
+    return () => {
+      active = false;
+    };
+  }, [cleanSelectedGat, selectedFarmer, selectFarmer]);
+
+  // Resolve current active farmer
+  const activeFarmerObj = useMemo(() => {
+    if (selectedFarmer && String(selectedFarmer.gat_no).replace(/[^\d]/g, "") === cleanSelectedGat) {
+      return selectedFarmer;
+    }
+    if (gatFarmers.length > 0) {
+      const preferred =
+        (cleanSelectedGat === "18"
+          ? gatFarmers.find((f) => f.name.includes("जयाबाई") || f.name.toLowerCase().includes("jayabai"))
+          : null) || gatFarmers[0];
+      return preferred ? { id: preferred.id, name: preferred.name, gat_no: cleanSelectedGat, village: "Malegaon Khurd" } : null;
+    }
+    return null;
+  }, [selectedFarmer, cleanSelectedGat, gatFarmers]);
+
+  const currentFarmerName = useMemo(() => {
+    if (activeFarmerObj?.name) return activeFarmerObj.name;
+    if (field?.gat_no && String(field.gat_no).replace(/[^\d]/g, "") === cleanSelectedGat && farmer?.name) {
+      return farmer.name;
+    }
+    if (report?.farmer?.name && !report.farmer.name.includes("Ramesh Patil")) {
+      return report.farmer.name;
+    }
+    return cleanSelectedGat === "18" ? "जयाबाई गोरख कापरे" : (cleanSelectedGat === "22" ? "प्रदिप भाऊसो शेलार" : "Farmer");
+  }, [activeFarmerObj, field?.gat_no, cleanSelectedGat, farmer?.name, report?.farmer?.name]);
+
+  const displayFarmerName = translateFarmerName(currentFarmerName, isMr);
+
   // Fetch official Soil Health Card for the active Gat
   const fetchFieldReport = useCallback(
-    async (gatToFetch: string) => {
+    async (gatToFetch: string, farmerNameParam?: string) => {
       try {
         setLoadingReport(true);
         setReportError(null);
-        const activeFieldId = `demo-field-gat-${gatToFetch}`;
-        const data = await soilHealthService.getFieldReport(activeFieldId);
+        const clean = String(gatToFetch).replace(/[^\d]/g, "") || "18";
+        const activeFieldId = `demo-field-gat-${clean}`;
+
+        const effectiveFarmer =
+          farmerNameParam ||
+          (selectedFarmer && String(selectedFarmer.gat_no).replace(/[^\d]/g, "") === clean
+            ? selectedFarmer.name
+            : (clean === "18" ? "जयाबाई गोरख कापरे" : (clean === "22" ? "प्रदिप भाऊसो शेलार" : undefined)));
+
+        const data = await soilHealthService.getFieldReport(activeFieldId, effectiveFarmer);
+        if (effectiveFarmer && data && data.farmer) {
+          data.farmer.name = effectiveFarmer;
+        }
         setReport(data);
 
         // Process data through integration layer
-        const extracted = extractTextureParametersFromReport(data);
+        const extracted = extractTextureParametersFromReport(data, effectiveFarmer);
         const result = processSoilTextureIntegration(extracted);
 
         if (result.status === "valid" && result.activeComposition) {
@@ -177,7 +315,7 @@ export const SoilTextureCalculator: React.FC = () => {
         setLoadingReport(false);
       }
     },
-    [isMr]
+    [isMr, selectedFarmer]
   );
 
   useEffect(() => {
@@ -188,21 +326,23 @@ export const SoilTextureCalculator: React.FC = () => {
 
   // Handle changing Gat
   const handleGatChange = (newGat: string) => {
-    setSelectedGat(newGat);
+    const clean = newGat.replace(/[^\d]/g, "") || newGat;
+    setSelectedGat(clean);
     if (typeof window !== "undefined") {
-      localStorage.setItem("soilpilot_selected_gat", newGat);
+      localStorage.setItem("soilpilot_selected_gat", clean);
+      window.dispatchEvent(new CustomEvent("soilpilot_gat_changed", { detail: clean }));
     }
     const currentParams = new URLSearchParams(window.location.search);
-    currentParams.set("gat", newGat);
+    currentParams.set("gat", clean);
     router.replace(`/soil-texture?${currentParams.toString()}`);
   };
 
   // Integration analysis of the current report
   const integrationResult: IntegratedSoilTextureResult | null = useMemo(() => {
     if (!report) return null;
-    const extracted = extractTextureParametersFromReport(report);
+    const extracted = extractTextureParametersFromReport(report, currentFarmerName || undefined);
     return processSoilTextureIntegration(extracted);
-  }, [report]);
+  }, [report, currentFarmerName]);
 
   // Numeric parsing of current inputs
   const numericComposition: SoilComposition = useMemo(() => {
@@ -277,6 +417,24 @@ export const SoilTextureCalculator: React.FC = () => {
     fetchFieldReport(selectedGat);
   };
 
+  const [downloadingReport, setDownloadingReport] = useState<boolean>(false);
+
+  // Single official PDF download handler for the bottom of the page
+  const handleDownloadPdf = async () => {
+    try {
+      setDownloadingReport(true);
+      const farmerNameOverride =
+        selectedFarmer && String(selectedFarmer.gat_no) === String(cleanSelectedGat)
+          ? selectedFarmer.name
+          : currentFarmerName || undefined;
+      await reportService.downloadSoilHealthCardPdf(cleanSelectedGat, language, farmerNameOverride);
+    } catch (err) {
+      console.error("PDF download failed:", err);
+    } finally {
+      setDownloadingReport(false);
+    }
+  };
+
   const extractedParams: ExtractedTextureParameters | null = integrationResult?.extractedParams || null;
 
   return (
@@ -294,7 +452,7 @@ export const SoilTextureCalculator: React.FC = () => {
                   {t("soilTexture.title") || "Soil Texture Calculator"}
                 </h1>
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FFF8CF] text-[#856404] border border-[#FFEBAA] uppercase">
-                  USDA System
+                  {isMr ? "USDA प्रणाली" : "USDA System"}
                 </span>
               </div>
               <p className="text-xs sm:text-sm text-[#4A6B67] mt-0.5">
@@ -305,24 +463,13 @@ export const SoilTextureCalculator: React.FC = () => {
           </div>
         </div>
 
-        {/* Gat Selector & Sync Action */}
+        {/* Gat Badge & Sync Action */}
         <div className="flex flex-wrap items-center gap-2">
-          {/* Field Gat Selector Dropdown */}
+          {/* Field Gat Badge (Static display - selection on Dashboard only) */}
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-subtle border border-surface-border text-xs">
             <MapPin className="w-3.5 h-3.5 text-soil-primary" />
             <span className="font-bold text-text-muted">{isMr ? "गट क्र." : "Gat:"}</span>
-            <select
-              value={selectedGat}
-              onChange={(e) => handleGatChange(e.target.value)}
-              className="bg-transparent font-black text-text-main focus:outline-hidden cursor-pointer"
-              aria-label="Select Gat Number"
-            >
-              {KML_AVAILABLE_GATS.map((g) => (
-                <option key={g} value={g}>
-                  {g} {g === "18" ? "(Reference Demo)" : ""}
-                </option>
-              ))}
-            </select>
+            <span className="font-black text-text-main">#{selectedGat}</span>
           </div>
 
           <button
@@ -337,15 +484,6 @@ export const SoilTextureCalculator: React.FC = () => {
               {isMr ? `मृदा कार्ड सिंक करा (गट ${selectedGat})` : `Sync Card Data (Gat #${selectedGat})`}
             </span>
           </button>
-
-          <Link
-            href={`/soil-health-card?gat=${selectedGat}`}
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-surface-muted text-text-muted text-xs font-semibold border border-surface-border hover:bg-surface-border transition-colors"
-            title="View full Soil Health Card"
-          >
-            <FileBadge className="w-3.5 h-3.5 text-soil-primary" />
-            <span suppressHydrationWarning>{isMr ? "आरोग्य पत्रक पहा" : "View Card"}</span>
-          </Link>
         </div>
       </div>
 
@@ -379,7 +517,7 @@ export const SoilTextureCalculator: React.FC = () => {
 
             {extractedParams?.isDemo && (
               <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-stone-100 text-stone-700 border border-stone-300">
-                VERIFIED TEST RECORD
+                {isMr ? "प्रमाणित चाचणी नोंद" : "VERIFIED TEST RECORD"}
               </span>
             )}
           </div>
@@ -402,18 +540,18 @@ export const SoilTextureCalculator: React.FC = () => {
             <span className="text-[10px] font-bold text-text-muted uppercase block">
               {isMr ? "गाव व तालुका" : "Village & Taluka"}
             </span>
-            <span className="font-semibold text-text-main truncate block" title={extractedParams?.village || "Malegaon Kh."}>
-              {extractedParams?.village || "Malegaon Kh."}, Baramati
+            <span className="font-semibold text-text-main truncate block" title={isMr ? "माळेगाव खु., बारामती" : (extractedParams?.village || "Malegaon Kh.")}>
+              {isMr ? "माळेगाव खु., बारामती" : `${extractedParams?.village || "Malegaon Kh."}, Baramati`}
             </span>
           </div>
 
-          {/* Farmer Name */}
+          {/* Farmer Name (Selection is on Dashboard only) */}
           <div className="space-y-0.5">
             <span className="text-[10px] font-bold text-text-muted uppercase block">
               {isMr ? "शेतकरी" : "Farmer"}
             </span>
-            <span className="font-semibold text-text-main truncate block" title={extractedParams?.farmerName || "Farmer"}>
-              {extractedParams?.farmerName || "Ramesh Patil"}
+            <span className="font-semibold text-text-main truncate block" title={displayFarmerName}>
+              {displayFarmerName}
             </span>
           </div>
 
@@ -423,7 +561,7 @@ export const SoilTextureCalculator: React.FC = () => {
               {isMr ? "मातीचा थर / खोली" : "Soil Depth"}
             </span>
             <span className="font-semibold text-text-main block">
-              {extractedParams?.depthInterval || "0–30 cm Root Zone"}
+              {isMr ? "०–३० सेमी मूळ क्षेत्र" : (extractedParams?.depthInterval || "0–30 cm Root Zone")}
             </span>
           </div>
 
@@ -441,7 +579,13 @@ export const SoilTextureCalculator: React.FC = () => {
                   : "bg-blue-100 text-blue-800"
               }`}
             >
-              {extractedParams?.sourceType || "DSM PREDICTION"}
+              {isMr
+                ? (extractedParams?.sourceType === "LABORATORY TEST"
+                    ? "प्रयोगशाळा चाचणी"
+                    : extractedParams?.sourceType === "DERIVED VALUE"
+                    ? "काढलेले मूल्य"
+                    : "DSM मॉडेल अंदाज")
+                : (extractedParams?.sourceType || "DSM PREDICTION")}
             </span>
           </div>
 
@@ -451,7 +595,7 @@ export const SoilTextureCalculator: React.FC = () => {
               {isMr ? "वर्गीकरण मानक" : "Standard"}
             </span>
             <span className="font-semibold text-text-main block" title="USDA-NRCS Soil Survey Manual Standard">
-              USDA-NRCS (12 Classes)
+              {isMr ? "USDA-NRCS (१२ पोत वर्ग)" : "USDA-NRCS (12 Classes)"}
             </span>
           </div>
         </div>
@@ -462,8 +606,13 @@ export const SoilTextureCalculator: React.FC = () => {
             <div className="flex items-center gap-1.5">
               <FlaskConical className="w-3.5 h-3.5 text-soil-primary shrink-0" />
               <span>
-                <strong>{isMr ? "स्त्रोत:" : "Source:"}</strong> {extractedParams.sourceLabel}
-                {extractedParams.reportNo ? ` (Report #${extractedParams.reportNo})` : ""}
+                <strong>{isMr ? "स्त्रोत:" : "Source:"}</strong>{" "}
+                {isMr
+                  ? (extractedParams.sourceLabel?.includes("DSM Official Calibration Station")
+                      ? "डीएसएम अधिकृत कॅलिब्रेशन केंद्र"
+                      : (extractedParams.sourceLabel || "डीएसएम मॉडेल"))
+                  : (extractedParams.sourceLabel || "DSM Calibration Station")}
+                {extractedParams.reportNo ? (isMr ? ` (अहवाल क्र. #${extractedParams.reportNo})` : ` (Report #${extractedParams.reportNo})`) : ""}
               </span>
             </div>
 
@@ -518,11 +667,30 @@ export const SoilTextureCalculator: React.FC = () => {
         <div className="p-4 bg-rose-50 border border-rose-200 rounded-2xl space-y-2 text-rose-900">
           <div className="flex items-center gap-2 font-bold text-sm">
             <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0" />
-            <span>Sand, silt, and clay data are incomplete for this soil sample. The soil texture cannot be calculated yet.</span>
+            <span>
+              {isMr
+                ? "या माती नमुन्यासाठी वाळू, गाळ आणि चिकणमाती माहिती अपूर्ण आहे. मातीचा पोत अजून मोजता येत नाही."
+                : "Sand, silt, and clay data are incomplete for this soil sample. The soil texture cannot be calculated yet."}
+            </span>
           </div>
           <p className="text-xs text-rose-700">
-            Missing parameters: <strong>{integrationResult.extractedParams.missingParameters.join(", ")}</strong>.
-            Please verify the laboratory test record for Gat #{selectedGat}.
+            {isMr ? (
+              <>
+                अनुपलब्ध घटक:{" "}
+                <strong>
+                  {integrationResult.extractedParams.missingParameters
+                    .map((p) => (p === "sand" ? "वाळू" : p === "silt" ? "गाळ" : p === "clay" ? "चिकणमाती" : p))
+                    .join(", ")}
+                </strong>
+                . कृपया गट क्र. #{selectedGat} ची प्रयोगशाळा चाचणी नोंद तपासा.
+              </>
+            ) : (
+              <>
+                Missing parameters:{" "}
+                <strong>{integrationResult.extractedParams.missingParameters.join(", ")}</strong>. Please verify the
+                laboratory test record for Gat #{selectedGat}.
+              </>
+            )}
           </p>
           <div className="pt-1 flex items-center gap-2">
             <Link
@@ -530,7 +698,7 @@ export const SoilTextureCalculator: React.FC = () => {
               className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-rose-600 text-white text-xs font-bold rounded-lg hover:bg-rose-700 transition-colors"
             >
               <FileBadge className="w-3.5 h-3.5" />
-              <span>View Available Soil Health Card Data</span>
+              <span>{isMr ? "उपलब्ध मृदा आरोग्य पत्रिका पहा" : "View Available Soil Health Card Data"}</span>
             </Link>
           </div>
         </div>
@@ -552,7 +720,7 @@ export const SoilTextureCalculator: React.FC = () => {
 
               {/* Source Tag for Inputs */}
               <span className="text-[11px] font-mono font-bold text-text-muted">
-                {activeMode === "field" ? "Card Values" : "Simulation"}
+                {activeMode === "field" ? (isMr ? "कार्ड मूल्ये" : "Card Values") : (isMr ? "सिम्युलेशन" : "Simulation")}
               </span>
             </div>
 
@@ -564,7 +732,9 @@ export const SoilTextureCalculator: React.FC = () => {
                   <label htmlFor="sand-input" className="text-xs font-bold text-text-main flex items-center gap-1.5">
                     <span className="w-2.5 h-2.5 rounded-full bg-amber-600 inline-block" />
                     <span>{t("soilTexture.sand") || "Sand"}</span>
-                    <span className="text-[11px] text-text-muted font-normal">(0.05 – 2.0 mm)</span>
+                    <span className="text-[11px] text-text-muted font-normal">
+                      {isMr ? "(०.०५ – २.० मिमी)" : "(0.05 – 2.0 mm)"}
+                    </span>
                   </label>
                   <div className="flex items-center gap-1">
                     <input
@@ -604,10 +774,12 @@ export const SoilTextureCalculator: React.FC = () => {
                   <label htmlFor="silt-input" className="text-xs font-bold text-text-main flex items-center gap-1.5">
                     <span className="w-2.5 h-2.5 rounded-full bg-sky-600 inline-block" />
                     <span>{t("soilTexture.silt") || "Silt"}</span>
-                    <span className="text-[11px] text-text-muted font-normal">(0.002 – 0.05 mm)</span>
+                    <span className="text-[11px] text-text-muted font-normal">
+                      {isMr ? "(०.००२ – ०.०५ मिमी)" : "(0.002 – 0.05 mm)"}
+                    </span>
                     {extractedParams?.isSiltDerived && activeMode === "field" && (
                       <span className="text-[10px] font-bold text-amber-700 bg-amber-100 px-1.5 py-0.2 rounded">
-                        Derived
+                        {isMr ? "काढलेले मूल्य" : "Derived"}
                       </span>
                     )}
                   </label>
@@ -649,7 +821,9 @@ export const SoilTextureCalculator: React.FC = () => {
                   <label htmlFor="clay-input" className="text-xs font-bold text-text-main flex items-center gap-1.5">
                     <span className="w-2.5 h-2.5 rounded-full bg-amber-800 inline-block" />
                     <span>{t("soilTexture.clay") || "Clay"}</span>
-                    <span className="text-[11px] text-text-muted font-normal">(&lt; 0.002 mm)</span>
+                    <span className="text-[11px] text-text-muted font-normal">
+                      {isMr ? "(< ०.००२ मिमी)" : "(< 0.002 mm)"}
+                    </span>
                   </label>
                   <div className="flex items-center gap-1">
                     <input
@@ -731,7 +905,7 @@ export const SoilTextureCalculator: React.FC = () => {
                   </div>
                   <ul className="text-[11px] text-rose-700 list-disc list-inside space-y-0.5">
                     {validation.errors.map((err, i) => (
-                      <li key={i}>{err}</li>
+                      <li key={i}>{translateValidationError(err, isMr)}</li>
                     ))}
                   </ul>
                   <button
@@ -805,7 +979,7 @@ export const SoilTextureCalculator: React.FC = () => {
                     {isMr ? activeMetadata.nameMr : activeMetadata.nameEn}
                   </h4>
                   <p className="text-xs font-semibold text-text-muted mt-0.5">
-                    {activeMetadata.abbreviation} &bull; {activeMetadata.typicalRange}
+                    {activeMetadata.abbreviation} &bull; {translateTypicalRange(activeMetadata.typicalRange, isMr)}
                   </p>
                 </div>
                 <div
@@ -860,7 +1034,7 @@ export const SoilTextureCalculator: React.FC = () => {
                       <span>{t("soilTexture.drainage") || "Drainage Speed"}</span>
                     </span>
                     <span className="font-bold text-text-main block">
-                      {activeMetadata.drainageRate}
+                      {translateDrainage(activeMetadata.drainageRate, isMr)}
                     </span>
                   </div>
                   <div className="p-2.5 bg-surface-muted rounded-xl border border-surface-border space-y-1">
@@ -869,7 +1043,7 @@ export const SoilTextureCalculator: React.FC = () => {
                       <span>{t("soilTexture.waterCapacity") || "Water Storage"}</span>
                     </span>
                     <span className="font-bold text-text-main block">
-                      {activeMetadata.waterHoldingCapacity}
+                      {translateWaterCapacity(activeMetadata.waterHoldingCapacity, isMr)}
                     </span>
                   </div>
                 </div>
@@ -890,30 +1064,18 @@ export const SoilTextureCalculator: React.FC = () => {
                   <Info className="w-3.5 h-3.5 text-text-light shrink-0" />
                   <span className="font-medium truncate max-w-[240px]">
                     {activeMode === "field"
-                      ? `${extractedParams?.sourceType || "Soil Health Card"} (Gat #${selectedGat})`
-                      : "Manual User Simulation"}
+                      ? (isMr
+                          ? `${extractedParams?.sourceType === "LABORATORY TEST" ? "प्रयोगशाळा चाचणी" : "मृदा आरोग्य पत्रिका"} (गट क्र. #${selectedGat})`
+                          : `${extractedParams?.sourceType || "Soil Health Card"} (Gat #${selectedGat})`)
+                      : (isMr ? "वापरकर्ता मॅन्युअल सिम्युलेशन" : "Manual User Simulation")}
                   </span>
                 </div>
                 <span className="font-semibold text-text-main bg-surface-muted px-2 py-0.5 rounded-md border border-surface-border">
-                  {extractedParams?.depthInterval || "0–30 cm Root Zone"}
+                  {isMr ? "०–३० सेमी मूळ क्षेत्र" : (extractedParams?.depthInterval || "0–30 cm Root Zone")}
                 </span>
               </div>
 
-              {/* Direct Link to Soil Health Card */}
-              <div className="pt-1">
-                <Link
-                  href={`/soil-health-card?gat=${selectedGat}`}
-                  className="w-full py-2.5 px-3 rounded-xl bg-soil-primary text-white font-bold text-xs flex items-center justify-center gap-2 hover:bg-soil-primaryHover transition-colors shadow-2xs"
-                >
-                  <FileBadge className="w-4 h-4" />
-                  <span>
-                    {isMr
-                      ? `गट क्र. ${selectedGat} चे संपूर्ण मृदा आरोग्य पत्रक पहा`
-                      : `View Official Soil Health Card for Gat #${selectedGat}`}
-                  </span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
-              </div>
+
             </div>
           ) : (
             <div className="bg-white rounded-2xl border border-surface-border p-6 shadow-card text-center space-y-3">
@@ -985,7 +1147,7 @@ export const SoilTextureCalculator: React.FC = () => {
               <h4 className="text-xs font-bold text-text-main uppercase tracking-wider">
                 {t("soilTexture.legendTitle") || "USDA Soil Texture Classes (12 Classes)"}
               </h4>
-              <span className="text-[10px] text-text-muted font-mono">12 Classes</span>
+              <span className="text-[10px] text-text-muted font-mono">{isMr ? "१२ वर्ग" : "12 Classes"}</span>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
@@ -1025,6 +1187,46 @@ export const SoilTextureCalculator: React.FC = () => {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* 5. Bottom Action Bar: Single Download Option for Soil Report & Classification */}
+      <div className="bg-white rounded-2xl border border-surface-border p-4 sm:p-5 shadow-card flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-soil-primaryLight text-soil-primary flex items-center justify-center shrink-0">
+            <Download className="w-5 h-5 text-soil-primary" />
+          </div>
+          <div>
+            <h4 className="text-sm font-bold text-text-main">
+              {isMr ? "अधिकृत मृदा आरोग्य अहवाल" : "Official Soil Health & Texture Dossier"}
+            </h4>
+            <p className="text-xs text-text-muted mt-0.5">
+              {isMr
+                ? `गट क्र. ${selectedGat} (${displayFarmerName}) ची प्रमाणित मृदा आरोग्य पत्रिका PDF डाऊनलोड करा.`
+                : `Download the verified Soil Health Card PDF for Gat #${selectedGat} (${displayFarmerName}).`}
+            </p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={handleDownloadPdf}
+          disabled={downloadingReport}
+          className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-soil-primary text-white text-xs sm:text-sm font-bold hover:bg-soil-primaryHover transition-colors shadow-xs disabled:opacity-50 cursor-pointer shrink-0 w-full sm:w-auto"
+          title={isMr ? "मृदा अहवाल PDF डाऊनलोड करा" : "Download Soil Report PDF"}
+        >
+          {downloadingReport ? (
+            <RefreshCw className="w-4 h-4 animate-spin" />
+          ) : (
+            <Download className="w-4 h-4" />
+          )}
+          <span>
+            {downloadingReport
+              ? (isMr ? "PDF तयार होत आहे..." : "Generating PDF...")
+              : (isMr
+                  ? "मृदा आरोग्य अहवाल PDF डाऊनलोड करा"
+                  : "Download Soil Health Card PDF")}
+          </span>
+        </button>
       </div>
     </div>
   );

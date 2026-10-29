@@ -23,6 +23,7 @@ import {
   CommodityItem,
   MarketItem,
 } from "@/services/marketService";
+import { isAllowedCrop } from "@/i18n/marathiHelper";
 
 interface FuturePriceOutlookProps {
   selectedMarket?: string;
@@ -64,10 +65,12 @@ export const FuturePriceOutlook: React.FC<FuturePriceOutlookProps> = ({
           marketService.getMarkets(),
         ]);
         if (isMounted) {
-          setCommoditiesList(comms);
+          const validComms = comms.filter(isAllowedCrop);
+          const finalComms = validComms.length > 0 ? validComms : comms;
+          setCommoditiesList(finalComms);
           setMarketsList(mkts);
-          if (!selectedCommodityId && comms.length > 0) {
-            setActiveCommodityId(comms[0].id);
+          if (!selectedCommodityId && finalComms.length > 0) {
+            setActiveCommodityId(finalComms[0].id);
           }
           if (!selectedMarketId && mkts.length > 0) {
             setActiveMarketId(mkts[0].id);

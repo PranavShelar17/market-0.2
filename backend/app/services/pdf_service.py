@@ -1202,50 +1202,18 @@ class PDFService:
             qualifying_crops = [
                 {
                     "rank_priority": 1,
-                    "crop_code": "CHANA",
-                    "crop_name": "Bengal Gram (Chickpea / Harbara)",
-                    "crop_name_mr": "हरभरा (चना / चिकपी)",
+                    "crop_code": "ONION",
+                    "crop_name": "Rabi Onion",
+                    "crop_name_mr": "कांदा",
                     "decision_tier": "RECOMMENDED",
                     "decision_tier_label": "Recommended Option" if not is_mr else "सर्वोत्तम शिफारस पर्याय",
                     "suitability_status": "PRELIMINARY_SUITABLE",
                     "suitability_summary": "High (Well Suited)" if not is_mr else "उच्च (उत्कृष्ट अनुकूल)",
-                    "planting_window_text": "Oct 01 – Nov 10" if not is_mr else "०१ ऑक्टोबर – १० नोव्हेंबर",
-                    "expected_harvest_text": "Feb 05 – Feb 15 (95–115 days)" if not is_mr else "०५ फेब्रुवारी – १५ फेब्रुवारी (९५–११५ दिवस)",
-                    "water_requirement": "LOW",
-                    "labor_intensity": "LOW",
-                    "explanation": "Optimal sowing window is active. Low water requirement is ideal for vertisol residual moisture. Strong benefit-cost ratio based on Baramati APMC modal price trends." if not is_mr else "पेरणीचा योग्य काळ सुरू आहे. कमी पाण्याची गरज काळ्या कसदार जमिनीतील ओलाव्यावर उत्तम जुळते. बारामती बाजार समितीतील दरांनुसार उत्कृष्ट नफा गुणोत्तर.",
-                    "recommendation_guidance": "Complete sowing with certified seed (Digvijay/Phule Vikram) with Rhizobium culture before second week of November." if not is_mr else "दिग्विजय किंवा फुले विक्रम प्रमाणित बियाणे व रायझोबियम जीवाणू संवर्धकाची प्रक्रिया करून नोव्हेंबरच्या दुसऱ्या आठवड्यापूर्वी पेरणी पूर्ण करावी.",
-                    "identified_constraints": ["Susceptible to pod borer (Helicoverpa armigera) at pod development; install pheromone traps @ 5/ha."] if not is_mr else ["घाटे अळीचा प्रादुर्भाव टाळण्यासाठी हेक्टरी ५ कामगंध सापळे लावावेत."],
-                    "financials": {
-                        "price_source_type": "FORECAST_MODAL",
-                        "assumed_price_modal": 5850.0,
-                        "cost_breakdown": {
-                            "operational_cost_per_acre": 10724.0,
-                            "total_cost_per_acre": 16390.0,
-                            "source_organization": "CACP & MPKV Rahuri",
-                        },
-                        "central_scenario": {
-                            "assumed_price_per_unit": 5850.0,
-                            "gross_revenue_per_acre": 28431.0,
-                            "net_return_operational_per_acre": 17707.0,
-                            "net_return_total_per_acre": 12041.0,
-                        }
-                    }
-                },
-                {
-                    "rank_priority": 2,
-                    "crop_code": "ONION",
-                    "crop_name": "Rabi Onion (Kanda)",
-                    "crop_name_mr": "कांदा (रब्बी)",
-                    "decision_tier": "CONDITIONALLY_SUITABLE",
-                    "decision_tier_label": "Conditionally Suitable" if not is_mr else "सशर्त अनुकूल पर्याय",
-                    "suitability_status": "CONDITIONAL_SUITABILITY",
-                    "suitability_summary": "Moderate (Conditional)" if not is_mr else "मध्यम (सशर्त अनुकूल)",
                     "planting_window_text": "Oct 15 – Nov 30" if not is_mr else "१५ ऑक्टोबर – ३० नोव्हेंबर",
                     "expected_harvest_text": "Mar 15 – Apr 10 (120–150 days)" if not is_mr else "१५ मार्च – १० एप्रिल (१२०–१५० दिवस)",
                     "water_requirement": "MEDIUM",
                     "labor_intensity": "INTENSIVE",
-                    "explanation": "High gross revenue potential, but requires verified drip irrigation and substantial operational cash flow for nursery, transplanting, and curing." if not is_mr else "उत्कृष्ट उत्पन्नाची क्षमता, परंतु पुनर्लागवड, मजुरी आणि काढणीपश्चात साठवणुकीसाठी खात्रीशीर सिंचन व खेळते भांडवल आवश्यक.",
+                    "explanation": "High gross revenue potential, with verified suitability for Baramati vertisols and strong local APMC demand." if not is_mr else "उत्कृष्ट उत्पन्नाची क्षमता, बारामती काळ्या जमिनीस अत्यंत अनुकूल आणि स्थानिक बाजारपेठेत हमखास मागणी.",
                     "recommendation_guidance": "Confirm nursery seedling vigor (Bhima Kiran/Kiran) and assured water storage before field transplanting." if not is_mr else "भीमा किरण/किरण रोपांची उगवण क्षमता व पाणी साठ्याची खात्री करून पुनर्लागवड करावी.",
                     "identified_constraints": ["High price volatility at peak rabi arrivals; thrips and purple blotch management required."] if not is_mr else ["रब्बी आवकेच्या काळात बाजारभावातील चढ-उतार आणि फुलकिडे (थ्रिप्स) नियंत्रणाची काळजी घ्यावी."],
                     "financials": {
@@ -1265,10 +1233,10 @@ class PDFService:
                     }
                 },
                 {
-                    "rank_priority": 3,
+                    "rank_priority": 2,
                     "crop_code": "WHEAT",
-                    "crop_name": "Wheat (Gahu)",
-                    "crop_name_mr": "गहू (रब्बी)",
+                    "crop_name": "Wheat",
+                    "crop_name_mr": "गहू",
                     "decision_tier": "CONDITIONALLY_SUITABLE",
                     "decision_tier_label": "Conditionally Suitable" if not is_mr else "सशर्त अनुकूल पर्याय",
                     "suitability_status": "CONDITIONAL_SUITABILITY",
@@ -1505,14 +1473,14 @@ class PDFService:
                 "Available Nitrogen is low (163 kg/ha), pH is moderately alkaline (8.38), and Soil Organic Carbon is optimal (0.82%). Apply balanced split N fertilization and basal organic enrichment."
             ),
             f"• <b>{('पीक शिफारस निष्कर्ष' if is_mr else 'Primary Crop Recommendation')}:</b> " + (
-                "काळ्या कसदार जमिनीतील ओलावा व बारामती बाजारपेठेतील मजबूत मागणी लक्षात घेता 'हरभरा (चना / दिग्विजय)' हे सर्वोत्तम १ले शिफारस पीक ठरते."
+                "काळ्या कसदार जमिनीतील ओलावा व बारामती बाजारपेठेतील मजबूत मागणी लक्षात घेता 'कांदा' हे सर्वोत्तम १ले शिफारस पीक ठरते."
                 if is_mr else
-                "Based on heavy vertisol moisture retention and favorable Baramati APMC modal price trends, Bengal Gram (Chickpea / Harbara) is the #1 recommended crop for this parcel."
+                "Based on heavy vertisol moisture retention and favorable Baramati APMC modal price trends, Rabi Onion is the #1 recommended crop for this parcel."
             ),
             f"• <b>{('जोखीम व सिंचन दक्षता' if is_mr else 'Resource & Risk Guidance')}:</b> " + (
-                "कांदा किंवा गहू लागवड करताना खात्रीशीर ५-६ सिंचनाची व काढणीपश्चात साठवणुकीची खात्री करावी. घाटे अळीच्या नियंत्रणासाठी कामगंध सापळे वेळेत वापरावेत."
+                "कांदा किंवा मका लागवड करताना खात्रीशीर ५-६ सिंचनाची व काढणीपश्चात साठवणुकीची खात्री करावी. घाटे अळीच्या नियंत्रणासाठी कामगंध सापळे वेळेत वापरावेत."
                 if is_mr else
-                "Conditional crops such as Onion or Wheat require verified irrigation storage (5–6 turns) and curing infrastructure. Monitor pest incidence (Helicoverpa) actively."
+                "Conditional crops such as Onion or Maize require verified irrigation storage (5–6 turns) and curing infrastructure. Monitor pest incidence (Helicoverpa) actively."
             ),
         ]
         sum_box = Table([[Paragraph("<br/>".join(sum_lines), styles["val"])]], colWidths=[186 * mm])

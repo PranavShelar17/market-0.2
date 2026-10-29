@@ -28,6 +28,7 @@ import {
   CriterionEvaluationResult,
 } from "@/services/marketService";
 import { getCertifiedFieldSuitability } from "@/services/certifiedDecisionPlanData";
+import { cleanCropName, isAllowedCrop } from "@/i18n/marathiHelper";
 import { useI18n } from "@/i18n/useI18n";
 
 interface FieldSuitabilitySectionProps {
@@ -55,8 +56,13 @@ export const FieldSuitabilitySection: React.FC<FieldSuitabilitySectionProps> = (
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [suitabilityData, setSuitabilityData] = useState<FieldSuitabilityResponse | null>(null);
-  const [selectedCropCode, setSelectedCropCode] = useState<string>("CHANA");
+  const [selectedCropCode, setSelectedCropCode] = useState<string>("ONION");
   const [showDetailedEvidence, setShowDetailedEvidence] = useState<boolean>(false);
+
+  const sanitizeSuitability = (data: FieldSuitabilityResponse): FieldSuitabilityResponse => ({
+    ...data,
+    crops: (data.crops || []).filter((c) => isAllowedCrop(c)),
+  });
 
   const fetchSuitability = async () => {
     setLoading(true);
@@ -68,17 +74,24 @@ export const FieldSuitabilitySection: React.FC<FieldSuitabilitySectionProps> = (
         season: activeSeason.toUpperCase(),
       });
       if (data && data.crops && data.crops.length > 0) {
-        setSuitabilityData(data);
-        if (!data.crops.some((c) => c.crop_code === selectedCropCode)) {
-          setSelectedCropCode(data.crops[0].crop_code);
+        const sanitized = sanitizeSuitability(data);
+        setSuitabilityData(sanitized);
+        if (!sanitized.crops.some((c) => c.crop_code === selectedCropCode)) {
+          setSelectedCropCode(sanitized.crops[0]?.crop_code || "ONION");
         }
       } else {
-        const demo = getCertifiedFieldSuitability(identifier);
+        const demo = sanitizeSuitability(getCertifiedFieldSuitability(identifier));
         setSuitabilityData(demo);
+        if (!demo.crops.some((c) => c.crop_code === selectedCropCode)) {
+          setSelectedCropCode(demo.crops[0]?.crop_code || "ONION");
+        }
       }
     } catch (_err: any) {
-      const demo = getCertifiedFieldSuitability(identifier);
+      const demo = sanitizeSuitability(getCertifiedFieldSuitability(identifier));
       setSuitabilityData(demo);
+      if (!demo.crops.some((c) => c.crop_code === selectedCropCode)) {
+        setSelectedCropCode(demo.crops[0]?.crop_code || "ONION");
+      }
     } finally {
       setLoading(false);
     }
@@ -409,7 +422,7 @@ export const FieldSuitabilitySection: React.FC<FieldSuitabilitySectionProps> = (
                           : "bg-white text-slate-700 border-slate-200 hover:border-[#76C457]"
                       }`}
                     >
-                      {isMr ? crop.crop_name_mr : crop.crop_name.split("(")[0].trim()}
+                      {cleanCropName(isMr ? crop.crop_name_mr : crop.crop_name)}
                     </button>
                   );
                 })}
@@ -423,7 +436,7 @@ export const FieldSuitabilitySection: React.FC<FieldSuitabilitySectionProps> = (
                   <div>
                     <div className="flex items-center gap-2">
                       <h4 className="text-lg font-black text-slate-900">
-                        {isMr ? selectedCrop.crop_name_mr : selectedCrop.crop_name}
+                        {cleanCropName(isMr ? selectedCrop.crop_name_mr : selectedCrop.crop_name)}
                       </h4>
                       {selectedCrop.scientific_name && (
                         <span className="text-xs italic text-slate-500 hidden sm:inline">

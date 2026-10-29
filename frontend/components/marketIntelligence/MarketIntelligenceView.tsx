@@ -75,7 +75,6 @@ export const MarketIntelligenceView: React.FC = () => {
     { key: "all", labelEn: "All Crops", labelMr: "सर्व पिके" },
     { key: "cash_crops", labelEn: "Cash Crops", labelMr: "नगदी पिके" },
     { key: "cereals", labelEn: "Cereals & Millets", labelMr: "धान्य" },
-    { key: "pulses", labelEn: "Pulses", labelMr: "कडधान्ये" },
     { key: "oilseeds", labelEn: "Oilseeds", labelMr: "तेलबिया" },
     { key: "vegetables", labelEn: "Vegetables", labelMr: "भाजीपाला" },
   ];

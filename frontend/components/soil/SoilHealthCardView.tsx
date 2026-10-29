@@ -200,7 +200,7 @@ export const SoilHealthCardView: React.FC<SoilHealthCardViewProps> = ({ fieldIdO
             title="Analyze Soil Texture on USDA Triangle"
           >
             <Layers className="w-3.5 h-3.5 text-[#214F3F]" />
-            <span>{locale === "mr" ? "मृदा पोत त्रिकोण" : "Texture Triangle"}</span>
+            <span>{locale === "mr" ? "मृदा पोत वर्गीकरण त्रिकोण" : "Texture Triangle"}</span>
           </Link>
 
           <button

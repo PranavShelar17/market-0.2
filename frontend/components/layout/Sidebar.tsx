@@ -34,7 +34,7 @@ const navItems: NavItem[] = [
   { key: "myFarm", label: "My Farm", labelMr: "माझे शेत", href: "/my-farm", icon: Tractor },
   { key: "soilMap", label: "My Soil Map", labelMr: "माती नकाशा", href: "/soil-map", icon: Map },
   { key: "soilHealthCard", label: "Soil Health Card", labelMr: "मृदा आरोग्य पत्रिका", href: "/soil-health-card", icon: Sprout },
-  { key: "soilTexture", label: "Soil Texture", labelMr: "मृदा पोत विश्लेषक", href: "/soil-texture", icon: Layers },
+  { key: "soilTexture", label: "Soil Texture", labelMr: "मृदा पोत वर्गीकरण त्रिकोण", href: "/soil-texture", icon: Layers },
   { key: "marketIntelligence", label: "Market & Crop Planner", labelMr: "बाजार व पीक नियोजन", href: "/market-intelligence", icon: TrendingUp },
   { key: "reports", label: "Report", labelMr: "अहवाल", href: "/reports", icon: FileText },
 ];

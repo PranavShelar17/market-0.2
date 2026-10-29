@@ -26,7 +26,7 @@ export const FarmerSampleInfoTable: React.FC<FarmerSampleInfoTableProps> = ({
 
   const farmerName =
     translateFarmerName(farmer?.name, isMr) ||
-    (isMr ? "रमेश पाटील" : "Ramesh Patil (रमेश पाटील)");
+    (isMr ? "शेतकरी" : "Farmer");
 
   const gatNumber = field?.gat_no || "22";
   const gatLabel = `${isMr ? "गट क्र." : "Gat No."} ${gatNumber}`;

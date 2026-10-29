@@ -19,7 +19,7 @@ Strict Non-Negotiable Rules:
 import math
 import logging
 from datetime import date, datetime, timedelta, timezone
-from typing import Optional, Dict, Any, List, Tuple
+from typing import Optional, Dict, Any, List, Tuple, Iterable, Set
 from sqlalchemy.orm import Session
 from sqlalchemy import select, and_, or_
 
@@ -74,7 +74,7 @@ VERIFIED_COST_AND_YIELD_BENCHMARKS: Dict[str, Dict[str, Any]] = {
     "CHANA": {
         "crop_code": "CHANA",
         "alt_code": "GRAM",
-        "crop_name": "Bengal Gram (Chickpea / Harbara)",
+        "crop_name": "Bengal Gram",
         "season": "RABI",
         "operational_cost_per_ha": 26500.0,  # A2 + FL (₹/ha)
         "total_cost_per_ha": 40500.0,        # C2 Comprehensive (₹/ha)
@@ -96,7 +96,7 @@ VERIFIED_COST_AND_YIELD_BENCHMARKS: Dict[str, Dict[str, Any]] = {
     "ONION": {
         "crop_code": "ONION",
         "alt_code": "ONION",
-        "crop_name": "Rabi Onion (Kanda)",
+        "crop_name": "Rabi Onion",
         "season": "RABI",
         "operational_cost_per_ha": 88000.0,  # A2 + FL (₹/ha)
         "total_cost_per_ha": 132000.0,       # C2 Comprehensive (₹/ha)
@@ -119,7 +119,7 @@ VERIFIED_COST_AND_YIELD_BENCHMARKS: Dict[str, Dict[str, Any]] = {
     "WHEAT": {
         "crop_code": "WHEAT",
         "alt_code": "WHEAT",
-        "crop_name": "Wheat (Gahu)",
+        "crop_name": "Wheat",
         "season": "RABI",
         "operational_cost_per_ha": 29500.0,  # A2 + FL
         "total_cost_per_ha": 46000.0,        # C2
@@ -142,7 +142,7 @@ VERIFIED_COST_AND_YIELD_BENCHMARKS: Dict[str, Dict[str, Any]] = {
     "MAIZE": {
         "crop_code": "MAIZE",
         "alt_code": "MAIZE",
-        "crop_name": "Rabi Maize (Makka)",
+        "crop_name": "Rabi Maize",
         "season": "RABI",
         "operational_cost_per_ha": 32000.0,  # A2 + FL
         "total_cost_per_ha": 49000.0,        # C2
@@ -164,7 +164,7 @@ VERIFIED_COST_AND_YIELD_BENCHMARKS: Dict[str, Dict[str, Any]] = {
     "SUGARCANE": {
         "crop_code": "SUGARCANE",
         "alt_code": "SUGARCANE",
-        "crop_name": "Sugarcane (Oos)",
+        "crop_name": "Sugarcane",
         "season": "ANNUAL",
         "operational_cost_per_ha": 118000.0, # A2 + FL
         "total_cost_per_ha": 175000.0,       # C2
@@ -208,7 +208,7 @@ VERIFIED_COST_AND_YIELD_BENCHMARKS: Dict[str, Dict[str, Any]] = {
     "TUR": {
         "crop_code": "TUR",
         "alt_code": "TUR",
-        "crop_name": "Pigeon Pea (Tur / Arhar)",
+        "crop_name": "Pigeon Pea",
         "season": "KHARIF",
         "operational_cost_per_ha": 29000.0,  # A2 + FL
         "total_cost_per_ha": 43000.0,        # C2
@@ -230,7 +230,7 @@ VERIFIED_COST_AND_YIELD_BENCHMARKS: Dict[str, Dict[str, Any]] = {
     "COTTON": {
         "crop_code": "COTTON",
         "alt_code": "COTTON",
-        "crop_name": "Cotton (Kapas)",
+        "crop_name": "Cotton",
         "season": "KHARIF",
         "operational_cost_per_ha": 45000.0,  # A2 + FL
         "total_cost_per_ha": 68000.0,        # C2
@@ -495,6 +495,7 @@ class CropDecisionService:
         planning_horizon: str = "IMMEDIATE_15_DAYS",
         planning_season: str = "RABI",
         market_id: Optional[int] = None,
+        exclude_crops: Optional[Iterable[str]] = None,
     ) -> FieldCropDecisionResponse:
         """
         Executes complete multi-criteria decision assessment for all candidate crops
@@ -537,7 +538,12 @@ class CropDecisionService:
         commodities = db.query(Commodity).filter(Commodity.is_active == True).all()
         comm_map = {c.code.upper(): c for c in commodities}
 
+        excluded_set = {c.upper() for c in exclude_crops} if exclude_crops else set()
+
         for crop_code, crop_info in AGRONOMIC_CROP_CRITERIA.items():
+            if crop_code.upper() in excluded_set or crop_info.get("crop_code", "").upper() in excluded_set:
+                continue
+
             comm_obj = comm_map.get(crop_code)
             if not comm_obj and crop_code == "CHANA":
                 comm_obj = comm_map.get("GRAM")

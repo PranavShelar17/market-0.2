@@ -37,7 +37,7 @@ import {
   getCleanReferenceRange,
   getCleanReferenceRangeMr,
 } from "@/lib/soilRecommendations";
-import { translateGeoName, translateFarmerName, translateStatus } from "@/i18n/marathiHelper";
+import { translateGeoName, translateFarmerName, translateStatus, cleanCropName } from "@/i18n/marathiHelper";
 import { getLiveDateStr, getLiveSampleDateStr } from "@/lib/dateUtils";
 
 type ButtonState = "idle" | "loading" | "success" | "error";
@@ -677,7 +677,7 @@ export default function ReportsPage() {
                             <span>{isMr ? "सर्वोत्तम शिफारस पीक (#१)" : "TOP-RANKED OPTION (Rank 1)"}</span>
                           </span>
                           <h4 className="text-base font-black text-text-main">
-                            {isMr ? topCrop.crop_name_mr || topCrop.crop_name : topCrop.crop_name}
+                            {cleanCropName(isMr ? topCrop.crop_name_mr || topCrop.crop_name : topCrop.crop_name)}
                           </h4>
                         </div>
                         <span className="px-3 py-1 rounded-lg text-xs font-bold bg-white text-emerald-800 border border-emerald-300">
@@ -753,7 +753,7 @@ export default function ReportsPage() {
                                 #{idx + 1}
                               </td>
                               <td className="p-3 font-bold text-text-main">
-                                {isMr ? c.crop_name_mr || c.crop_name : c.crop_name}
+                                {cleanCropName(isMr ? c.crop_name_mr || c.crop_name : c.crop_name)}
                               </td>
                               <td className="p-3">
                                 <span className="inline-block px-2 py-0.5 rounded text-[10.5px] font-bold bg-soil-primaryLight text-soil-primary border border-soil-primary/20">
@@ -828,7 +828,7 @@ export default function ReportsPage() {
                           return (
                             <tr key={c.crop_code} className="hover:bg-surface-subtle/50">
                               <td className="p-3 font-bold text-text-main">
-                                {isMr ? c.crop_name_mr || c.crop_name : c.crop_name}
+                                {cleanCropName(isMr ? c.crop_name_mr || c.crop_name : c.crop_name)}
                               </td>
                               <td className="p-3 text-center font-mono">
                                 {modalPrice ? (
@@ -918,14 +918,14 @@ export default function ReportsPage() {
                     <p>
                       • <b>{isMr ? "सर्वोत्तम पीक शिफारस:" : "Primary Crop Recommendation:"}</b>{" "}
                       {isMr
-                        ? "काळ्या कसदार जमिनीतील ओलावा व बारामती बाजारातील मागणी लक्षात घेता 'हरभरा (दिग्विजय/फुले विक्रम)' हे सर्वोत्तम शिफारस पीक आहे. कमी पाण्यात व कमी खर्चात उत्कृष्ट परतावा देण्याची क्षमता आहे."
-                        : "Bengal Gram (Chickpea / Harbara) is the #1 recommended crop for this parcel due to optimal alignment with residual vertisol soil moisture and high benefit-cost ratio in the Baramati mandi."}
+                        ? "काळ्या कसदार जमिनीतील ओलावा व बारामती बाजारातील मागणी लक्षात घेता 'कांदा' हे सर्वोत्तम शिफारस पीक आहे. योग्य व्यवस्थापनात उत्कृष्ट परतावा देण्याची क्षमता आहे."
+                        : "Rabi Onion is the #1 recommended crop for this parcel due to optimal alignment with vertisol soil and high benefit-cost ratio in the Baramati mandi."}
                     </p>
                     <p>
                       • <b>{isMr ? "जोखीम व बाजार वेळ:" : "Resource & Risk Guidance:"}</b>{" "}
                       {isMr
-                        ? "नोव्हेंबरच्या पहिल्या आठवड्यापूर्वी पेरणी पूर्ण करावी जेणेकरून घाटे अळीचा प्रादुर्भाव टाळता येईल. कांदा किंवा गहू यांसारख्या पर्यायी पिकांसाठी खात्रीशीर ५-६ वेळेस सिंचन आवश्यक आहे."
-                        : "Complete sowing before second week of November to avoid terminal heat stress and pod borer incidence. Conditional crops such as Onion or Wheat require verified irrigation availability (5–6 turns)."}
+                        ? "नोव्हेंबरच्या पहिल्या आठवड्यापूर्वी पेरणी पूर्ण करावी जेणेकरून घाटे अळीचा प्रादुर्भाव टाळता येईल. कांदा किंवा मका यांसारख्या पर्यायी पिकांसाठी खात्रीशीर ५-६ वेळेस सिंचन आवश्यक आहे."
+                        : "Complete sowing before second week of November to avoid terminal heat stress and pod borer incidence. Conditional crops such as Onion or Maize require verified irrigation availability (5–6 turns)."}
                     </p>
                   </div>
                 </div>

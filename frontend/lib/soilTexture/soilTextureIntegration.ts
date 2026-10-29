@@ -29,7 +29,10 @@ export interface IntegratedSoilTextureResult {
   extractedParams: ExtractedTextureParameters;
 }
 
-export function extractTextureParametersFromReport(report: any): ExtractedTextureParameters {
+export function extractTextureParametersFromReport(
+  report: any,
+  farmerNameOverride?: string
+): ExtractedTextureParameters {
   if (!report || !Array.isArray(report.parameters)) {
     return {
       sand: null,
@@ -85,7 +88,7 @@ export function extractTextureParametersFromReport(report: any): ExtractedTextur
     missingParameters: missing,
     isDemo: report.is_demo ?? true,
     village: report.field?.village || "Malegaon Kh.",
-    farmerName: report.farmer?.name || "Ramesh Patil",
+    farmerName: farmerNameOverride || report.farmer?.name || "Farmer",
     depthInterval: "0–30 cm Root Zone",
     reportNo: report.report_no || report.report_number || "SHC-2026-001",
     sampleDate: report.sample_date || report.report_date || "2026-03-15",

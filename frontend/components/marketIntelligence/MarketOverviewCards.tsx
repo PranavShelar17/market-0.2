@@ -21,6 +21,7 @@ import {
 } from "@/services/marketService";
 import { getCertifiedObservations } from "@/services/certifiedDecisionPlanData";
 import { CropCategory } from "@/types/marketIntelligence";
+import { cleanCropName, isAllowedCrop } from "@/i18n/marathiHelper";
 
 interface MarketOverviewCardsProps {
   selectedDistrict?: string;
@@ -54,7 +55,12 @@ export const MarketOverviewCards: React.FC<MarketOverviewCardsProps> = ({
         limit: 100,
       });
       if (resp && resp.items && resp.items.length > 0) {
-        setDataResponse(resp);
+        const allowed = resp.items.filter((item) => isAllowedCrop(item));
+        if (allowed.length > 0) {
+          setDataResponse({ ...resp, items: allowed, total: allowed.length });
+        } else {
+          setDataResponse(getCertifiedObservations());
+        }
       } else {
         setDataResponse(getCertifiedObservations());
       }
@@ -74,6 +80,10 @@ export const MarketOverviewCards: React.FC<MarketOverviewCardsProps> = ({
   // Filter items by category and search
   const filteredItems = useMemo(() => {
     return items.filter((item) => {
+      if (!isAllowedCrop(item)) {
+        return false;
+      }
+
       // Category filter
       if (selectedCategory !== "all") {
         const cat = (item.commodity_category || "").toLowerCase();
@@ -104,7 +114,6 @@ export const MarketOverviewCards: React.FC<MarketOverviewCardsProps> = ({
     { key: "all", labelEn: "All Crops", labelMr: "सर्व पिके" },
     { key: "cash_crops", labelEn: "Cash Crops", labelMr: "नगदी पिके" },
     { key: "cereals", labelEn: "Cereals & Millets", labelMr: "धान्य" },
-    { key: "pulses", labelEn: "Pulses", labelMr: "कडधान्ये" },
     { key: "oilseeds", labelEn: "Oilseeds", labelMr: "तेलबिया" },
     { key: "vegetables", labelEn: "Vegetables", labelMr: "भाजीपाला" },
   ];
@@ -265,14 +274,14 @@ export const MarketOverviewCards: React.FC<MarketOverviewCardsProps> = ({
             <table className="w-full text-left text-xs">
               <thead className="bg-surface-subtle text-text-muted text-[11px] uppercase font-bold tracking-wider border-b border-surface-border">
                 <tr>
-                  <th className="py-3 px-4">{isMr ? "पीक (Crop Name)" : "Crop Name"}</th>
+                  <th className="py-3 px-4">{isMr ? "पीक" : "Crop Name"}</th>
                   <th className="py-3 px-4 text-right font-bold text-text-main">
-                    {isMr ? "उपलब्ध दर (Latest Price)" : "Latest Available Price"}
+                    {isMr ? "उपलब्ध दर" : "Latest Available Price"}
                   </th>
-                  <th className="py-3 px-4">{isMr ? "एकक (Unit)" : "Unit"}</th>
-                  <th className="py-3 px-4">{isMr ? "बाजार समिती (Market Name)" : "Market Name"}</th>
-                  <th className="py-3 px-4">{isMr ? "बाजार दिनांक (Market Date)" : "Market Date"}</th>
-                  <th className="py-3 px-4 text-center">{isMr ? "स्थिती (Data Status)" : "Data Status"}</th>
+                  <th className="py-3 px-4">{isMr ? "एकक" : "Unit"}</th>
+                  <th className="py-3 px-4">{isMr ? "बाजार समिती" : "Market Name"}</th>
+                  <th className="py-3 px-4">{isMr ? "बाजार दिनांक" : "Market Date"}</th>
+                  <th className="py-3 px-4 text-center">{isMr ? "स्थिती" : "Data Status"}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-surface-border/60">
@@ -282,7 +291,7 @@ export const MarketOverviewCards: React.FC<MarketOverviewCardsProps> = ({
                     <td className="py-3.5 px-4 font-bold text-text-main">
                       <div className="flex flex-col">
                         <span className="text-sm font-extrabold text-text-main">
-                          {isMr ? obs.commodity_name_mr || obs.commodity_name : obs.commodity_name}
+                          {cleanCropName(isMr ? obs.commodity_name_mr || obs.commodity_name : obs.commodity_name)}
                         </span>
                         <span className="text-[10px] text-text-muted font-normal">
                           {obs.commodity_category}
@@ -344,7 +353,7 @@ export const MarketOverviewCards: React.FC<MarketOverviewCardsProps> = ({
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <h3 className="text-sm font-extrabold text-text-main">
-                      {isMr ? obs.commodity_name_mr || obs.commodity_name : obs.commodity_name}
+                      {cleanCropName(isMr ? obs.commodity_name_mr || obs.commodity_name : obs.commodity_name)}
                     </h3>
                     <span className="text-[10px] text-text-muted">{obs.commodity_category}</span>
                   </div>

@@ -500,6 +500,150 @@ export function translateGeoName(
   return geoName;
 }
 
+export const ALLOWED_CROP_CODES = new Set([
+  "SUGARCANE",
+  "POMEGRANATE",
+  "MAIZE",
+  "SOYBEAN",
+  "BANANA",
+  "ONION",
+  "TOMATO",
+]);
+
+/**
+ * Checks whether an item or string belongs strictly to the 7 permitted crops:
+ * Sugarcane, Pomegranate, Maize, Soybean, Banana, Onion, Tomato.
+ */
+export function isAllowedCrop(crop: any): boolean {
+  if (!crop) return false;
+
+  if (typeof crop === "string") {
+    const raw = crop.toUpperCase().trim();
+    if (ALLOWED_CROP_CODES.has(raw)) return true;
+    const lower = crop.toLowerCase();
+    if (lower.includes("sugarcane") || lower.includes("ऊस") || lower.includes("oos")) return true;
+    if (lower.includes("pomegranate") || lower.includes("डाळिंब") || lower.includes("dalimb")) return true;
+    if (lower.includes("maize") || lower.includes("मका") || lower.includes("corn") || lower.includes("makka")) return true;
+    if (lower.includes("soybean") || lower.includes("सोयाबीन") || lower.includes("soya")) return true;
+    if (lower.includes("banana") || lower.includes("केळी") || lower.includes("keli")) return true;
+    if (lower.includes("onion") || lower.includes("कांदा") || lower.includes("kanda")) return true;
+    if (lower.includes("tomato") || lower.includes("टोमॅटो") || lower.includes("tameta")) return true;
+    return false;
+  }
+
+  const code = (crop.crop_code || crop.comm_code || crop.code || crop.commodity_code || "").toUpperCase();
+  if (code && ALLOWED_CROP_CODES.has(code)) return true;
+
+  const names = [crop.crop_name, crop.commodity_name, crop.name, crop.crop_name_mr, crop.commodity_name_mr, crop.name_mr];
+  for (const n of names) {
+    if (n && typeof n === "string" && isAllowedCrop(n)) return true;
+  }
+  return false;
+}
+
+/**
+ * Removes sub-names and secondary labels enclosed in brackets e.g.
+ * "Rabi Onion (Kanda)" -> "Rabi Onion"
+ * "Wheat (Gahu)" -> "Wheat"
+ * "कांदा (रब्बी)" -> "कांदा"
+ */
+export function cleanCropName(name?: string | null): string {
+  if (!name) return "";
+  return name.replace(/\s*\([^)]*\)/g, "").trim();
+}
+
+/**
+ * Translates crop category into Marathi or formatted English
+ */
+export function translateCropCategory(
+  category?: string | null,
+  isMarathi: boolean = true
+): string {
+  if (!category) return "";
+  const cat = category.toLowerCase().trim();
+  if (isMarathi) {
+    if (cat.includes("cash")) return "नगदी पिके";
+    if (cat.includes("cereal") || cat.includes("millet")) return "धान्य";
+    if (cat.includes("pulse")) return "कडधान्ये";
+    if (cat.includes("oilseed")) return "तेलबिया";
+    if (cat.includes("veg")) return "भाजीपाला";
+    return category;
+  }
+  if (cat.includes("cash")) return "Cash Crops";
+  if (cat.includes("cereal") || cat.includes("millet")) return "Cereals & Millets";
+  if (cat.includes("pulse")) return "Pulses";
+  if (cat.includes("oilseed")) return "Oilseeds";
+  if (cat.includes("veg")) return "Vegetables";
+  return category.charAt(0).toUpperCase() + category.slice(1);
+}
+
+/**
+ * Translates crop water requirement into Marathi or English
+ */
+export function translateWaterRequirement(
+  water?: string | null,
+  isMarathi: boolean = true
+): string {
+  if (!water) return "";
+  const w = water.toUpperCase().trim();
+  if (isMarathi) {
+    if (w === "LOW") return "कमी";
+    if (w === "MEDIUM" || w === "MODERATE") return "मध्यम";
+    if (w === "HIGH") return "जास्त";
+    if (w === "VERY_HIGH") return "अति जास्त";
+    return water;
+  }
+  if (w === "LOW") return "Low";
+  if (w === "MEDIUM" || w === "MODERATE") return "Medium";
+  if (w === "HIGH") return "High";
+  if (w === "VERY_HIGH") return "Very High";
+  return water;
+}
+
+/**
+ * Translates crop planting window status into Marathi or English
+ */
+export function translatePlantingStatus(
+  status?: string | null,
+  isMarathi: boolean = true
+): string {
+  if (!status) return "";
+  const s = status.toUpperCase().trim();
+  if (isMarathi) {
+    if (s === "OPTIMAL_NOW") return "पेरणीस योग्य";
+    if (s === "OPENING_SOON") return "लवकरच सुरू";
+    if (s === "CLOSING_SOON") return "मुदत संपत आहे";
+    if (s === "OFF_SEASON") return "हंगाम नसलेली";
+    return status;
+  }
+  if (s === "OPTIMAL_NOW") return "Optimal Now";
+  if (s === "OPENING_SOON") return "Opening Soon";
+  if (s === "CLOSING_SOON") return "Closing Soon";
+  if (s === "OFF_SEASON") return "Off-Season";
+  return status.replace(/_/g, " ");
+}
+
+/**
+ * Translates crop labor requirement into Marathi or English
+ */
+export function translateLaborRequirement(
+  labor?: string | null,
+  isMarathi: boolean = true
+): string {
+  if (!labor) return "";
+  const l = labor.toUpperCase().trim();
+  if (isMarathi) {
+    if (l === "LOW") return "कमी मजूर";
+    if (l === "MEDIUM" || l === "MODERATE") return "मध्यम मजूर";
+    if (l === "HIGH" || l === "INTENSIVE") return "अधिक मजूर";
+    return labor;
+  }
+  if (l === "LOW") return "Low Labor";
+  if (l === "MEDIUM" || l === "MODERATE") return "Moderate Labor";
+  if (l === "HIGH" || l === "INTENSIVE") return "Intensive Labor";
+  return `${labor} Labor`;
+}
+
 /**
  * Translates crop names into Marathi or English
  */
@@ -507,8 +651,9 @@ export function translateCropName(
   crop: string | null | undefined,
   isMarathi: boolean = true
 ): string {
-  if (!crop) return isMarathi ? "ऊस / नगदी पीक" : "Sugarcane / Cash Crop";
-  const trimmed = crop.trim();
+  if (!crop) return isMarathi ? "ऊस" : "Sugarcane";
+  const cleaned = cleanCropName(crop);
+  const trimmed = cleaned.trim();
 
   // English requested
   if (!isMarathi) {

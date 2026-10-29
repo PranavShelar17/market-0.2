@@ -38,6 +38,111 @@ import {
   CostBenchmarkSummaryItem,
 } from "@/services/marketService";
 import { getCertifiedDecisionPlan } from "@/services/certifiedDecisionPlanData";
+import {
+  cleanCropName,
+  isAllowedCrop,
+  ALLOWED_CROP_CODES,
+  translateCropCategory,
+  translateWaterRequirement,
+  translatePlantingStatus,
+  translateLaborRequirement,
+} from "@/i18n/marathiHelper";
+
+const sanitizeDecisionPlan = (
+  rawPlan: FieldCropDecisionResponse,
+  fallbackPlan?: FieldCropDecisionResponse
+): FieldCropDecisionResponse => {
+  const allowed = (rawPlan.crops || []).filter((c) => isAllowedCrop(c));
+
+  // Build map of fallback crops for merging complete benchmarks
+  const fbMap = new Map<string, CropDecisionItem>();
+  if (fallbackPlan && fallbackPlan.crops) {
+    for (const fb of fallbackPlan.crops) {
+      if (isAllowedCrop(fb)) {
+        fbMap.set(fb.crop_code.toUpperCase(), fb);
+      }
+    }
+  }
+
+  // Ensure every allowed crop has complete financials from fallback if missing or empty
+  const mergedCrops: CropDecisionItem[] = allowed.map((c) => {
+    const code = c.crop_code.toUpperCase();
+    const fb = fbMap.get(code);
+    if (!fb) return c;
+
+    const hasFinancials =
+      c.financials &&
+      c.financials.is_available &&
+      c.financials.assumed_price_modal != null &&
+      c.financials.central_scenario != null;
+
+    if (!hasFinancials && fb.financials) {
+      return {
+        ...c,
+        financials: fb.financials,
+        expected_harvest_period_text: c.expected_harvest_period_text || fb.expected_harvest_period_text,
+        planting_window_text: c.planting_window_text || fb.planting_window_text,
+      };
+    }
+    return c;
+  });
+
+  // Ensure all 7 allowed crops are present; merge from fallback if needed
+  const existingCodes = new Set(mergedCrops.map((c) => c.crop_code.toUpperCase()));
+  if (fallbackPlan && fallbackPlan.crops) {
+    for (const fbCrop of fallbackPlan.crops) {
+      if (isAllowedCrop(fbCrop) && !existingCodes.has(fbCrop.crop_code.toUpperCase())) {
+        mergedCrops.push(fbCrop);
+        existingCodes.add(fbCrop.crop_code.toUpperCase());
+      }
+    }
+  }
+
+  // Sort by rank_priority
+  mergedCrops.sort((a, b) => a.rank_priority - b.rank_priority);
+
+  // Compute decision tier summary directly
+  const decision_tier_summary = {
+    RECOMMENDED: mergedCrops.filter((c) => c.decision_tier === "RECOMMENDED").length,
+    CONDITIONALLY_SUITABLE: mergedCrops.filter((c) => c.decision_tier === "CONDITIONALLY_SUITABLE").length,
+    OFF_SEASON: mergedCrops.filter((c) => c.decision_tier === "OFF_SEASON").length,
+    CONSTRAINED: mergedCrops.filter((c) => c.decision_tier === "CONSTRAINED").length,
+    INSUFFICIENT_DATA: mergedCrops.filter((c) => c.decision_tier === "INSUFFICIENT_DATA").length,
+  };
+
+  const rawCtx = rawPlan.planning_context || (fallbackPlan?.planning_context as any) || {};
+  const fbCtx = fallbackPlan?.planning_context || ({} as any);
+  const areaAcres =
+    rawCtx.area_evaluated_acres ??
+    (rawCtx as any).area_acres ??
+    fbCtx.area_evaluated_acres ??
+    (fbCtx as any).area_acres ??
+    2.48;
+  const areaHa =
+    rawCtx.area_evaluated_ha ??
+    (rawCtx as any).area_ha ??
+    fbCtx.area_evaluated_ha ??
+    (fbCtx as any).area_ha ??
+    Math.round(areaAcres * 0.404686 * 100) / 100;
+
+  const planning_context = {
+    ...fbCtx,
+    ...rawCtx,
+    area_evaluated_acres: areaAcres,
+    area_evaluated_ha: areaHa,
+    has_lab_report: rawCtx.has_lab_report ?? fbCtx.has_lab_report ?? false,
+    has_dsm_data: rawCtx.has_dsm_data ?? fbCtx.has_dsm_data ?? true,
+    soil_data_readiness: rawCtx.soil_data_readiness || fbCtx.soil_data_readiness || "DATA_AVAILABLE",
+  };
+
+  return {
+    ...rawPlan,
+    crops: mergedCrops,
+    total_crops_evaluated: mergedCrops.length,
+    decision_tier_summary,
+    planning_context,
+  };
+};
 import { CropCategory } from "@/types/marketIntelligence";
 
 interface CropPlanningComparisonProps {
@@ -91,6 +196,13 @@ export const CropPlanningComparison: React.FC<CropPlanningComparisonProps> = ({
     const normHorizon = horizon === "immediate" ? "IMMEDIATE_15_DAYS" : "SEASONAL";
     const normSeason = (season || "RABI").toUpperCase();
 
+    const certified = getCertifiedDecisionPlan(
+      fieldIdentifier,
+      normHorizon,
+      normSeason,
+      fieldAcreage ?? 2.48
+    );
+
     try {
       const [plan, benchmarks] = await Promise.all([
         marketService.getFieldCropDecisionPlan({
@@ -102,26 +214,19 @@ export const CropPlanningComparison: React.FC<CropPlanningComparisonProps> = ({
       ]);
 
       if (plan && plan.crops && plan.crops.length > 0) {
-        setDecisionPlan(plan);
+        setDecisionPlan(sanitizeDecisionPlan(plan, certified));
       } else {
-        const certified = getCertifiedDecisionPlan(
-          fieldIdentifier,
-          normHorizon,
-          normSeason,
-          fieldAcreage ?? 2.48
-        );
-        setDecisionPlan(certified);
+        setDecisionPlan(sanitizeDecisionPlan(certified));
       }
-      if (benchmarks) setBenchmarksData(benchmarks);
+      if (benchmarks) {
+        setBenchmarksData({
+          ...benchmarks,
+          benchmarks: (benchmarks.benchmarks || []).filter((b) => isAllowedCrop(b)),
+        });
+      }
     } catch (err: any) {
       console.warn("API request for crop decision plan had an issue; applying certified plan:", err);
-      const certified = getCertifiedDecisionPlan(
-        fieldIdentifier,
-        normHorizon,
-        normSeason,
-        fieldAcreage ?? 2.48
-      );
-      setDecisionPlan(certified);
+      setDecisionPlan(sanitizeDecisionPlan(certified));
     } finally {
       setIsLoading(false);
     }
@@ -155,6 +260,18 @@ export const CropPlanningComparison: React.FC<CropPlanningComparisonProps> = ({
       return true;
     });
   }, [decisionPlan, categoryFilter, selectedTierFilter]);
+
+  // Tier counts directly derived from evaluated crops
+  const tierCounts = useMemo(() => {
+    const crops = decisionPlan?.crops || [];
+    return {
+      ALL: crops.length,
+      RECOMMENDED: crops.filter((c) => c.decision_tier === "RECOMMENDED").length,
+      CONDITIONALLY_SUITABLE: crops.filter((c) => c.decision_tier === "CONDITIONALLY_SUITABLE").length,
+      OFF_SEASON: crops.filter((c) => c.decision_tier === "OFF_SEASON").length,
+      CONSTRAINED: crops.filter((c) => c.decision_tier === "CONSTRAINED").length,
+    };
+  }, [decisionPlan?.crops]);
 
   // Tier helper colors & badges
   const getTierBadge = (tier: string) => {
@@ -285,9 +402,11 @@ export const CropPlanningComparison: React.FC<CropPlanningComparisonProps> = ({
             <div className="bg-white/80 p-2.5 rounded-lg border border-border/50">
               <span className="text-text-muted block text-[11px] font-medium">{isMr ? "मूल्यांकन क्षेत्र" : "Evaluated Area"}</span>
               <span className="font-bold text-text-primary text-sm">
-                {decisionPlan.planning_context.area_evaluated_acres} {isMr ? "एकर" : "Acres"}
+                {decisionPlan.planning_context.area_evaluated_acres ?? (decisionPlan.planning_context as any).area_acres ?? fieldAcreage ?? 2.48} {isMr ? "एकर" : "Acres"}
               </span>
-              <span className="block text-[10px] text-text-muted">({decisionPlan.planning_context.area_evaluated_ha} ha)</span>
+              <span className="block text-[10px] text-text-muted">
+                ({decisionPlan.planning_context.area_evaluated_ha ?? (decisionPlan.planning_context as any).area_ha ?? Math.round(((decisionPlan.planning_context.area_evaluated_acres ?? (decisionPlan.planning_context as any).area_acres ?? fieldAcreage ?? 2.48) * 0.404686) * 100) / 100} ha)
+              </span>
             </div>
 
             <div className="bg-white/80 p-2.5 rounded-lg border border-border/50">
@@ -311,10 +430,20 @@ export const CropPlanningComparison: React.FC<CropPlanningComparisonProps> = ({
                     : "text-rose-700"
                 }`}
               >
-                {decisionPlan.planning_context.has_lab_report ? "✓ Lab Certified" : decisionPlan.planning_context.has_dsm_data ? "≈ DSM Predicted" : "✗ Unrecorded"}
+                {decisionPlan.planning_context.has_lab_report
+                  ? isMr ? "✓ लॅब प्रमाणित" : "✓ Lab Certified"
+                  : (decisionPlan.planning_context.has_dsm_data || decisionPlan.planning_context.soil_data_readiness === "DATA_AVAILABLE")
+                  ? isMr ? "≈ डिजिटल मॅपिंग अंदाज" : "≈ DSM Predicted"
+                  : isMr ? "✗ नोंद नाही" : "✗ Unrecorded"}
               </span>
               <span className="block text-[10px] text-text-muted truncate">
-                {decisionPlan.planning_context.soil_data_readiness.replace("_", " ")}
+                {isMr
+                  ? (decisionPlan.planning_context.soil_data_readiness === "DATA_AVAILABLE"
+                      ? "माती माहिती उपलब्ध"
+                      : decisionPlan.planning_context.soil_data_readiness === "PARTIAL_DATA"
+                      ? "अंशतः माहिती उपलब्ध"
+                      : "माहिती उपलब्ध नाही")
+                  : decisionPlan.planning_context.soil_data_readiness.replace("_", " ")}
               </span>
             </div>
 
@@ -355,7 +484,7 @@ export const CropPlanningComparison: React.FC<CropPlanningComparisonProps> = ({
                 : "bg-white text-text-muted hover:bg-slate-100 border border-border/60"
             }`}
           >
-            {isMr ? "सर्व पिके" : "All Crops"} ({decisionPlan?.total_crops_evaluated ?? 0})
+            {isMr ? "सर्व पिके" : "All Crops"} ({tierCounts.ALL})
           </button>
 
           <button
@@ -367,7 +496,7 @@ export const CropPlanningComparison: React.FC<CropPlanningComparisonProps> = ({
             }`}
           >
             <Award className="w-3.5 h-3.5" />
-            {isMr ? "शिफारस केलेली" : "Recommended"} ({decisionPlan?.decision_tier_summary?.["RECOMMENDED"] ?? 0})
+            {isMr ? "शिफारस केलेली" : "Recommended"} ({tierCounts.RECOMMENDED})
           </button>
 
           <button
@@ -379,7 +508,7 @@ export const CropPlanningComparison: React.FC<CropPlanningComparisonProps> = ({
             }`}
           >
             <SlidersHorizontal className="w-3.5 h-3.5" />
-            {isMr ? "सशर्त" : "Conditional"} ({decisionPlan?.decision_tier_summary?.["CONDITIONALLY_SUITABLE"] ?? 0})
+            {isMr ? "सशर्त" : "Conditional"} ({tierCounts.CONDITIONALLY_SUITABLE})
           </button>
 
           <button
@@ -391,7 +520,7 @@ export const CropPlanningComparison: React.FC<CropPlanningComparisonProps> = ({
             }`}
           >
             <Clock className="w-3.5 h-3.5" />
-            {isMr ? "हंगाम नसलेली" : "Off-Season"} ({decisionPlan?.decision_tier_summary?.["OFF_SEASON"] ?? 0})
+            {isMr ? "हंगाम नसलेली" : "Off-Season"} ({tierCounts.OFF_SEASON})
           </button>
 
           <button
@@ -403,7 +532,7 @@ export const CropPlanningComparison: React.FC<CropPlanningComparisonProps> = ({
             }`}
           >
             <ShieldAlert className="w-3.5 h-3.5" />
-            {isMr ? "मर्यादा असलेली" : "Constrained"} ({decisionPlan?.decision_tier_summary?.["CONSTRAINED"] ?? 0})
+            {isMr ? "मर्यादा असलेली" : "Constrained"} ({tierCounts.CONSTRAINED})
           </button>
         </div>
 
@@ -641,9 +770,9 @@ export const CropPlanningComparison: React.FC<CropPlanningComparisonProps> = ({
                                 }`}
                               />
                               <div>
-                                <span className="font-bold text-sm block">{isMr ? crop.crop_name_mr : crop.crop_name}</span>
+                                <span className="font-bold text-sm block">{cleanCropName(isMr ? crop.crop_name_mr : crop.crop_name)}</span>
                                 <span className="text-[10px] text-text-muted">
-                                  {crop.category} • <span className="italic">{crop.scientific_name || crop.crop_code}</span>
+                                  {translateCropCategory(crop.category, isMr)} • <span className="italic">{crop.scientific_name || crop.crop_code}</span>
                                 </span>
                               </div>
                             </div>
@@ -682,7 +811,7 @@ export const CropPlanningComparison: React.FC<CropPlanningComparisonProps> = ({
                                   : "bg-slate-100 text-slate-600"
                               }`}
                             >
-                              {crop.planting_window_status.replace("_", " ")}
+                              {translatePlantingStatus(crop.planting_window_status, isMr)}
                             </span>
                           </td>
 
@@ -763,9 +892,9 @@ export const CropPlanningComparison: React.FC<CropPlanningComparisonProps> = ({
                                 }`}
                                 title="Water Requirement"
                               >
-                                {crop.water_requirement}
+                                {translateWaterRequirement(crop.water_requirement, isMr)}
                               </span>
-                              <span className="text-[10px] text-text-muted">{crop.labor_requirement} Labor</span>
+                              <span className="text-[10px] text-text-muted">{translateLaborRequirement(crop.labor_requirement, isMr)}</span>
                             </div>
                           </td>
 
@@ -1030,10 +1159,10 @@ export const CropPlanningComparison: React.FC<CropPlanningComparisonProps> = ({
                       <div className="flex items-start justify-between gap-3">
                         <div>
                           <h3 className="font-extrabold text-lg text-text-primary tracking-tight">
-                            {isMr ? crop.crop_name_mr : crop.crop_name}
+                            {cleanCropName(isMr ? crop.crop_name_mr : crop.crop_name)}
                           </h3>
                           <span className="text-xs text-text-muted block">
-                            {crop.category} • {crop.planting_window_text}
+                            {translateCropCategory(crop.category, isMr)} • {crop.planting_window_text}
                           </span>
                         </div>
                         <span
@@ -1120,7 +1249,7 @@ export const CropPlanningComparison: React.FC<CropPlanningComparisonProps> = ({
                           </span>
                           <span className="font-bold text-blue-700 flex items-center gap-1 mt-0.5">
                             <Droplets className="w-3.5 h-3.5" />
-                            {crop.water_requirement}
+                            {translateWaterRequirement(crop.water_requirement, isMr)}
                           </span>
                         </div>
 
@@ -1325,7 +1454,7 @@ export const CropPlanningComparison: React.FC<CropPlanningComparisonProps> = ({
                     <tbody className="divide-y divide-border/60">
                       {benchmarksData.benchmarks.map((b) => (
                         <tr key={b.crop_code} className="hover:bg-slate-50">
-                          <td className="p-3 font-bold text-text-primary">{b.crop_name}</td>
+                          <td className="p-3 font-bold text-text-primary">{cleanCropName(b.crop_name)}</td>
                           <td className="p-3 text-text-muted">{b.season}</td>
                           <td className="p-3 font-semibold text-[#2A7C13]">₹{b.operational_cost_per_acre.toLocaleString("en-IN")}</td>
                           <td className="p-3 text-text-secondary">₹{b.total_cost_per_acre.toLocaleString("en-IN")}</td>

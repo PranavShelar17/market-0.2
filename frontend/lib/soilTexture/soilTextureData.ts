@@ -28,7 +28,7 @@ export const USDA_CLASS_METADATA: Record<USDAClassKey, SoilTextureClassMetadata>
   clay: {
     key: 'clay',
     nameEn: 'Clay',
-    nameMr: 'चिकणमाती (काळी कसदार माती)',
+    nameMr: 'चिकणमाती',
     abbreviation: 'Clay',
     colorHex: '#D4A373',
     colorBorder: '#B88656',
@@ -48,7 +48,7 @@ export const USDA_CLASS_METADATA: Record<USDAClassKey, SoilTextureClassMetadata>
   silty_clay: {
     key: 'silty_clay',
     nameEn: 'Silty Clay',
-    nameMr: 'गाळयुक्त चिकणमाती',
+    nameMr: 'गाळमिश्रित चिकणमाती',
     abbreviation: 'SiCl',
     colorHex: '#CCD5AE',
     colorBorder: '#A9B58A',
@@ -68,7 +68,7 @@ export const USDA_CLASS_METADATA: Record<USDAClassKey, SoilTextureClassMetadata>
   sandy_clay: {
     key: 'sandy_clay',
     nameEn: 'Sandy Clay',
-    nameMr: 'वालुकामय चिकणमाती',
+    nameMr: 'वाळूमिश्रित चिकणमाती',
     abbreviation: 'SaCl',
     colorHex: '#E9EDC9',
     colorBorder: '#CCD59B',
@@ -88,7 +88,7 @@ export const USDA_CLASS_METADATA: Record<USDAClassKey, SoilTextureClassMetadata>
   clay_loam: {
     key: 'clay_loam',
     nameEn: 'Clay Loam',
-    nameMr: 'चिकण दुमट माती',
+    nameMr: 'चिकण पोयट',
     abbreviation: 'ClLo',
     colorHex: '#FAEDCD',
     colorBorder: '#DFCE9F',
@@ -108,7 +108,7 @@ export const USDA_CLASS_METADATA: Record<USDAClassKey, SoilTextureClassMetadata>
   silty_clay_loam: {
     key: 'silty_clay_loam',
     nameEn: 'Silty Clay Loam',
-    nameMr: 'गाळयुक्त चिकण दुमट माती',
+    nameMr: 'गाळमिश्रित चिकण पोयट',
     abbreviation: 'SiClLo',
     colorHex: '#D8E2DC',
     colorBorder: '#B0C2B6',
@@ -128,7 +128,7 @@ export const USDA_CLASS_METADATA: Record<USDAClassKey, SoilTextureClassMetadata>
   sandy_clay_loam: {
     key: 'sandy_clay_loam',
     nameEn: 'Sandy Clay Loam',
-    nameMr: 'वालुकामय चिकण दुमट माती',
+    nameMr: 'वाळूमिश्रित चिकण पोयट',
     abbreviation: 'SaClLo',
     colorHex: '#FFE5D9',
     colorBorder: '#E6BDB0',
@@ -148,7 +148,7 @@ export const USDA_CLASS_METADATA: Record<USDAClassKey, SoilTextureClassMetadata>
   loam: {
     key: 'loam',
     nameEn: 'Loam',
-    nameMr: 'दुमट माती (आदर्श कृषी पोत)',
+    nameMr: 'पोयट',
     abbreviation: 'Loam',
     colorHex: '#C7E8AC',
     colorBorder: '#96C774',
@@ -168,7 +168,7 @@ export const USDA_CLASS_METADATA: Record<USDAClassKey, SoilTextureClassMetadata>
   silt_loam: {
     key: 'silt_loam',
     nameEn: 'Silt Loam',
-    nameMr: 'गाळयुक्त दुमट माती',
+    nameMr: 'गाळमिश्रित पोयट',
     abbreviation: 'SiLo',
     colorHex: '#D8F3DC',
     colorBorder: '#A3D9AE',
@@ -188,7 +188,7 @@ export const USDA_CLASS_METADATA: Record<USDAClassKey, SoilTextureClassMetadata>
   silt: {
     key: 'silt',
     nameEn: 'Silt',
-    nameMr: 'मऊ गाळ माती',
+    nameMr: 'गाळमय',
     abbreviation: 'Silt',
     colorHex: '#B7E4C7',
     colorBorder: '#74C69D',
@@ -208,7 +208,7 @@ export const USDA_CLASS_METADATA: Record<USDAClassKey, SoilTextureClassMetadata>
   sandy_loam: {
     key: 'sandy_loam',
     nameEn: 'Sandy Loam',
-    nameMr: 'वालुकामय दुमट माती',
+    nameMr: 'वाळूमिश्रित पोयटायुक्त',
     abbreviation: 'SaLo',
     colorHex: '#FFF1C5',
     colorBorder: '#E5D08C',
@@ -228,7 +228,7 @@ export const USDA_CLASS_METADATA: Record<USDAClassKey, SoilTextureClassMetadata>
   loamy_sand: {
     key: 'loamy_sand',
     nameEn: 'Loamy Sand',
-    nameMr: 'दुमट वाळू माती',
+    nameMr: 'पोयटायुक्त वाळूमय',
     abbreviation: 'LoSa',
     colorHex: '#FDE2B8',
     colorBorder: '#D8B57D',
@@ -248,7 +248,7 @@ export const USDA_CLASS_METADATA: Record<USDAClassKey, SoilTextureClassMetadata>
   sand: {
     key: 'sand',
     nameEn: 'Sand',
-    nameMr: 'वाळू / रेती',
+    nameMr: 'वाळूमय',
     abbreviation: 'Sand',
     colorHex: '#F5D6A7',
     colorBorder: '#CCA56E',

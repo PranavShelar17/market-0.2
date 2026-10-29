@@ -107,7 +107,7 @@ export const SoilOverview: React.FC = () => {
             className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold text-[#0B4D2B] bg-[#EAF5EC] rounded-lg border border-[#CCD3CB] hover:bg-[#d8ebd2] transition-colors"
           >
             <Layers className="w-3.5 h-3.5" />
-            <span>{isMr ? "मृदा पोत त्रिकोण" : "Texture Triangle"}</span>
+            <span>{isMr ? "मृदा पोत वर्गीकरण त्रिकोण" : "Texture Triangle"}</span>
           </Link>
           <Link
             href="/soil-health-card"

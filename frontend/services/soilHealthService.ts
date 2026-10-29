@@ -359,6 +359,27 @@ export const DEFAULT_DEMO_SOIL_PARAMETERS: SoilParameter[] = [
 
 export function buildFallbackReport(fieldIdentifier: string | number, farmerName?: string): SoilHealthReport {
   const cleanGat = String(fieldIdentifier).replace(/[^\d]/g, "") || "22";
+  let resolvedFarmerName = farmerName;
+  if (!resolvedFarmerName && typeof window !== "undefined") {
+    try {
+      const stored = localStorage.getItem("soilpilot_selected_farmer");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        const storedGat = String(parsed.gat_no || "").replace(/[^\d]/g, "");
+        if (storedGat === cleanGat && parsed.name) {
+          resolvedFarmerName = parsed.name;
+        }
+      }
+    } catch (_) {}
+  }
+
+  const defaultName =
+    cleanGat === "18"
+      ? "जयाबाई गोरख कापरे"
+      : cleanGat === "22"
+      ? "प्रदिप भाऊसो शेलार"
+      : `Farmer (Gat #${cleanGat})`;
+
   return {
     field: {
       id: `demo-field-gat-${cleanGat}`,
@@ -372,7 +393,7 @@ export function buildFallbackReport(fieldIdentifier: string | number, farmerName
     },
     farmer: {
       id: Number(cleanGat) || 22,
-      name: farmerName || "Ramesh Patil (रमेश पाटील)",
+      name: resolvedFarmerName || defaultName,
       code: `FARMER-${cleanGat}`,
     },
     has_report: true,
@@ -469,23 +490,41 @@ export const soilHealthService = {
    * Fetch complete Soil Health Report including all parameters, farmer info, and laboratory metadata.
    */
   async getFieldReport(fieldId: string | number, farmerName?: string): Promise<SoilHealthReport> {
+    const cleanGat = String(fieldId).replace(/[^\d]/g, "") || "22";
+    let effectiveFarmerName = farmerName;
+    if (!effectiveFarmerName && typeof window !== "undefined") {
+      try {
+        const stored = localStorage.getItem("soilpilot_selected_farmer");
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          const storedGat = String(parsed.gat_no || "").replace(/[^\d]/g, "");
+          if (storedGat === cleanGat && parsed.name) {
+            effectiveFarmerName = parsed.name;
+          }
+        }
+      } catch (_) {}
+    }
+    if (!effectiveFarmerName && cleanGat === "18") {
+      effectiveFarmerName = "जयाबाई गोरख कापरे";
+    }
+
     try {
       const response = await api.get<SoilHealthReport>(`/reports/${fieldId}`, {
-        params: farmerName ? { farmer_name: farmerName } : {},
+        params: effectiveFarmerName ? { farmer_name: effectiveFarmerName } : {},
       });
       if (response.data && response.data.parameters && response.data.parameters.length > 0) {
         if (response.data.report) {
           response.data.report.report_date = getLiveDateStr(response.data.report.report_date);
         }
-        if (farmerName && response.data.farmer) {
-          response.data.farmer.name = farmerName;
+        if (effectiveFarmerName && response.data.farmer) {
+          response.data.farmer.name = effectiveFarmerName;
         }
         return response.data;
       }
-      return buildFallbackReport(fieldId, farmerName);
+      return buildFallbackReport(fieldId, effectiveFarmerName);
     } catch (err) {
       console.warn(`[soilHealthService] Backend query failed for ${fieldId}, using verified laboratory test report fallback:`, err);
-      return buildFallbackReport(fieldId, farmerName);
+      return buildFallbackReport(fieldId, effectiveFarmerName);
     }
   },
 

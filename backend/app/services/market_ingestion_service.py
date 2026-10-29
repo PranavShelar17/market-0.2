@@ -62,8 +62,8 @@ DEFAULT_COMMODITIES = [
     },
     {
         "code": "GRAM",
-        "name": "Bengal Gram (Chana)",
-        "name_mr": "हरभरा (चना)",
+        "name": "Bengal Gram",
+        "name_mr": "हरभरा",
         "category": "PULSES",
         "standard_unit": "QUINTAL",
         "crop_duration_min_days": 95,
@@ -92,8 +92,8 @@ DEFAULT_COMMODITIES = [
     },
     {
         "code": "TUR",
-        "name": "Pigeon Pea (Tur/Arhar)",
-        "name_mr": "तूर (अरहर)",
+        "name": "Pigeon Pea",
+        "name_mr": "तूर",
         "category": "PULSES",
         "standard_unit": "QUINTAL",
         "crop_duration_min_days": 150,
@@ -122,7 +122,7 @@ DEFAULT_COMMODITIES = [
     },
     {
         "code": "BAJRA",
-        "name": "Pearl Millet (Bajra)",
+        "name": "Pearl Millet",
         "name_mr": "बाजरी",
         "category": "CEREALS",
         "standard_unit": "QUINTAL",
@@ -132,7 +132,7 @@ DEFAULT_COMMODITIES = [
     },
     {
         "code": "JOWAR",
-        "name": "Sorghum (Jowar)",
+        "name": "Sorghum",
         "name_mr": "ज्वारी",
         "category": "CEREALS",
         "standard_unit": "QUINTAL",
@@ -149,6 +149,16 @@ DEFAULT_COMMODITIES = [
         "crop_duration_min_days": 150,
         "crop_duration_max_days": 180,
         "aliases": ["pomegranate", "डाळिंब"]
+    },
+    {
+        "code": "BANANA",
+        "name": "Banana",
+        "name_mr": "केळी",
+        "category": "FRUITS",
+        "standard_unit": "QUINTAL",
+        "crop_duration_min_days": 330,
+        "crop_duration_max_days": 390,
+        "aliases": ["banana", "केळी"]
     }
 ]
 

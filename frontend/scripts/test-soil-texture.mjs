@@ -45,7 +45,7 @@ console.log('\n--- 1. Canonical Loam & Standard 12 USDA Classes ---');
   const loam = classifyUSDA({ sand: 40, silt: 40, clay: 20 });
   assert(loam.classKey === 'loam', '40% sand, 40% silt, 20% clay must classify as Loam');
   assert(loam.classNameEn === 'Loam', 'Class name (en) is Loam');
-  assert(loam.classNameMr.includes('दुमट'), 'Class name (mr) has Marathi translation');
+  assert(loam.classNameMr === 'पोयट', 'Class name (mr) has Marathi scientific name पोयट');
 
   const testCases = [
     { name: 'Clay', comp: { sand: 20, silt: 20, clay: 60 }, expected: 'clay' },

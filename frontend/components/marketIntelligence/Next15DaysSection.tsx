@@ -22,6 +22,7 @@ import {
   PlantingOptionItem,
 } from "@/services/marketService";
 import { getCertifiedNext15DaysOptions } from "@/services/certifiedDecisionPlanData";
+import { cleanCropName, isAllowedCrop } from "@/i18n/marathiHelper";
 
 interface Next15DaysSectionProps {
   currentVillage?: string;
@@ -45,6 +46,15 @@ export const Next15DaysSection: React.FC<Next15DaysSectionProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<Next15DaysPlanningResponse | null>(null);
 
+  const sanitizeData = (raw: Next15DaysPlanningResponse): Next15DaysPlanningResponse => {
+    const remaining = (raw.options || []).filter((opt) => isAllowedCrop(opt));
+    return {
+      ...raw,
+      options: remaining,
+      total_options_count: remaining.length,
+    };
+  };
+
   const fetchPlanningData = async () => {
     setLoading(true);
     setError(null);
@@ -55,12 +65,12 @@ export const Next15DaysSection: React.FC<Next15DaysSectionProps> = ({
         marketId,
       });
       if (res && res.options && res.options.length > 0) {
-        setData(res);
+        setData(sanitizeData(res));
       } else {
-        setData(getCertifiedNext15DaysOptions());
+        setData(sanitizeData(getCertifiedNext15DaysOptions()));
       }
     } catch (_err: any) {
-      setData(getCertifiedNext15DaysOptions());
+      setData(sanitizeData(getCertifiedNext15DaysOptions()));
     } finally {
       setLoading(false);
     }
@@ -302,11 +312,8 @@ export const Next15DaysSection: React.FC<Next15DaysSectionProps> = ({
                   <div className="space-y-1">
                     <div className="flex items-center gap-2.5 flex-wrap">
                       <h3 className="text-base sm:text-lg font-extrabold text-text-main">
-                        {isMr ? option.crop_name_mr : option.crop_name}
+                        {cleanCropName(isMr ? option.crop_name_mr : option.crop_name)}
                       </h3>
-                      <span className="text-xs text-text-muted font-medium">
-                        ({isMr ? option.crop_name : option.crop_name_mr})
-                      </span>
                       <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-white border border-surface-border text-soil-primary">
                         {option.season}
                       </span>

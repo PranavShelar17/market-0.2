@@ -588,7 +588,7 @@ def test_api_decision_engine_endpoints(client, decision_db):
     assert resp2.status_code == 200
     data2 = resp2.json()
     assert "benchmarks" in data2
-    assert data2["total_benchmarks"] >= 8
+    assert data2["total_benchmarks"] >= 7
 
 
 # =========================================================================

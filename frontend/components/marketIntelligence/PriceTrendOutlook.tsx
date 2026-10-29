@@ -30,6 +30,7 @@ import {
   HistoricalAnalysisResponse,
   HistoricalTrendPoint,
 } from "@/services/marketService";
+import { isAllowedCrop } from "@/i18n/marathiHelper";
 
 interface PriceTrendOutlookProps {
   selectedMarket: string;
@@ -69,12 +70,14 @@ export const PriceTrendOutlook: React.FC<PriceTrendOutlookProps> = ({
     ])
       .then(([commList, mktList]) => {
         if (!isMounted) return;
-        setCommodities(commList);
+        const validComms = commList.filter(isAllowedCrop);
+        const finalComms = validComms.length > 0 ? validComms : commList;
+        setCommodities(finalComms);
         setMarkets(mktList);
 
         // Match selected commodity by name if possible
-        if (commList.length > 0) {
-          const matchComm = commList.find(
+        if (finalComms.length > 0) {
+          const matchComm = finalComms.find(
             (c) =>
               c.name.toLowerCase().includes(selectedCommodity.toLowerCase()) ||
               selectedCommodity.toLowerCase().includes(c.name.toLowerCase())
@@ -82,7 +85,7 @@ export const PriceTrendOutlook: React.FC<PriceTrendOutlookProps> = ({
           if (matchComm) {
             setSelectedCommodityId(matchComm.id);
           } else {
-            setSelectedCommodityId(commList[0].id);
+            setSelectedCommodityId(finalComms[0].id);
           }
         }
 

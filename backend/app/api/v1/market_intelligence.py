@@ -514,6 +514,7 @@ def get_field_crop_decision_plan(
         planning_horizon=horizon,
         planning_season=season,
         market_id=market_id,
+        exclude_crops={"CHANA", "GRAM", "LEMON", "GROUNDNUT", "WHEAT", "TUR", "COTTON"},
     )
 
 
@@ -525,6 +526,8 @@ def get_verified_cost_and_yield_benchmarks():
     """
     benchmarks_list = []
     for code, data in VERIFIED_COST_AND_YIELD_BENCHMARKS.items():
+        if code.upper() in {"CHANA", "GRAM", "LEMON", "GROUNDNUT"}:
+            continue
         benchmarks_list.append({
             "crop_code": code,
             "crop_name": data["crop_name"],

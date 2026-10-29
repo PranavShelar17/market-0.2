@@ -202,7 +202,7 @@ export const FarmMap: React.FC<FarmMapProps> = ({
         taluka: data?.taluka || authLocation?.taluka || "Baramati",
         district: data?.district || authLocation?.district || "Pune",
         state: data?.state || authLocation?.state || "Maharashtra",
-        farmer_name: data?.farmer_name || authFarmer?.name || "Ramesh Patil (रमेश पाटील)",
+        farmer_name: data?.farmer_name || authFarmer?.name || (cleanNum === "18" ? "जयाबाई गोरख कापरे" : (cleanNum === "22" ? "प्रदिप भाऊसो शेलार" : "Farmer")),
         is_demo: data?.is_demo ?? authField?.is_demo ?? true,
         geometry: resolvedGeometry,
       };
