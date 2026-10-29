@@ -88,12 +88,12 @@ export const DSMLayerSelector: React.FC<DSMLayerSelectorProps> = ({
     (activeLayer?.category as DSMLayerCategoryId) ||
     (activeLayerId === "elevation" || activeLayerId === "slope"
       ? "topography"
-      : ["lulc", "kharif_rgb", "rabi_rgb", "ndvi", "evi", "savi", "ndmi", "ndre", "bsi", "ndwi"].includes(activeLayerId)
+      : ["lulc", "ndvi", "evi", "savi", "ndmi", "ndre", "bsi", "ndwi"].includes(activeLayerId)
       ? "land_use"
       : "soil_properties");
 
-  // Filter out unwanted / duplicate layers (bd alias, uncertainty, farm_boundary)
-  const excludedLayerIds = new Set(["bd", "uncertainty", "farm_boundary"]);
+  // Filter out unwanted / duplicate layers (bd alias, uncertainty, farm_boundary, kharif_rgb, rabi_rgb)
+  const excludedLayerIds = new Set(["bd", "uncertainty", "farm_boundary", "kharif_rgb", "rabi_rgb"]);
   const cleanLayers = layers.filter((l) => !excludedLayerIds.has(l.id));
 
   // Deduplicate by layer id to ensure strict uniqueness
@@ -120,7 +120,7 @@ export const DSMLayerSelector: React.FC<DSMLayerSelectorProps> = ({
   const landUseLayers = uniqueLayers.filter(
     (l) =>
       l.category === "land_use" ||
-      ["lulc", "kharif_rgb", "rabi_rgb", "ndvi", "evi", "savi", "ndmi", "ndre", "bsi", "ndwi"].includes(l.id)
+      ["lulc", "ndvi", "evi", "savi", "ndmi", "ndre", "bsi", "ndwi"].includes(l.id)
   );
 
   const getCategoryLayers = (catId: DSMLayerCategoryId): DSMLayerConfig[] => {
@@ -229,10 +229,6 @@ export const DSMLayerSelector: React.FC<DSMLayerSelectorProps> = ({
         return "BSI Bare Soil Index";
       case "ndwi":
         return "NDWI Water Index";
-      case "kharif_rgb":
-        return "Kharif True Color RGB";
-      case "rabi_rgb":
-        return "Rabi True Color RGB";
       case "uncertainty":
         return "Prediction Uncertainty";
       default:
@@ -261,7 +257,7 @@ export const DSMLayerSelector: React.FC<DSMLayerSelectorProps> = ({
               {locale === "mr" ? "डिजिटल सॉईल मॅपिंग स्तर" : "DSM Spatial Layers"}
             </h3>
             <p className="text-[10px] text-slate-400 font-medium">
-              {locale === "mr" ? "माळेगाव खुर्द पायलट (२२ स्तर)" : "Malegaon Khurd Pilot (22 Layers)"}
+              {locale === "mr" ? `माळेगाव खुर्द पायलट (${uniqueLayers.length} स्तर)` : `Malegaon Khurd Pilot (${uniqueLayers.length} Layers)`}
             </p>
           </div>
         </div>

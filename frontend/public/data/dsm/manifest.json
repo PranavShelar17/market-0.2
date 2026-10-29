@@ -63,7 +63,7 @@
         "width": 467,
         "height": 389,
         "dtype": "uint16",
-        "scale": 1.1979824172336123e-05,
+        "scale": 0.000011979824172336123,
         "offset": 0.7996624708175659,
         "nodata": 65535
       },
@@ -121,8 +121,8 @@
       "categoryLabelMr": "मातीचे गुणधर्म (०-३० सेमी प्रमाणबद्ध)",
       "description": "Total capacity of soil to hold exchangeable cations (Ca, Mg, K). Reflects nutrient retention & fertility buffer.",
       "cmap": "CustomAgro",
-      "min": 20.0,
-      "max": 42.0,
+      "min": 20,
+      "max": 42,
       "mean": 33.4057,
       "std": 3.715,
       "validPixels": 121499,
@@ -140,7 +140,7 @@
         {
           "pct": 0,
           "color": "rgb(253, 35, 0)",
-          "value": 20.0
+          "value": 20
         },
         {
           "pct": 14,
@@ -175,7 +175,7 @@
         {
           "pct": 100,
           "color": "rgb(50, 123, 0)",
-          "value": 42.0
+          "value": 42
         }
       ]
     },
@@ -190,8 +190,8 @@
       "categoryLabelMr": "मातीचे गुणधर्म (०-३० सेमी प्रमाणबद्ध)",
       "description": "Volume percentage of coarse rock fragments (>2mm) in root zone. Affects tillability and water capacity.",
       "cmap": "CustomAgro",
-      "min": 5.0,
-      "max": 16.0,
+      "min": 5,
+      "max": 16,
       "mean": 11.3198,
       "std": 1.168,
       "validPixels": 121499,
@@ -209,7 +209,7 @@
         {
           "pct": 0,
           "color": "rgb(50, 123, 0)",
-          "value": 5.0
+          "value": 5
         },
         {
           "pct": 14,
@@ -244,7 +244,7 @@
         {
           "pct": 100,
           "color": "rgb(253, 35, 0)",
-          "value": 16.0
+          "value": 16
         }
       ]
     },
@@ -259,8 +259,8 @@
       "categoryLabelMr": "मातीचे गुणधर्म (०-३० सेमी प्रमाणबद्ध)",
       "description": "Clay fraction (<0.002mm) by weight in root zone. Controls water retention, swelling and shrink-swell cracking.",
       "cmap": "CustomAgro",
-      "min": 28.0,
-      "max": 48.0,
+      "min": 28,
+      "max": 48,
       "mean": 42.6371,
       "std": 1.8273,
       "validPixels": 121499,
@@ -278,7 +278,7 @@
         {
           "pct": 0,
           "color": "rgb(253, 35, 0)",
-          "value": 28.0
+          "value": 28
         },
         {
           "pct": 14,
@@ -308,12 +308,12 @@
         {
           "pct": 85,
           "color": "rgb(107, 161, 1)",
-          "value": 45.0
+          "value": 45
         },
         {
           "pct": 100,
           "color": "rgb(50, 123, 0)",
-          "value": 48.0
+          "value": 48
         }
       ]
     },
@@ -328,8 +328,8 @@
       "categoryLabelMr": "मातीचे गुणधर्म (०-३० सेमी प्रमाणबद्ध)",
       "description": "Sand fraction (0.05–2.0mm) in root zone. Influences drainage, aeration, and thermal conductivity.",
       "cmap": "CustomAgro",
-      "min": 18.0,
-      "max": 34.0,
+      "min": 18,
+      "max": 34,
       "mean": 29.5468,
       "std": 1.4296,
       "validPixels": 121499,
@@ -347,7 +347,7 @@
         {
           "pct": 0,
           "color": "rgb(253, 35, 0)",
-          "value": 18.0
+          "value": 18
         },
         {
           "pct": 14,
@@ -382,7 +382,7 @@
         {
           "pct": 100,
           "color": "rgb(50, 123, 0)",
-          "value": 34.0
+          "value": 34
         }
       ]
     },
@@ -397,8 +397,8 @@
       "categoryLabelMr": "मातीचे गुणधर्म (०-३० सेमी प्रमाणबद्ध)",
       "description": "Silt fraction (0.002–0.05mm) in root zone. Provides moisture storage and optimal plant-available water.",
       "cmap": "CustomAgro",
-      "min": 18.0,
-      "max": 31.0,
+      "min": 18,
+      "max": 31,
       "mean": 27.3173,
       "std": 1.248,
       "validPixels": 121499,
@@ -416,7 +416,7 @@
         {
           "pct": 0,
           "color": "rgb(253, 35, 0)",
-          "value": 18.0
+          "value": 18
         },
         {
           "pct": 14,
@@ -451,7 +451,7 @@
         {
           "pct": 100,
           "color": "rgb(50, 123, 0)",
-          "value": 31.0
+          "value": 31
         }
       ]
     },
@@ -477,7 +477,7 @@
         "width": 467,
         "height": 389,
         "dtype": "uint16",
-        "scale": 1.3968213984741226e-05,
+        "scale": 0.000013968213984741226,
         "offset": 0.4528523087501526,
         "nodata": 65535
       },
@@ -546,7 +546,7 @@
         "width": 467,
         "height": 389,
         "dtype": "uint16",
-        "scale": 1.0495858243813676e-05,
+        "scale": 0.000010495858243813676,
         "offset": 0.5086863040924072,
         "nodata": 65535
       },
@@ -615,7 +615,7 @@
         "width": 467,
         "height": 389,
         "dtype": "uint16",
-        "scale": 5.361891740205272e-05,
+        "scale": 0.00005361891740205272,
         "offset": 3.7861123085021973,
         "nodata": 65535
       },
@@ -673,10 +673,10 @@
       "categoryLabelMr": "मातीचे गुणधर्म (०-३० सेमी प्रमाणबद्ध)",
       "description": "Standard USDA Soil Texture Classification (Class 1 = Clay / Deep Vertisols). Dominant black cotton agricultural soil.",
       "cmap": "CustomAgro",
-      "min": 1.0,
-      "max": 1.0,
-      "mean": 1.0,
-      "std": 0.0,
+      "min": 1,
+      "max": 1,
+      "mean": 1,
+      "std": 0,
       "validPixels": 121499,
       "image": "layers/soil_texture.png",
       "grid": {
@@ -684,15 +684,15 @@
         "width": 467,
         "height": 389,
         "dtype": "uint16",
-        "scale": 1.0,
-        "offset": 0.0,
+        "scale": 1,
+        "offset": 0,
         "nodata": 65535
       },
       "legendStops": [
         {
           "pct": 100,
           "color": "rgb(92, 61, 46)",
-          "value": 1.0,
+          "value": 1,
           "label": "Class 1: Clay - Vertisols (काळी / चिकण माती)"
         }
       ]
@@ -708,8 +708,8 @@
       "categoryLabelMr": "भूरूप आणि उंची",
       "description": "Surface elevation above mean sea level from high-resolution SRTM DEM. Drives surface hydrology and watershed drainage.",
       "cmap": "CustomAgro",
-      "min": 541.0,
-      "max": 582.0,
+      "min": 541,
+      "max": 582,
       "mean": 559.1663,
       "std": 7.3578,
       "validPixels": 121499,
@@ -720,14 +720,14 @@
         "height": 389,
         "dtype": "uint16",
         "scale": 0.0006120652483348338,
-        "offset": 541.0,
+        "offset": 541,
         "nodata": 65535
       },
       "legendStops": [
         {
           "pct": 0,
           "color": "rgb(45, 106, 79)",
-          "value": 541.0
+          "value": 541
         },
         {
           "pct": 20,
@@ -752,7 +752,7 @@
         {
           "pct": 100,
           "color": "rgb(140, 80, 35)",
-          "value": 582.0
+          "value": 582
         }
       ]
     },
@@ -767,8 +767,8 @@
       "categoryLabelMr": "भूरूप आणि उंची",
       "description": "Topographic inclination percentage. Critical for estimating soil erosion risk, water runoff speed and terracing needs.",
       "cmap": "CustomAgro",
-      "min": 0.0,
-      "max": 15.0,
+      "min": 0,
+      "max": 15,
       "mean": 3.5577,
       "std": 1.9777,
       "validPixels": 121499,
@@ -779,14 +779,14 @@
         "height": 389,
         "dtype": "uint16",
         "scale": 0.000257891527693327,
-        "offset": 0.0,
+        "offset": 0,
         "nodata": 65535
       },
       "legendStops": [
         {
           "pct": 0,
           "color": "rgb(50, 123, 0)",
-          "value": 0.0
+          "value": 0
         },
         {
           "pct": 14,
@@ -821,7 +821,7 @@
         {
           "pct": 100,
           "color": "rgb(253, 35, 0)",
-          "value": 15.0
+          "value": 15
         }
       ]
     },
@@ -836,10 +836,10 @@
       "categoryLabelMr": "जमीन वापर आणि बहु-स्पेक्ट्रल निर्देशांक",
       "description": "Near-real-time global 10m LULC classification by Dynamic World (WRI/Google): Crops, Built, Water, Trees, Shrub, Grass.",
       "cmap": "CustomAgro",
-      "min": 0.0,
-      "max": 7.0,
-      "mean": 4.0,
-      "std": 1.0,
+      "min": 0,
+      "max": 7,
+      "mean": 4,
+      "std": 1,
       "validPixels": 121499,
       "image": "layers/lulc.png",
       "grid": {
@@ -847,128 +847,46 @@
         "width": 467,
         "height": 389,
         "dtype": "uint16",
-        "scale": 1.0,
-        "offset": 0.0,
+        "scale": 1,
+        "offset": 0,
         "nodata": 65535
       },
       "legendStops": [
         {
           "pct": 0,
           "color": "rgb(0, 102, 255)",
-          "value": 0.0,
+          "value": 0,
           "label": "0: Water (पाणी / जलाशय)"
         },
         {
           "pct": 12,
           "color": "rgb(0, 100, 0)",
-          "value": 1.0,
+          "value": 1,
           "label": "1: Trees (झाडे / वृक्ष)"
         },
         {
           "pct": 37,
           "color": "rgb(0, 230, 230)",
-          "value": 3.0,
+          "value": 3,
           "label": "3: Flooded Vegetation (जलमय वनस्पती)"
         },
         {
           "pct": 50,
           "color": "rgb(233, 30, 99)",
-          "value": 4.0,
+          "value": 4,
           "label": "4: Crops (पिके / शेती)"
         },
         {
           "pct": 62,
           "color": "rgb(128, 128, 0)",
-          "value": 5.0,
+          "value": 5,
           "label": "5: Shrub & Scrub (झुडपे)"
         },
         {
           "pct": 75,
           "color": "rgb(63, 81, 181)",
-          "value": 6.0,
+          "value": 6,
           "label": "6: Built Area (वस्ती / बांधकाम)"
-        }
-      ]
-    },
-    {
-      "id": "kharif_rgb",
-      "key": "MalegaonKh_Kharif_Composite",
-      "name": "Kharif Season True-Color Composite",
-      "marathiName": "खरीप हंगाम नैसर्गिक रंग उपग्रह प्रतिमा",
-      "unit": "RGB",
-      "category": "land_use",
-      "categoryLabel": "Land Use & Multi-Spectral Indices",
-      "categoryLabelMr": "जमीन वापर आणि बहु-स्पेक्ट्रल निर्देशांक",
-      "description": "Monsoon / Kharif season true-color optical satellite imagery composite from Sentinel-2 (Bands 4, 3, 2).",
-      "cmap": "CustomAgro",
-      "min": 0.0,
-      "max": 1.0,
-      "mean": 0.2838,
-      "std": 0.1552,
-      "validPixels": 121499,
-      "image": "layers/kharif_rgb.png",
-      "grid": {
-        "file": "grids/kharif_rgb.bin",
-        "width": 467,
-        "height": 389,
-        "dtype": "uint16",
-        "scale": 1.3935560082066472e-05,
-        "offset": -0.21121947467327118,
-        "nodata": 65535
-      },
-      "legendStops": [
-        {
-          "pct": 0,
-          "color": "rgb(40, 60, 40)",
-          "value": 0.0,
-          "label": "Natural True-Color Composite (Bands 4, 3, 2)"
-        },
-        {
-          "pct": 100,
-          "color": "rgb(220, 230, 200)",
-          "value": 1.0,
-          "label": "Optical Surface Reflectance"
-        }
-      ]
-    },
-    {
-      "id": "rabi_rgb",
-      "key": "MalegaonKh_Rabi_Composite",
-      "name": "Rabi Season True-Color Composite",
-      "marathiName": "रब्बी हंगाम नैसर्गिक रंग उपग्रह प्रतिमा",
-      "unit": "RGB",
-      "category": "land_use",
-      "categoryLabel": "Land Use & Multi-Spectral Indices",
-      "categoryLabelMr": "जमीन वापर आणि बहु-स्पेक्ट्रल निर्देशांक",
-      "description": "Winter / Rabi season true-color optical satellite imagery composite from Sentinel-2 (Bands 4, 3, 2).",
-      "cmap": "CustomAgro",
-      "min": 0.0,
-      "max": 1.0,
-      "mean": 0.2845,
-      "std": 0.1251,
-      "validPixels": 121499,
-      "image": "layers/rabi_rgb.png",
-      "grid": {
-        "file": "grids/rabi_rgb.bin",
-        "width": 467,
-        "height": 389,
-        "dtype": "uint16",
-        "scale": 1.5472769682672306e-05,
-        "offset": -0.31738823652267456,
-        "nodata": 65535
-      },
-      "legendStops": [
-        {
-          "pct": 0,
-          "color": "rgb(40, 60, 40)",
-          "value": 0.0,
-          "label": "Natural True-Color Composite (Bands 4, 3, 2)"
-        },
-        {
-          "pct": 100,
-          "color": "rgb(220, 230, 200)",
-          "value": 1.0,
-          "label": "Optical Surface Reflectance"
         }
       ]
     },
@@ -994,7 +912,7 @@
         "width": 467,
         "height": 389,
         "dtype": "uint16",
-        "scale": 1.491748200590844e-05,
+        "scale": 0.00001491748200590844,
         "offset": -0.12318458408117294,
         "nodata": 65535
       },
@@ -1058,7 +976,7 @@
         "width": 467,
         "height": 389,
         "dtype": "uint16",
-        "scale": 1.0487973082017195e-05,
+        "scale": 0.000010487973082017195,
         "offset": -0.022436823695898056,
         "nodata": 65535
       },
@@ -1122,7 +1040,7 @@
         "width": 467,
         "height": 389,
         "dtype": "uint16",
-        "scale": 9.276348447522823e-06,
+        "scale": 0.000009276348447522823,
         "offset": -0.025137705728411674,
         "nodata": 65535
       },
@@ -1186,7 +1104,7 @@
         "width": 467,
         "height": 389,
         "dtype": "uint16",
-        "scale": 1.513839421042496e-05,
+        "scale": 0.00001513839421042496,
         "offset": -0.5350323915481567,
         "nodata": 65535
       },
@@ -1250,7 +1168,7 @@
         "width": 467,
         "height": 389,
         "dtype": "uint16",
-        "scale": 1.561772391492477e-05,
+        "scale": 0.00001561772391492477,
         "offset": -0.3936185836791992,
         "nodata": 65535
       },
@@ -1314,7 +1232,7 @@
         "width": 467,
         "height": 389,
         "dtype": "uint16",
-        "scale": 1.1765690752390842e-05,
+        "scale": 0.000011765690752390842,
         "offset": -0.390048623085022,
         "nodata": 65535
       },
@@ -1371,7 +1289,7 @@
         "width": 467,
         "height": 389,
         "dtype": "uint16",
-        "scale": 1.7426410280039586e-05,
+        "scale": 0.000017426410280039586,
         "offset": -0.7860574722290039,
         "nodata": 65535
       },
@@ -1408,7 +1326,7 @@
           "pct": 100,
           "color": "rgb(23, 37, 84)",
           "hex": "#172554",
-          "value": 0.0,
+          "value": 0,
           "label": "> 0.00: Surface Water (Dark Blue)"
         }
       ]

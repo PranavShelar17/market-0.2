@@ -35,8 +35,6 @@ const RASTER_IDS: DSMRasterLayerId[] = [
   "elevation",
   "slope",
   "lulc",
-  "kharif_rgb",
-  "rabi_rgb",
   "ndvi",
   "evi",
   "savi",

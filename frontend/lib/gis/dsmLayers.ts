@@ -46,10 +46,8 @@ export const DSM_LAYER_ORDER: DSMLayerId[] = [
   "elevation",
   "slope",
 
-  // 3. Land Use & Multi-Spectral Indices (10 Layers)
+  // 3. Land Use & Multi-Spectral Indices (8 Layers)
   "lulc",
-  "kharif_rgb",
-  "rabi_rgb",
   "ndvi",
   "evi",
   "savi",

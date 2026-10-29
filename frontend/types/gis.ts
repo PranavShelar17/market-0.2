@@ -21,10 +21,8 @@ export type DSMLayerId =
   // 2. Topography & Elevation
   | "elevation"
   | "slope"
-  // 3. Land Use & Multi-Spectral Indices
+  // 3. Land Use & Multi-Spectral Indices (8 Layers)
   | "lulc"
-  | "kharif_rgb"
-  | "rabi_rgb"
   | "ndvi"
   | "evi"
   | "savi"
@@ -32,7 +30,9 @@ export type DSMLayerId =
   | "ndre"
   | "bsi"
   | "ndwi"
-  // Legacy compatibility
+  // Legacy / Deprecated compatibility
+  | "kharif_rgb"
+  | "rabi_rgb"
   | "bd"
   | "uncertainty";
 
